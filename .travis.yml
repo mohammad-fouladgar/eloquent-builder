@@ -17,10 +17,11 @@ install:
   - travis_retry composer install --no-interaction --prefer-dist --no-suggest 
 
 script:
-  - vendor/bin/phpunit --coverage-text
+  - vendor/bin/phpunit --coverage-text --coverage-clover=build/logs/clover.xml
   
-after_success: 
-  - vendor/bin/php-coveralls  -v
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
 
 notifications:
   email: false
