@@ -3,7 +3,7 @@ filter:
 
 checks:
     php:
-		code_rating: true
+        code_rating: true
 		duplication: true
 		remove_extra_empty_lines: true
 		remove_php_closing_tag: true
