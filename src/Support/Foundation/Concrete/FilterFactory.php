@@ -21,13 +21,13 @@ class FilterFactory implements IFactory
 
     private static function makeFilter(string $filterName, Model $model)
     {
-        $filter = static::resolveNameSpace($model) . static::resolveFilterName($filterName);
+        $filter = static::resolveNameSpace($model).static::resolveFilterName($filterName);
 
         if (static::isValidFilter($filter)) {
             return app($filter);
         }
 
-        throw new FilterNotFound("The {$filterName} filter not found for the " . static::getClassName($model) . ' model.');
+        throw new FilterNotFound("The {$filterName} filter not found for the ".static::getClassName($model).' model.');
     }
 
     /**
@@ -39,7 +39,7 @@ class FilterFactory implements IFactory
      */
     private static function resolveFilterName(string $filterName): string
     {
-        return str_replace(' ', '', ucwords(str_replace(['_', '-'], ' ', $filterName))) . 'Filter';
+        return str_replace(' ', '', ucwords(str_replace(['_', '-'], ' ', $filterName))).'Filter';
     }
 
     /**
@@ -51,7 +51,7 @@ class FilterFactory implements IFactory
      */
     private static function resolveNameSpace(Model $model): string
     {
-        return config('eloquent-builder.namespace', 'App\\EloquentFilters\\') . static::getClassName($model) . '\\';
+        return config('eloquent-builder.namespace', 'App\\EloquentFilters\\').static::getClassName($model).'\\';
     }
 
     /**
