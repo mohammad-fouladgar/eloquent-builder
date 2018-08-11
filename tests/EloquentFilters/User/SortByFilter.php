@@ -2,8 +2,8 @@
 
 namespace Fouladgar\EloquentBuilder\Tests\EloquentFilters\User;
 
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
 
 class SortByFilter implements Filter
 {
