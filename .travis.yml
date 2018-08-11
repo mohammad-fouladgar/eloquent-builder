@@ -18,10 +18,7 @@ install:
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=build/logs/clover.xml
-  
-after_script:
-  - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+
 
 notifications:
   email: false
