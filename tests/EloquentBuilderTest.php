@@ -2,10 +2,10 @@
 
 namespace Fouladgar\EloquentBuilder\Tests;
 
+use Illuminate\Database\Eloquent\Builder;
 use Fouladgar\EloquentBuilder\EloquentBuilder;
 use Fouladgar\EloquentBuilder\Tests\Models\Post;
 use Fouladgar\EloquentBuilder\Tests\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 
 class EloquentBuilderTest extends TestCase
 {

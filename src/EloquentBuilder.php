@@ -2,10 +2,10 @@
 
 namespace Fouladgar\EloquentBuilder;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Fouladgar\EloquentBuilder\Exception\FilterNotFound;
 use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterFactory;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 
 class EloquentBuilder
 {
@@ -23,7 +23,7 @@ class EloquentBuilder
             $query = ($query)::query();
         }
 
-        if (!$filters) {
+        if (! $filters) {
             return $query;
         }
 
