@@ -1,4 +1,4 @@
-# Provides an Eloquent builder queries for Laravel 5
+# Provide an Eloquent Builder queries for Laravel 5
 
 [![Build Status](https://travis-ci.org/mohammad-fouladgar/eloquent-builder.svg?branch=develop)](https://travis-ci.org/mohammad-fouladgar/eloquent-builder)
 [![Coverage Status](https://coveralls.io/repos/github/mohammad-fouladgar/eloquent-builder/badge.svg?branch=develop)](https://coveralls.io/github/mohammad-fouladgar/eloquent-builder?branch=develop)
@@ -8,26 +8,27 @@
 [![License](https://poser.pugx.org/mohammad-fouladgar/eloquent-builder/license)](https://packagist.org/packages/mohammad-fouladgar/eloquent-builder)
 
 This package allows you to build eloquent queries, based on request parameters.
-it greatly reduces the complex queries and conditions that this will make your code cleaner.
+It greatly reduces the complexity of the queries and conditions, which will make your code cleaner.
 
 ### Installation:
 ```shell
 composer require mohammad-fouladgar/eloquent-builder
 ```
-Laravel 5.5 uses Package Auto-Discovery, so doesn't require you to manually add the ServiceProvider.
+Laravel 5.5 uses Package Auto-Discovery, so you are not required to add ServiceProvider manually.
 
 ### Laravel 5.5+:
-If you don't use auto-discovery, add the ServiceProvider to the providers array in config/app.php
+If you don't use Auto-Discovery, add the ServiceProvider to the providers array in config/app.php
 ```php
 Fouladgar\EloquentBuilder\ServiceProvider::class,
 ```
 
 ### Default Filters NameSpace:
 The default namespace for all filters is  ``App\EloquentFilters\``  with the base name of the Model.
-For each model expect the filter class name to follow the ``{$FilterName}Filter`` naming.
 
 For example:
-Suppose we have a **User** model with an **Age** filter.As a result, the namespace filter must be as below:
+
+Suppose we have a **User** model with an **Age** filter.As a result, the namespace filter must be as follows:
+
 ``
 App\EloquentFilters\User\AgeFilter
 ``
@@ -36,7 +37,7 @@ You can optionally publish the config file with:
 ```sh
 php artisan vendor:publish --provider="Fouladgar\EloquentBuilder\ServiceProvider" --tag="config"
 ```
-And set the namespace your model filters will reside in:
+And set the namespace for your model filters which will reside in:
 ```php
 return [
     /*
@@ -60,7 +61,7 @@ Suppose we want to get the users list with the  requested parameters as below:
     'published_post' => 'true',
 ]
 ```
-In the legacy code the method written below was followed:
+In the __legacy__ code the method written below was followed:
 ```php
 <?php
 
@@ -95,7 +96,7 @@ class UserController extends Controller
     }
 }
 ```
-But the new method with **Eloquent Builder** follows the steps below:
+**But** the new method with **EloquentBuilder** follows the steps below:
 ```php
 <?php
 
@@ -117,7 +118,7 @@ class UserController extends Controller
 ```
 
 ## Define a Filter:
-Writing a filter is simple. Define a class that implements the ``Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter`` interface. This interface requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query as needed:
+Writing a filter is simple. Define a class that implements the ``Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter`` interface. This interface requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query is needed:
 ```php
 <?php
 
@@ -172,4 +173,5 @@ class UserController extends Controller
 ```sh
 vendor/bin/phpunit
 ```
-Built with :heart:
+Built with :heart: for you.
+
