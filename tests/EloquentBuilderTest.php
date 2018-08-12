@@ -87,4 +87,17 @@ class EloquentBuilderTest extends TestCase
         $this->assertEquals(5, Post::get()->count());
         $this->assertEquals(3, $users->count());
     }
+
+    /** @test */
+    public function it_can_get_female_users_over_30_years_old()
+    {
+        $Male31   = factory(User::class)->create(['gender'=>'male',   'age'=>31]);
+        $Female25 = factory(User::class)->create(['gender'=>'female', 'age'=>25]);
+        $Female35 = factory(User::class)->create(['gender'=>'female', 'age'=>35]);
+        $Female40 = factory(User::class)->create(['gender'=>'female', 'age'=>40]);
+
+        $users = EloquentBuilder::to(User::class, ['age'=>30, 'gender'=>'female'])->get();
+
+        $this->assertEquals(2, $users->count());
+    }
 }
