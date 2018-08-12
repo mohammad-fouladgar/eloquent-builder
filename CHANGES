@@ -1,3 +1,21 @@
+Version 0.2.0:
+ - added documentation to the readme file
+ - Testing a combination filters
+ - Merge pull request #2 from mohammad-fouladgar/analysis-8n9brO
+ - Apply fixes from StyleCI
+ - add styleci badge
+ - add styleci
+ - run php-coveralls command
+ - add coveralls
+ - add external code coverage
+ - convert ident tabs to space
+ - fix config file
+ - Merge branch 'develop'
+ - add scrutinizer config
+ - add some badge to readme
+ - Merge branch 'release/0.1.0' into develop
+ - New tag version '0.1.0'
+
 Version 0.1.0
  - update readme
  - first commit
