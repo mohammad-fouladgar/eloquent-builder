@@ -22,7 +22,7 @@ If you don't use Auto-Discovery, add the ServiceProvider to the providers array 
 Fouladgar\EloquentBuilder\ServiceProvider::class,
 ```
 
-### Default Filters NameSpace:
+### Default Filters Namespace:
 The default namespace for all filters is  ``App\EloquentFilters\``  with the base name of the Model.
 
 For example:
@@ -118,7 +118,7 @@ class UserController extends Controller
 ```
 
 ## Define a Filter:
-Writing a filter is simple. Define a class that implements the ``Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter`` interface. This interface requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query is needed:
+Writing a filter is simple. Define a class that implements the ``Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter`` interface. This interface requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query as needed:
 ```php
 <?php
 
