@@ -1,7 +1,7 @@
 # .travis.yml
 os: linux
+sudo: required
 language: php
-
 cache:
   directories:
     - $HOME/.composer/cache
