@@ -10,19 +10,19 @@
 This package allows you to build eloquent queries, based on request parameters.
 It greatly reduces the complexity of the queries and conditions, which will make your code cleaner.
 
-### Installation:
+### Installation
 ```shell
 composer require mohammad-fouladgar/eloquent-builder
 ```
 Laravel 5.5 uses Package Auto-Discovery, so you are not required to add ServiceProvider manually.
 
-### Laravel 5.5+:
+### Laravel 5.5+
 If you don't use Auto-Discovery, add the ServiceProvider to the providers array in config/app.php
 ```php
 Fouladgar\EloquentBuilder\ServiceProvider::class,
 ```
 
-### Default Filters Namespace:
+### Default Filters Namespace
 The default namespace for all filters is  ``App\EloquentFilters\``  with the base name of the Model.
 
 For example:
@@ -32,7 +32,7 @@ Suppose we have a **User** model with an **Age** filter.As a result, the namespa
 ``
 App\EloquentFilters\User\AgeFilter
 ``
-#### With Config file:
+#### With Config file
 You can optionally publish the config file with:
 ```sh
 php artisan vendor:publish --provider="Fouladgar\EloquentBuilder\ServiceProvider" --tag="config"
@@ -52,7 +52,7 @@ return [
 ];
 ```
 
-## Usage:
+## Usage
 Suppose we want to get the users list with the  requested parameters as below:
 ```php
 [
@@ -117,7 +117,7 @@ class UserController extends Controller
 }
 ```
 
-## Define a Filter:
+## Define a Filter
 Writing a filter is simple. Define a class that implements the ``Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter`` interface. This interface requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query as needed:
 ```php
 <?php
@@ -144,7 +144,7 @@ class AgeFilter implements Filter
 }
 ```
 
-## Work with existing queries:
+## Work with existing queries
 You may also want to work with existing queries. For example, consider the following code:
 ```php
 <?php
@@ -169,9 +169,15 @@ class UserController extends Controller
 }
 ```
 
-## Testing:
+## Testing
 ```sh
 vendor/bin/phpunit
 ```
+
+## License
+Eloquent-Builder is released under the MIT License. See the bundled
+ [LICENSE](https://github.com/mohammad-fouladgar/eloquent-builder/blob/master/LICENSE)
+ file for details.
+
 Built with :heart: for you.
 
