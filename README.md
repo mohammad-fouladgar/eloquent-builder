@@ -1,4 +1,4 @@
-# Provide an Eloquent Builder queries for Laravel 5
+# Provides a Eloquent query builder for Laravel 5
 
 [![Build Status](https://travis-ci.org/mohammad-fouladgar/eloquent-builder.svg?branch=develop)](https://travis-ci.org/mohammad-fouladgar/eloquent-builder)
 [![Coverage Status](https://coveralls.io/repos/github/mohammad-fouladgar/eloquent-builder/badge.svg?branch=develop)](https://coveralls.io/github/mohammad-fouladgar/eloquent-builder?branch=develop)
