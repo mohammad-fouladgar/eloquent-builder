@@ -36,7 +36,7 @@ class EloquentBuilderTest extends TestCase
     }
 
     /** @test */
-    public function it_can_get_user_list_where_age_greater_than_25()
+    public function it_can_get_user_list_where_age_more_than_25()
     {
         factory(User::class)->create(['age'=>15]);
         factory(User::class)->create(['age'=>20]);
