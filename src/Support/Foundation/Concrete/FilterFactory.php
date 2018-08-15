@@ -39,7 +39,7 @@ class FilterFactory implements IFactory
      */
     private static function resolveFilterName(string $filterName): string
     {
-        return str_replace(' ', '', ucwords(str_replace(['_', '-'], ' ', $filterName))).'Filter';
+        return studly_case($filterName).'Filter';
     }
 
     /**
