@@ -20,7 +20,7 @@ class EloquentBuilderTest extends TestCase
     /** @test */
     public function it_can_make_with_filters()
     {
-        $builder = EloquentBuilder::to(User::class, ['age'=>[15, 20, 25], 'not_exists_filter'=>'tom']);
+        $builder = EloquentBuilder::to(User::class, ['age_more_than'=>25, 'not_exists_filter'=>'tom']);
 
         $this->assertInstanceOf(Builder::class, $builder);
     }
@@ -38,14 +38,14 @@ class EloquentBuilderTest extends TestCase
     /** @test */
     public function it_can_get_user_list_where_age_greater_than_25()
     {
-        $user15 = factory(User::class)->create(['age'=>15]);
-        $user20 = factory(User::class)->create(['age'=>20]);
-        $user22 = factory(User::class)->create(['age'=>22]);
+        factory(User::class)->create(['age'=>15]);
+        factory(User::class)->create(['age'=>20]);
+        factory(User::class)->create(['age'=>22]);
 
-        $user30 = factory(User::class)->create(['age'=>30]);
-        $user40 = factory(User::class)->create(['age'=>40]);
+        factory(User::class)->create(['age'=>30]);
+        factory(User::class)->create(['age'=>40]);
 
-        $users = EloquentBuilder::to(User::class, ['age'=>25])->get();
+        $users = EloquentBuilder::to(User::class, ['age_more_than'=>25])->get();
 
         $this->assertEquals(2, $users->count());
     }
@@ -53,7 +53,7 @@ class EloquentBuilderTest extends TestCase
     /* @test */
     public function it_can_get_user_list_order_by_id_desc()
     {
-        $aa = factory(User::class, 5)->create();
+        factory(User::class, 5)->create();
 
         $users = EloquentBuilder::to(User::class, ['sort_by'=>'id'])->get();
 
@@ -91,12 +91,12 @@ class EloquentBuilderTest extends TestCase
     /** @test */
     public function it_can_get_female_users_over_30_years_old()
     {
-        $Male31 = factory(User::class)->create(['gender'=>'male',   'age'=>31]);
-        $Female25 = factory(User::class)->create(['gender'=>'female', 'age'=>25]);
-        $Female35 = factory(User::class)->create(['gender'=>'female', 'age'=>35]);
-        $Female40 = factory(User::class)->create(['gender'=>'female', 'age'=>40]);
+        factory(User::class)->create(['gender'=>'male',   'age'=>31]);
+        factory(User::class)->create(['gender'=>'female', 'age'=>25]);
+        factory(User::class)->create(['gender'=>'female', 'age'=>35]);
+        factory(User::class)->create(['gender'=>'female', 'age'=>40]);
 
-        $users = EloquentBuilder::to(User::class, ['age'=>30, 'gender'=>'female'])->get();
+        $users = EloquentBuilder::to(User::class, ['age_more_than'=>30, 'gender'=>'female'])->get();
 
         $this->assertEquals(2, $users->count());
     }

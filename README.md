@@ -27,10 +27,10 @@ The default namespace for all filters is  ``App\EloquentFilters\``  with the bas
 
 For example:
 
-Suppose we have a **User** model with an **Age** filter.As a result, the namespace filter must be as follows:
+Suppose we have a **User** model with an **AgeMoreThan** filter.As a result, the namespace filter must be as follows:
 
 ``
-App\EloquentFilters\User\AgeFilter
+App\EloquentFilters\User\AgeMoreThanFilter
 ``
 #### With Config file
 You can optionally publish the config file with:
@@ -56,7 +56,7 @@ return [
 Suppose we want to get the users list with the  requested parameters as below:
 ```php
 [
-    'age'            => '25',
+    'age_more_than'  => '25',
     'gender'         => 'female',
     'published_post' => 'true',
 ]
@@ -76,8 +76,8 @@ class UserController extends Controller
     {
         $users = User::where('is_active', true);
 
-        if ($request->has('age')) {
-            $users->where('age', '>', $request->age);
+        if ($request->has('age_more_than')) {
+            $users->where('age', '>', $request->age_more_than);
         }
 
         if ($request->has('gender')) {
@@ -129,7 +129,7 @@ namespace App\EloquentFilters\User;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
-class AgeFilter implements Filter
+class AgeMoreThanFilter implements Filter
 {
     /**
      * Apply the age condition to the query.
