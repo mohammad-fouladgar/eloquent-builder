@@ -117,6 +117,8 @@ class UserController extends Controller
 }
 ```
 
+> **Note**: It's recommended validates the incoming requests before sending to filters.
+
 ## Define a Filter
 Writing a filter is simple. Define a class that implements the ``Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter`` interface. This interface requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query as needed:
 ```php
