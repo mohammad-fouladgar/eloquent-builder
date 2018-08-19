@@ -26,13 +26,15 @@ class EloquentBuilderTest extends TestCase
     }
 
     /** @test */
-    public function it_can_make_with_query_eloquent_builder()
+    public function it_can_make_with_existing_query()
     {
-        $user = User::where('age', '>', 20);
+        factory(User::class)->create(['age'=>30, 'gender'=>'male']);
 
-        $builder = EloquentBuilder::to($user);
+        $query = User::where('age', '>', 20);
 
-        $this->assertInstanceOf(Builder::class, $builder);
+        $users = EloquentBuilder::to($query, ['gender'=>'male']);
+
+        $this->assertEquals(1, $users->count('id'));
     }
 
     /** @test */
