@@ -173,7 +173,7 @@ class UserController extends Controller
 
 ## Testing
 ```sh
-vendor/bin/phpunit
+composer test
 ```
 
 ## License
