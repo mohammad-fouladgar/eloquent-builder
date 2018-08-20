@@ -34,6 +34,11 @@ class EloquentBuilderTest extends TestCase
 
         $users = EloquentBuilder::to($query, ['gender'=>'male']);
 
+        $this->assertEquals(
+            'select * from "users" where "age" > ? and "gender" = ?',
+            $users->toSql()
+        );
+
         $this->assertEquals(1, $users->count('id'));
     }
 

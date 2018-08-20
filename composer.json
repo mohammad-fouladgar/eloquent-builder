@@ -36,6 +36,9 @@
             "Fouladgar\\EloquentBuilder\\Tests\\":"tests/"
         }
     },
+    "scripts": {
+        "test": "vendor/bin/phpunit --coverage-text"
+    },
     "extra": {
         "laravel":{
             "providers":[
