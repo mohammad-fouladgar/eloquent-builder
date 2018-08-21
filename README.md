@@ -176,6 +176,10 @@ class UserController extends Controller
 composer test
 ```
 
+## Security
+
+If you discover any security related issues, please email fouladgar.dev@gmail.com instead of using the issue tracker.
+
 ## License
 Eloquent-Builder is released under the MIT License. See the bundled
  [LICENSE](https://github.com/mohammad-fouladgar/eloquent-builder/blob/master/LICENSE)
