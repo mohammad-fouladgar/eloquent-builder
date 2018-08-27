@@ -53,12 +53,12 @@ return [
 ```
 
 ## Usage
-Suppose we want to get the users list with the  requested parameters as below:
+Suppose we want to get the list of the users with the requested parameters as follows:
 ```php
 [
     'age_more_than'  => '25',
     'gender'         => 'female',
-    'published_post' => 'true',
+    'has_published_post' => 'true',
 ]
 ```
 In the __legacy__ code the method written below was followed:
@@ -84,10 +84,10 @@ class UserController extends Controller
             $users->where('gender', $request->gender);
         }
 
-        if ($request->has('published_post')) {
+        if ($request->has('has_published_post')) {
             $users->where(function ($query) use ($request) {
                 $query->whereHas('posts', function ($query) use ($request) {
-                    $query->where('is_published', $request->published_post);
+                    $query->where('is_published', $request->has_published_post);
                 });
             });
         }
@@ -176,6 +176,8 @@ class UserController extends Controller
 composer test
 ```
 
+## Contributing
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 ## Security
 
 If you discover any security related issues, please email fouladgar.dev@gmail.com instead of using the issue tracker.
