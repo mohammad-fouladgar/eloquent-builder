@@ -55,6 +55,7 @@ return [
 ## Usage
 Suppose we want to get the list of the users with the requested parameters as follows:
 ```php
+// http://yourhost.io/api/user/search?age_more_than=25&gender=male&has_published_post=true
 [
     'age_more_than'  => '25',
     'gender'         => 'female',
