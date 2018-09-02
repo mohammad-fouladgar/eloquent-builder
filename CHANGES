@@ -1,3 +1,41 @@
+Version 0.4.0:
+ - added test for invalid filter and not found filter
+ - use facade instead of class
+ - remove this filter
+ - rename exception dir to Exceptions
+ - added EloquentBuilder facade
+ - added url to requested params
+ - Merge branch 'develop'
+ - add CONTRIBUTING file and fix some typo in readme
+ - Merge branch 'develop'
+ - add security to readme file
+ - Merge branch 'develop'
+ - checkout representation of the existing query
+ - add test script to composer
+ - Merge pull request #6 from mohammad-fouladgar/develop
+ - refactor test name for existing query
+ - fix test name
+ - refactor name of the age filter
+ - replace studly_case function
+ - add a note for validation incoming request
+ - add license to readme doc
+ - add sudo required to travis config
+ - update readme
+ - Merge branch 'develop'
+ - update readme
+ - Merge pull request #5 from mohammad-fouladgar/add-license-1
+ - Create LICENSE
+ - Merge branch 'master' into develop
+ - Merge branch 'master' of github.com:mohammad-fouladgar/eloquent-builder
+ - fix readme file
+ - Merge pull request #4 from mohammad-fouladgar/analysis-zRn40p
+ - Apply fixes from StyleCI
+ - Merge branch 'develop' of github.com:mohammad-fouladgar/eloquent-builder into develop
+ - Merge branch 'release/0.2.0' into develop
+ - merge with new release tag
+ - Merge pull request #3 from mohammad-fouladgar/analysis-XNYNLg
+ - Apply fixes from StyleCI
+
 Version 0.2.0:
  - added documentation to the readme file
  - Testing a combination filters

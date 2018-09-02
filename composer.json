@@ -43,7 +43,10 @@
         "laravel":{
             "providers":[
                 "Fouladgar\\EloquentBuilder\\ServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "EloquentBuilder": "Fouladgar\\EloquentBuilder\\Facade"
+            }
         }
     },
     "minimum-stability": "dev",

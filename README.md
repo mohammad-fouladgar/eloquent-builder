@@ -17,9 +17,13 @@ composer require mohammad-fouladgar/eloquent-builder
 Laravel 5.5 uses Package Auto-Discovery, so you are not required to add ServiceProvider manually.
 
 ### Laravel 5.5+
-If you don't use Auto-Discovery, add the ServiceProvider to the providers array in config/app.php
+If you don't use Auto-Discovery, add the ServiceProvider to the providers array in ``config/app.php`` file
 ```php
 Fouladgar\EloquentBuilder\ServiceProvider::class,
+```
+And add the facade to your ``config/app.php`` file
+```php
+ "EloquentBuilder" => Fouladgar\EloquentBuilder\Facade::class,
 ```
 
 ### Default Filters Namespace
@@ -104,7 +108,7 @@ class UserController extends Controller
 namespace App\Http\Controllers;
 
 use App\User;
-use Fouladgar\EloquentBuilder\EloquentBuilder;
+use EloquentBuilder;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -155,7 +159,7 @@ You may also want to work with existing queries. For example, consider the follo
 namespace App\Http\Controllers;
 
 use App\User;
-use Fouladgar\EloquentBuilder\EloquentBuilder;
+use EloquentBuilder;
 use Illuminate\Http\Request;
 
 class UserController extends Controller

@@ -2,22 +2,33 @@
 
 namespace Fouladgar\EloquentBuilder;
 
-use Fouladgar\EloquentBuilder\Exception\FilterNotFound;
-use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterFactory;
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory as IFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class EloquentBuilder
 {
     /**
+     * the filter factory.
+     *
+     * @var
+     */
+    protected $filterFactory;
+
+    public function __construct(IFactory $filterFactory)
+    {
+        $this->filterFactory = $filterFactory;
+    }
+
+    /**
      * Create a new EloquentBuilder for a request and model.
      *
      * @param string|Builder $query   Model class or eloquent builder
      * @param array          $filters
      *
-     * @return
+     * @return Builder
      */
-    public static function to($query, array $filters = null): Builder
+    public function to($query, array $filters = null): Builder
     {
         if (is_string($query)) {
             $query = ($query)::query();
@@ -27,26 +38,21 @@ class EloquentBuilder
             return $query;
         }
 
-        static::build($query, $filters);
+        self::addFilters($query, $filters);
 
         return $query;
     }
 
     /**
-     * Undocumented function.
+     * Add filters to Query Builder.
      *
      * @param Builder $query
      * @param array   $filters
      */
-    private static function build(Builder &$query, array $filters)
+    private function addFilters(Builder &$query, array $filters)
     {
-        foreach ($filters as $filterName => $value) {
-            try {
-                $query = FilterFactory::factory($filterName, $query->getModel())
-                                        ->apply($query, $value);
-            } catch (FilterNotFound $e) {
-                \Log::warning($e->getMessage());
-            }
+        foreach ($filters as $filter => $value) {
+            $query = $this->filterFactory->factory($filter, $query->getModel())->apply($query, $value);
         }
     }
 }

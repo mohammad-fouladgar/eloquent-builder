@@ -2,67 +2,54 @@
 
 namespace Fouladgar\EloquentBuilder\Support\Foundation\Concrete;
 
-use Fouladgar\EloquentBuilder\Exception\FilterNotFound;
+use Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory as IFactory;
 use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 
 class FilterFactory implements IFactory
 {
-    public static function factory(string $filter, Model $model): Filter
+    private $filterNamespace;
+
+    public function factory(string $filter, Model $model): Filter
     {
-        return static::makeFilter($filter, $model);
+        return self::make($filter, $model);
     }
 
-    private static function isValidFilter(string $filter): bool
+    public function make(string $filterName, Model $model)
     {
-        return class_exists($filter);
-    }
+        $this->setFilterNamespace($filterName, $model)->findFilter();
 
-    private static function makeFilter(string $filterName, Model $model)
-    {
-        $filter = static::resolveNameSpace($model).static::resolveFilterName($filterName);
+        $filter = app()->make($this->filterNamespace);
 
-        if (static::isValidFilter($filter)) {
-            return app($filter);
+        if (!$filter instanceof Filter) {
+            throw new InvalidArgumentException('The filter must be an instance of Filter.');
         }
 
-        throw new FilterNotFound("The {$filterName} filter not found for the ".static::getClassName($model).' model.');
+        return $filter;
     }
 
-    /**
-     * Undocumented function.
-     *
-     * @param string $filterName
-     *
-     * @return string
-     */
-    private static function resolveFilterName(string $filterName): string
+    private function setFilterNamespace(string $filterName, Model $model)
+    {
+        $this->filterNamespace =  config('eloquent-builder.namespace', 'App\\EloquentFilters\\').class_basename($model).'\\'.$this->resolveFilterName($filterName);
+
+        return $this;
+    }
+
+    private function resolveFilterName(string $filterName)
     {
         return studly_case($filterName).'Filter';
     }
 
-    /**
-     * Undocumented function.
-     *
-     * @param Model $model
-     *
-     * @return string
-     */
-    private static function resolveNameSpace(Model $model): string
+    private function findFilter()
     {
-        return config('eloquent-builder.namespace', 'App\\EloquentFilters\\').static::getClassName($model).'\\';
-    }
+        throw_if(
+            !class_exists($this->filterNamespace),
+            NotFoundFilterException::class,
+            'Filter not found.'
+        );
 
-    /**
-     * Undocumented function.
-     *
-     * @param Model $model
-     *
-     * @return string
-     */
-    private static function getClassName(Model $model): string
-    {
-        return class_basename(get_class($model));
+        return true;
     }
 }

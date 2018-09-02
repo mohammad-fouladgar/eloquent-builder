@@ -2,21 +2,20 @@
 
 namespace Fouladgar\EloquentBuilder\Tests\EloquentFilters\User;
 
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
-class SortByFilter implements Filter
+class InvalidImplementedFilter
 {
     /**
      * Undocumented function.
      *
      * @param Builder $builder
-     * @param mixed   $sortBy
+     * @param mixed   $value
      *
      * @return Builder
      */
-    public function apply(Builder $builder, $sortBy): Builder
+    public function apply(Builder $builder, $value): Builder
     {
-        return $builder->orderByDesc($sortBy);
+        return $builder;
     }
 }

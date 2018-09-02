@@ -14,5 +14,5 @@ interface FilterFactory
      *
      * @return Filter
      */
-    public static function factory(string $filter, Model $model): Filter;
+    public function factory(string $filter, Model $model): Filter;
 }
