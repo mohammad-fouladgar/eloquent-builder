@@ -17,9 +17,13 @@ composer require mohammad-fouladgar/eloquent-builder
 Laravel 5.5 uses Package Auto-Discovery, so you are not required to add ServiceProvider manually.
 
 ### Laravel 5.5+
-If you don't use Auto-Discovery, add the ServiceProvider to the providers array in config/app.php
+If you don't use Auto-Discovery, add the ServiceProvider to the providers array in ``config/app.php`` file
 ```php
 Fouladgar\EloquentBuilder\ServiceProvider::class,
+```
+And add the facade to your ``config/app.php`` file
+```php
+ "EloquentBuilder" => Fouladgar\EloquentBuilder\Facade::class,
 ```
 
 ### Default Filters Namespace

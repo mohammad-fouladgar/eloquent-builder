@@ -2,6 +2,7 @@
 
 namespace Fouladgar\EloquentBuilder;
 
+use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterFactory;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
@@ -24,5 +25,9 @@ class ServiceProvider extends BaseServiceProvider
         $this->mergeConfigFrom(
             __DIR__.'/../config/eloquent-builder.php', 'eloquent-builder'
         );
+
+        $this->app->bind('eloquentbuilder', function () {
+            return new EloquentBuilder(new FilterFactory());
+        });
     }
 }
