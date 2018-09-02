@@ -108,7 +108,7 @@ class UserController extends Controller
 namespace App\Http\Controllers;
 
 use App\User;
-use Fouladgar\EloquentBuilder\EloquentBuilder;
+use EloquentBuilder;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -159,7 +159,7 @@ You may also want to work with existing queries. For example, consider the follo
 namespace App\Http\Controllers;
 
 use App\User;
-use Fouladgar\EloquentBuilder\EloquentBuilder;
+use EloquentBuilder;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
