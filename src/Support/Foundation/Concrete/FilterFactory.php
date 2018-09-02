@@ -32,7 +32,7 @@ class FilterFactory implements IFactory
 
     private function setFilterNamespace(string $filterName, Model $model)
     {
-        $this->filterNamespace =  config('eloquent-builder.namespace', 'App\\EloquentFilters\\').class_basename($model).'\\'.$this->resolveFilterName($filterName);
+        $this->filterNamespace = config('eloquent-builder.namespace', 'App\\EloquentFilters\\').class_basename($model).'\\'.$this->resolveFilterName($filterName);
 
         return $this;
     }
