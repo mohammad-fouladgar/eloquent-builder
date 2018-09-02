@@ -1,3 +1,6 @@
+Version 0.4.1:
+ - Merge branch 'release/0.4.0'
+
 Version 0.4.0:
  - added test for invalid filter and not found filter
  - use facade instead of class
