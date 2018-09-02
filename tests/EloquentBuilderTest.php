@@ -3,26 +3,56 @@
 namespace Fouladgar\EloquentBuilder\Tests;
 
 use Fouladgar\EloquentBuilder\EloquentBuilder;
+use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterFactory;
 use Fouladgar\EloquentBuilder\Tests\Models\Post;
 use Fouladgar\EloquentBuilder\Tests\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
 class EloquentBuilderTest extends TestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->eloquentBuilder = new EloquentBuilder(new FilterFactory());
+    }
+
     /** @test */
     public function it_can_make_without_filters()
     {
-        $builder = EloquentBuilder::to(User::class);
+        $this->assertInstanceOf(
+            Builder::class,
+            $this->eloquentBuilder->to(User::class)
+        );
+    }
 
-        $this->assertInstanceOf(Builder::class, $builder);
+    /**
+     * @test
+     * @expectedException        \Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException
+     * @expectedExceptionMessage Filter not found.
+     */
+    public function it_should_return_not_found_filter_exception()
+    {
+        $this->eloquentBuilder->to(User::class, ['not_exists_filter'=>'any_value']);
+    }
+
+    /**
+     * @test
+     * @expectedException        \InvalidArgumentException
+     * @expectedExceptionMessage The filter must be an instance of Filter.
+     */
+    public function it_should_return_invalid_argument_exception()
+    {
+        $this->eloquentBuilder->to(User::class, ['invalid_implemented'=>'any_value']);
     }
 
     /** @test */
     public function it_can_make_with_filters()
     {
-        $builder = EloquentBuilder::to(User::class, ['age_more_than'=>25, 'not_exists_filter'=>'tom']);
-
-        $this->assertInstanceOf(Builder::class, $builder);
+        $this->assertInstanceOf(
+            Builder::class,
+            $this->eloquentBuilder->to(User::class, ['age_more_than'=>25])
+        );
     }
 
     /** @test */
@@ -30,9 +60,10 @@ class EloquentBuilderTest extends TestCase
     {
         factory(User::class)->create(['age'=>30, 'gender'=>'male']);
 
-        $query = User::where('age', '>', 20);
-
-        $users = EloquentBuilder::to($query, ['gender'=>'male']);
+        $users = $this->eloquentBuilder->to(
+            User::where('age', '>', 20),
+            ['gender'=> 'male']
+        );
 
         $this->assertEquals(
             'select * from "users" where "age" > ? and "gender" = ?',
@@ -52,19 +83,9 @@ class EloquentBuilderTest extends TestCase
         factory(User::class)->create(['age'=>30]);
         factory(User::class)->create(['age'=>40]);
 
-        $users = EloquentBuilder::to(User::class, ['age_more_than'=>25])->get();
+        $users = $this->eloquentBuilder->to(User::class, ['age_more_than'=>25])->get();
 
         $this->assertEquals(2, $users->count());
-    }
-
-    /* @test */
-    public function it_can_get_user_list_order_by_id_desc()
-    {
-        factory(User::class, 5)->create();
-
-        $users = EloquentBuilder::to(User::class, ['sort_by'=>'id'])->get();
-
-        $this->assertEquals(5, $users->first()->id);
     }
 
     /** @test */
@@ -88,7 +109,7 @@ class EloquentBuilderTest extends TestCase
                     );
             });
 
-        $users = EloquentBuilder::to(User::class, ['published_post'=>true])->get();
+        $users = $this->eloquentBuilder->to(User::class, ['published_post'=>true])->get();
 
         $this->assertEquals(5, User::get()->count());
         $this->assertEquals(5, Post::get()->count());
@@ -103,7 +124,7 @@ class EloquentBuilderTest extends TestCase
         factory(User::class)->create(['gender'=>'female', 'age'=>35]);
         factory(User::class)->create(['gender'=>'female', 'age'=>40]);
 
-        $users = EloquentBuilder::to(User::class, ['age_more_than'=>30, 'gender'=>'female'])->get();
+        $users = $this->eloquentBuilder->to(User::class, ['age_more_than'=>30, 'gender'=>'female'])->get();
 
         $this->assertEquals(2, $users->count());
     }
