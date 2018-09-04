@@ -22,7 +22,7 @@ before_script:
 
 script:
   - composer test
-  - test-coverage
+  - composer test-coverage
 
 notifications:
   email: false
