@@ -1,3 +1,19 @@
+Version 0.5.0:
+ - added DI and repository example
+ - register bindings
+ - refactor name of the Interfaces
+ - Merge branch 'master' into develop
+ - Merge branch 'master' of github.com:mohammad-fouladgar/eloquent-builder
+ - Merge branch 'hotfix/facade'
+ - add Facade file to whitelist
+ - add Fecade file to whitelist exclude
+ - Merge pull request #8 from mohammad-fouladgar/analysis-8AEJEB
+ - Apply fixes from StyleCI
+ - Merge branch 'develop' of github.com:mohammad-fouladgar/eloquent-builder into develop
+ - Merge branch 'release/0.4.0' into develop
+ - Merge pull request #7 from mohammad-fouladgar/analysis-zGyeyg
+ - Apply fixes from StyleCI
+
 Version 0.4.1:
  - Merge branch 'release/0.4.0'
 
