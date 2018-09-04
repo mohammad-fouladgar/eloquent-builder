@@ -175,7 +175,88 @@ class UserController extends Controller
     }
 }
 ```
+## Use as Dependency Injection
+Suppose you want use the ``EloquentBuilder`` as ``DependencyInjection`` in a ``Repository``.
 
+Let's have an example.We have a sample ``UserRepository`` as follows:
+```php
+<?php
+
+namespace App\Repositories;
+
+use App\User;
+use Fouladgar\EloquentBuilder\EloquentBuilder;
+
+class UserRepository extends BaseRepository
+{
+    
+    public function __construct(EloquentBuilder $eloquentBuilder)
+    {
+        $this->eloquentBuilder = $eloquentBuilder;
+        $this->makeModel();
+    }
+
+    public function makeModel()
+    {
+        return $this->setModel($this->model());
+    }
+    
+    public function setModel($model)
+    {
+        $this->model = app()->make($model);
+
+        return $this;
+    }
+    
+    public function model()
+    {
+        return User::class;
+    }
+    
+    public function all($columns = ['*'])
+    {
+        return $this->model->get($columns);
+    }
+
+    // other methods ...
+
+    public function filters(array $filters)
+    {
+        $this->model = $this->eloquentBuilder->to($this->model(), $filters);
+
+        return $this;
+    }
+}
+
+```
+The ``filters`` method applies the requested filters to the query by using ``EloquentBuilder`` injected.
+
+### Injecting The Repository
+Now,we can simply "type-hint" it in the constructor of our ``UserController``:
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Repositories\UserRepository;
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+
+    protected $users;
+
+    public function __construct(UserRepository $users)
+    {
+        $this->users = $users;
+    }
+
+    public function index(Request $request)
+    {
+        return $this->users->filters($request->all())->all();
+    }
+}
+```
 ## Testing
 ```sh
 composer test
