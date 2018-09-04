@@ -2,10 +2,10 @@
 
 namespace Fouladgar\EloquentBuilder\Tests\EloquentFilters\User;
 
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFilter;
 use Illuminate\Database\Eloquent\Builder;
 
-class GenderFilter implements Filter
+class GenderFilter implements IFilter
 {
     /**
      * Undocumented function.

@@ -3,8 +3,8 @@
 namespace Fouladgar\EloquentBuilder\Support\Foundation\Concrete;
 
 use Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException;
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory as IFactory;
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFactory;
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFilter;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 
@@ -12,19 +12,19 @@ class FilterFactory implements IFactory
 {
     private $filterNamespace;
 
-    public function factory(string $filter, Model $model): Filter
+    public function factory(string $filter, Model $model): IFilter
     {
         return self::make($filter, $model);
     }
 
-    public function make(string $filterName, Model $model)
+    public function make(string $filterName, Model $model): IFilter
     {
         $this->setFilterNamespace($filterName, $model)->findFilter();
 
         $filter = app()->make($this->filterNamespace);
 
-        if (!$filter instanceof Filter) {
-            throw new InvalidArgumentException('The filter must be an instance of Filter.');
+        if (!$filter instanceof IFilter) {
+            throw new InvalidArgumentException('The filter must be an instance of IFilter.');
         }
 
         return $filter;
@@ -37,12 +37,12 @@ class FilterFactory implements IFactory
         return $this;
     }
 
-    private function resolveFilterName(string $filterName)
+    private function resolveFilterName(string $filterName): string
     {
         return studly_case($filterName).'Filter';
     }
 
-    private function findFilter()
+    private function findFilter(): bool
     {
         throw_if(
             !class_exists($this->filterNamespace),

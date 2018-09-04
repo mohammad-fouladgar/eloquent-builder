@@ -4,7 +4,7 @@ namespace Fouladgar\EloquentBuilder\Support\Foundation\Contracts;
 
 use Illuminate\Database\Eloquent\Builder;
 
-interface Filter
+interface IFilter
 {
     public function apply(Builder $builder, $value): Builder;
 }

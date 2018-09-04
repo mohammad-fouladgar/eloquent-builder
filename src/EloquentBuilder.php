@@ -2,7 +2,7 @@
 
 namespace Fouladgar\EloquentBuilder;
 
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory as IFactory;
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 

@@ -2,10 +2,10 @@
 
 namespace Fouladgar\EloquentBuilder\Tests\EloquentFilters\User;
 
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFilter;
 use Illuminate\Database\Eloquent\Builder;
 
-class PublishedPostFilter implements Filter
+class PublishedPostFilter implements IFilter
 {
     /**
      * Undocumented function.

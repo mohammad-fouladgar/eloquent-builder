@@ -4,7 +4,7 @@ namespace Fouladgar\EloquentBuilder\Support\Foundation\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 
-interface FilterFactory
+interface IFactory
 {
     /**
      * Undocumented function.
@@ -14,5 +14,5 @@ interface FilterFactory
      *
      * @return Filter
      */
-    public function factory(string $filter, Model $model): Filter;
+    public function factory(string $filter, Model $model): IFilter;
 }
