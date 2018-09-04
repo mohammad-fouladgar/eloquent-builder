@@ -15,15 +15,13 @@
     ],
     "license" : "MIT",
     "require": {
-        "php": "^7.1.3",
-        "illuminate/support": "^5.6",
-        "illuminate/container": "^5.6",
-        "illuminate/database": "^5.6"
+        "php": "^7.1",
+        "laravel/framework": "~5.5.0|~5.6.0|~5.7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.1",
-        "mockery/mockery": "^1.0",
-        "orchestra/testbench": "^3.6",
+        "orchestra/testbench": "~3.5.0|~3.6.0|~3.7.0",
+        "mockery/mockery": "^1.0.0",
         "php-coveralls/php-coveralls": "^2.1"
     },
     "autoload": {
@@ -37,7 +35,8 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit --coverage-text"
+        "test": "vendor/bin/phpunit --coverage-text",
+        "test-coverage":"vendor/bin/php-coveralls -v"
     },
     "extra": {
         "laravel":{
