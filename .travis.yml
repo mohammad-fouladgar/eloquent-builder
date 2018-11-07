@@ -10,7 +10,6 @@ cache:
 php:
   - 7.1
   - 7.2
-
 env:
   matrix:
     - COMPOSER_FLAGS="--prefer-lowest"
