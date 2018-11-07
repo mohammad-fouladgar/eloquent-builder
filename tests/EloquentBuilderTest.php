@@ -28,8 +28,7 @@ class EloquentBuilderTest extends TestCase
 
     /**
      * @test
-     * @expectedException        \Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException
-     * @expectedExceptionMessage Filter not found.
+     * @expectedException  \Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException
      */
     public function it_should_return_not_found_filter_exception()
     {
@@ -127,5 +126,28 @@ class EloquentBuilderTest extends TestCase
         $users = $this->eloquentBuilder->to(User::class, ['age_more_than'=>30, 'gender'=>'female'])->get();
 
         $this->assertEquals(2, $users->count());
+    }
+
+    /** @test*/
+    public function it_can_ignore_filters_lacking_value()
+    {
+        factory(User::class, 1)
+            ->create()
+            ->each(function ($user) {
+                $user
+                    ->posts()
+                    ->save(
+                        factory(Post::class)->make(['is_published'=>true])
+                    );
+            });
+
+        factory(User::class)->create();
+
+        $users = $this->eloquentBuilder->to(
+            User::class,
+            ['published_post'=> true, 'gender'=> null, 'age_more_than'=>'', 'name']
+        )->get();
+
+        $this->assertEquals(1, $users->count());
     }
 }

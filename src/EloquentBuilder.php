@@ -38,9 +38,24 @@ class EloquentBuilder
             return $query;
         }
 
-        self::addFilters($query, $filters);
+        self::addFilters(
+            $query,
+            $this->getFilters($filters)
+        );
 
         return $query;
+    }
+
+    /**
+     * Returns only filters that have value.
+     *
+     * @param array $filters
+     *
+     * @return array
+     */
+    private function getFilters(array $filters = []): array
+    {
+        return collect($filters)->getFilters();
     }
 
     /**
