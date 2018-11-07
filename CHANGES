@@ -1,8 +1,6 @@
 Version 0.5.1:
  - Fix ignore filters on the null value
- - Fix composer test-coverage script
  - Add support for Laravel 5.7
- - Merge branch 'release/0.5.0' into develop
 
 Version 0.5.0:
  - added DI and repository example
