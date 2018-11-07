@@ -15,7 +15,7 @@ class ServiceProvider extends BaseServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../config/eloquent-builder.php' => config_path('eloquent-builder.php'),
+            __DIR__.'/../config/eloquent-builder.php' => config_path('eloquent-builder.php'),
         ], 'config');
 
         $this->registerMacros();
@@ -31,7 +31,7 @@ class ServiceProvider extends BaseServiceProvider
 
         // Merge config.
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/eloquent-builder.php',
+            __DIR__.'/../config/eloquent-builder.php',
             'eloquent-builder'
         );
     }

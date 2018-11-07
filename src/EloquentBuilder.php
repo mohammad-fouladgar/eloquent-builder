@@ -53,7 +53,7 @@ class EloquentBuilder
      *
      * @return array
      */
-    private function getFilters(array $filters=[]): array
+    private function getFilters(array $filters = []): array
     {
         return collect($filters)->getFilters();
     }
