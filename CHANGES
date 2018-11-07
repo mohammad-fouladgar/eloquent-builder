@@ -1,5 +1,5 @@
 Version 0.5.1:
- - Fix ignore filters on the null value
+ - Fix ignore filters on the null value #12
  - Add support for Laravel 5.7
 
 Version 0.5.0:
