@@ -14,16 +14,29 @@ It greatly reduces the complexity of the queries and conditions, which will make
 ```shell
 composer require mohammad-fouladgar/eloquent-builder
 ```
-Laravel 5.5 uses Package Auto-Discovery, so you are not required to add ServiceProvider manually.
+> Laravel 5.5 uses Package Auto-Discovery, so you are not required to add ServiceProvider manually.
 
-### Laravel 5.5+
+### Laravel <= 5.4.x
 If you don't use Auto-Discovery, add the ServiceProvider to the providers array in ``config/app.php`` file
 ```php
-Fouladgar\EloquentBuilder\ServiceProvider::class,
+'providers' => [
+  /*
+   * Package Service Providers...
+   */
+  Fouladgar\EloquentBuilder\ServiceProvider::class,
+],
+
 ```
-And add the facade to your ``config/app.php`` file
+And add the **facade** to your ``config/app.php`` file
 ```php
- "EloquentBuilder" => Fouladgar\EloquentBuilder\Facade::class,
+/*
+|--------------------------------------------------------------------------
+| Class Aliases
+|--------------------------------------------------------------------------
+*/
+'aliases' => [
+    "EloquentBuilder" => Fouladgar\EloquentBuilder\Facade::class,
+]
 ```
 
 ### Default Filters Namespace
@@ -59,7 +72,7 @@ return [
 ## Usage
 Suppose we want to get the list of the users with the requested parameters as follows:
 ```php
-// http://yourhost.io/api/user/search?age_more_than=25&gender=male&has_published_post=true
+//Get api/user/search?age_more_than=25&gender=male&has_published_post=true
 [
     'age_more_than'  => '25',
     'gender'         => 'female',
@@ -125,13 +138,13 @@ class UserController extends Controller
 > **Note**: It's recommended validates the incoming requests before sending to filters.
 
 ## Define a Filter
-Writing a filter is simple. Define a class that implements the ``Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter`` interface. This interface requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query as needed:
+Writing a filter is simple. Define a class that implements the ``Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFilter`` interface. This interface requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query as needed:
 ```php
 <?php
 
 namespace App\EloquentFilters\User;
 
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFilter as Filter;
 use Illuminate\Database\Eloquent\Builder;
 
 class AgeMoreThanFilter implements Filter
@@ -150,6 +163,20 @@ class AgeMoreThanFilter implements Filter
     }
 }
 ```
+## Ignore Filters on null value
+Filter parameters are ignored if contain **empty** values or **null**.
+
+Suppose we have a request something like:
+```php
+//Get api/user/search?name&gender=null&age_more_than=''&published_post=true
+
+// Request result will be:
+$filters = [
+    'published_post'  => true
+];
+```
+Only the **"published_post"** filter will be applied on your query.
+
 
 ## Work with existing queries
 You may also want to work with existing queries. For example, consider the following code:
@@ -253,7 +280,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        return $this->users->filters($request->all())->all();
+        return $this->users->filters($request->all())->get();
     }
 }
 ```
