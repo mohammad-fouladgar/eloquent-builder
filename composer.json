@@ -1,7 +1,7 @@
 {
     "name": "mohammad-fouladgar/eloquent-builder",
     "description": "",
-    "keywords": ["laravel","eloquent","search","filter","eloquent-builder"],
+    "keywords": ["laravel","lumen","eloquent","search","filter","eloquent-builder"],
     "support": {
         "issues": "https://github.com/mohammad-fouladgar/eloquent-builder/issues",
         "source": "https://github.com/mohammad-fouladgar/eloquent-builder"
