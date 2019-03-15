@@ -37,6 +37,9 @@ matrix:
       env: LARAVEL='5.7.*' TESTBENCH='3.7.*'
     - php: 7.3
       env: LARAVEL='5.8.*' TESTBENCH='3.8.*'
+  allow_failures:
+    - php: 7.1
+      env: LARAVEL='5.5.*' TESTBENCH='3.5.*' COMPOSER_FLAGS='--prefer-lowest'
 
 before_script:
   - travis_retry composer self-update --stable -n

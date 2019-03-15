@@ -1,4 +1,4 @@
-# Provides a Eloquent query builder for Laravel 5
+# Provides a Eloquent query builder for Laravel or Lumen
 
 [![Build Status](https://travis-ci.org/mohammad-fouladgar/eloquent-builder.svg?branch=develop)](https://travis-ci.org/mohammad-fouladgar/eloquent-builder)
 [![Coverage Status](https://coveralls.io/repos/github/mohammad-fouladgar/eloquent-builder/badge.svg?branch=develop)](https://coveralls.io/github/mohammad-fouladgar/eloquent-builder?branch=develop)
@@ -10,72 +10,13 @@
 This package allows you to build eloquent queries, based on request parameters.
 It greatly reduces the complexity of the queries and conditions, which will make your code cleaner.
 
-### Installation
-```shell
-composer require mohammad-fouladgar/eloquent-builder
-```
-> Laravel 5.5 uses Package Auto-Discovery, so you are not required to add ServiceProvider manually.
-
-### Laravel <= 5.4.x
-If you don't use Auto-Discovery, add the ServiceProvider to the providers array in ``config/app.php`` file
-```php
-'providers' => [
-  /*
-   * Package Service Providers...
-   */
-  Fouladgar\EloquentBuilder\ServiceProvider::class,
-],
-
-```
-And add the **facade** to your ``config/app.php`` file
-```php
-/*
-|--------------------------------------------------------------------------
-| Class Aliases
-|--------------------------------------------------------------------------
-*/
-'aliases' => [
-    "EloquentBuilder" => Fouladgar\EloquentBuilder\Facade::class,
-]
-```
-
-### Default Filters Namespace
-The default namespace for all filters is  ``App\EloquentFilters\``  with the base name of the Model.
-
-For example:
-
-Suppose we have a **User** model with an **AgeMoreThan** filter.As a result, the namespace filter must be as follows:
-
-``
-App\EloquentFilters\User\AgeMoreThanFilter
-``
-#### With Config file
-You can optionally publish the config file with:
-```sh
-php artisan vendor:publish --provider="Fouladgar\EloquentBuilder\ServiceProvider" --tag="config"
-```
-And set the namespace for your model filters which will reside in:
-```php
-return [
-    /*
-     |--------------------------------------------------------------------------
-     | Eloquent Filter Settings
-     |--------------------------------------------------------------------------
-     |
-     | This is the namespace all you Eloquent Model Filters will reside
-     |
-     */
-    'namespace' => 'App\\EloquentFilters\\',
-];
-```
-
-## Usage
+## Basic Usage
 Suppose we want to get the list of the users with the requested parameters as follows:
 ```php
 //Get api/user/search?age_more_than=25&gender=male&has_published_post=true
 [
     'age_more_than'  => '25',
-    'gender'         => 'female',
+    'gender'         => 'male',
     'has_published_post' => 'true',
 ]
 ```
@@ -136,6 +77,111 @@ class UserController extends Controller
 ```
 
 > **Note**: It's recommended validates the incoming requests before sending to filters.
+
+### Installation
+
+- [Laravel](#laravel)
+- [Lumen](#lumen)
+
+### Laravel
+
+You can install the package via composer:
+
+```shell
+composer require mohammad-fouladgar/eloquent-builder
+```
+> Laravel 5.5 uses Package Auto-Discovery, so you are not required to add ServiceProvider manually.
+
+### Laravel <= 5.4.x
+If you don't use Auto-Discovery, add the ServiceProvider to the providers array in ``config/app.php`` file
+```php
+'providers' => [
+  /*
+   * Package Service Providers...
+   */
+  Fouladgar\EloquentBuilder\ServiceProvider::class,
+],
+
+```
+And add the **facade** to your ``config/app.php`` file
+```php
+/*
+|--------------------------------------------------------------------------
+| Class Aliases
+|--------------------------------------------------------------------------
+*/
+'aliases' => [
+    "EloquentBuilder" => Fouladgar\EloquentBuilder\Facade::class,
+]
+```
+### Lumen
+
+You can install the package via composer:
+
+```shell
+composer require mohammad-fouladgar/eloquent-builder
+```
+For Lumen, add the ``LumenServiceProvider`` to the ``bootstrap/app.php`` file
+
+```php
+/*
+|--------------------------------------------------------------------------
+| Register Service Providers...
+|--------------------------------------------------------------------------
+*/
+
+$app->register(\Fouladgar\EloquentBuilder\LumenServiceProvider::class);
+```
+For using the facade you have to uncomment the line  ``$app->withFacades();`` in the ``bootstrap/app.php`` file
+
+After uncommenting this line you have the ``EloquentBuilder`` facade enabled
+```php
+$app->withFacades();
+```
+
+Publish the configuration file 
+```shell
+php artisan eloquent-builder:publish
+```
+and  add the configuration to the ``bootstrap/app.php`` file 
+```php
+$app->configure('eloquent-builder');
+...
+$app->register(\Fouladgar\EloquentBuilder\LumenServiceProvider::class);
+```
+> **Important** : this needs to be before the registration of the service provider.
+
+### Default Filters Namespace
+The default namespace for all filters is  ``App\EloquentFilters\``  with the base name of the Model.
+
+For example:
+
+Suppose we have a **User** model with an **AgeMoreThan** filter.As a result, the namespace filter must be as follows:
+
+``
+App\EloquentFilters\User\AgeMoreThanFilter
+``
+#### With Config file
+You can optionally publish the config file with:
+```sh
+php artisan vendor:publish --provider="Fouladgar\EloquentBuilder\ServiceProvider" --tag="config"
+```
+And set the namespace for your model filters which will reside in:
+```php
+return [
+    /*
+     |--------------------------------------------------------------------------
+     | Eloquent Filter Settings
+     |--------------------------------------------------------------------------
+     |
+     | This is the namespace all you Eloquent Model Filters will reside
+     |
+     */
+    'namespace' => 'App\\EloquentFilters\\',
+];
+```
+
+
 
 ## Define a Filter
 Writing a filter is simple. Define a class that implements the ``Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFilter`` interface. This interface requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query as needed:

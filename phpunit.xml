@@ -18,7 +18,6 @@
         <whitelist>
             <directory suffix=".php">./src</directory>
             <exclude>
-                <!-- <file>src/ServiceProvider.php</file> -->
                 <file>src/Facade.php</file>
             </exclude>
         </whitelist>
