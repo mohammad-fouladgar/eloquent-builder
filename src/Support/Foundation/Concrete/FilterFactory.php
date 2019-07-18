@@ -46,7 +46,7 @@ class FilterFactory implements Factory
      */
     protected function notFoundFilter()
     {
-        throw new NotFoundFilterException('Not found the filter: ' . $this->filterBasename());
+        throw new NotFoundFilterException('Not found the filter: '.$this->filterBasename());
     }
 
     /**
@@ -56,7 +56,7 @@ class FilterFactory implements Factory
      */
     protected function failedImplementation()
     {
-        throw new InvalidArgumentException('The ' . $this->filterBasename() . ' filter must be an instance of Filter.');
+        throw new InvalidArgumentException('The '.$this->filterBasename().' filter must be an instance of Filter.');
     }
 
     /**
@@ -73,12 +73,12 @@ class FilterFactory implements Factory
     {
         $config = config('eloquent-builder.namespace', 'App\\EloquentFilters\\');
 
-        $this->namespace = $config . class_basename($model) . '\\' . $this->resolveFilterName($filter);
+        $this->namespace = $config.class_basename($model).'\\'.$this->resolveFilterName($filter);
     }
 
     private function resolveFilterName(string $filter): string
     {
-        return studly_case($filter) . 'Filter';
+        return studly_case($filter).'Filter';
     }
 
     private function filterBasename(): string
