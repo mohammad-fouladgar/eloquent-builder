@@ -9,7 +9,7 @@ class User extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'name', 'age', 'gender',
+        'name', 'age', 'gender', 'status',
     ];
 
     /**

@@ -37,8 +37,7 @@ class EloquentBuilderTest extends TestCase
 
     /**
      * @test
-     * @expectedException        \InvalidArgumentException
-     * @expectedExceptionMessage The filter must be an instance of IFilter.
+     * @expectedException \InvalidArgumentException
      */
     public function it_should_return_invalid_argument_exception()
     {

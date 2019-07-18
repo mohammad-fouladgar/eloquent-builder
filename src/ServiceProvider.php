@@ -3,7 +3,8 @@
 namespace Fouladgar\EloquentBuilder;
 
 use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterFactory;
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFactory;
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\AuthorizeWhenResolved;
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory as Factory;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -17,6 +18,10 @@ class ServiceProvider extends BaseServiceProvider
         $this->bootPublishes();
 
         $this->registerMacros();
+
+        $this->app->afterResolving(AuthorizeWhenResolved::class, function ($resolved) {
+            $resolved->authorizeResolved();
+        });
     }
 
     /*
@@ -42,7 +47,7 @@ class ServiceProvider extends BaseServiceProvider
 
     protected function configPath()
     {
-        return __DIR__.'/../config/eloquent-builder.php';
+        return __DIR__ . '/../config/eloquent-builder.php';
     }
 
     /**
@@ -55,7 +60,7 @@ class ServiceProvider extends BaseServiceProvider
 
     private function registerBindings()
     {
-        $this->app->bind(IFactory::class, FilterFactory::class);
+        $this->app->bind(Factory::class, FilterFactory::class);
 
         $this->app->singleton('eloquentbuilder', function () {
             return new EloquentBuilder(new FilterFactory());

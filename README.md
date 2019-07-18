@@ -43,6 +43,7 @@ class UserController extends Controller
             $users->where('gender', $request->gender);
         }
 
+        // A User model may have an infinite numbers of Post(One-To-Many).
         if ($request->has('has_published_post')) {
             $users->where(function ($query) use ($request) {
                 $query->whereHas('posts', function ($query) use ($request) {
@@ -56,6 +57,7 @@ class UserController extends Controller
 }
 ```
 **But** the new method with **EloquentBuilder** follows the steps below:
+
 ```php
 <?php
 
@@ -75,7 +77,7 @@ class UserController extends Controller
     }
 }
 ```
-
+You just need to [define filter](#define%20a%20filter) for each parameter that you want to add to the query.
 > **Note**: It's recommended validates the incoming requests before sending to filters.
 
 ### Installation
@@ -152,14 +154,12 @@ $app->register(\Fouladgar\EloquentBuilder\LumenServiceProvider::class);
 > **Important** : this needs to be before the registration of the service provider.
 
 ### Default Filters Namespace
-The default namespace for all filters is  ``App\EloquentFilters\``  with the base name of the Model.
+The default namespace for all filters is ``App\EloquentFilters\`` with the base name of the Model.
 
-For example:
-
-Suppose we have a **User** model with an **AgeMoreThan** filter.As a result, the namespace filter must be as follows:
+For example, you can see a sample of the namespace filters for the `User` model in below:
 
 ``
-App\EloquentFilters\User\AgeMoreThanFilter
+App\EloquentFilters\User
 ``
 #### With Config file
 You can optionally publish the config file with:
@@ -181,10 +181,12 @@ return [
 ];
 ```
 
-
-
 ## Define a Filter
-Writing a filter is simple. Define a class that implements the ``Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFilter`` interface. This interface requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query as needed:
+Writing a filter is simple. Define a class that implements the ``Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFilter`` interface. This interface requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query as needed.
+Each filter class should be suffixed with the word `Filter`.
+
+For example, take a look at the filter defined below:
+
 ```php
 <?php
 
@@ -209,10 +211,13 @@ class AgeMoreThanFilter implements Filter
     }
 }
 ```
-## Ignore Filters on null value
-Filter parameters are ignored if contain **empty** values or **null**.
+> Tip: Also, you can easily use [local scopes](https://laravel.com/docs/5.8/eloquent#local-scopes) in your filter. Because they are instance of the query builder.
 
-Suppose we have a request something like:
+## Ignore Filters on null value
+Filter parameters are ignored if contain **empty** or **null** values.
+
+Suppose we have a request something like this:
+
 ```php
 //Get api/user/search?name&gender=null&age_more_than=''&published_post=true
 

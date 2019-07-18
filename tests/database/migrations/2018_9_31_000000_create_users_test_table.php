@@ -16,6 +16,7 @@ class CreateUsersTestTable extends Migration
             $table->string('name');
             $table->string('age');
             $table->enum('gender', ['male', 'female']);
+            $table->enum('status', ['offline', 'online']);
         });
     }
 
