@@ -1,13 +1,2 @@
 Version 1.0.0:
- - Added VERSION and CHANGES files, Version bump to v0.1.0
  - release v1.0.0
- - Version bump to 1.0.0
- - Merge pull request #26 from mohammad-fouladgar/analysis-XZNQON
- - Apply fixes from StyleCI
- - Squashed commit of the following:
- - Merge branch 'master' into develop
- - Update README.md
- - Version bump to 0.6.0
- - Support Lumen (#21)
- - Merge pull request #19 from mohammad-fouladgar/develop
-
