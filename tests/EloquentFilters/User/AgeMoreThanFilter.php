@@ -2,11 +2,16 @@
 
 namespace Fouladgar\EloquentBuilder\Tests\EloquentFilters\User;
 
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFilter;
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
-class AgeMoreThanFilter implements IFilter
+class AgeMoreThanFilter extends Filter
 {
+    public function authorize()
+    {
+        return true;
+    }
+
     /**
      * Undocumented function.
      *

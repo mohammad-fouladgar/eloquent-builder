@@ -2,7 +2,7 @@
 
 namespace Fouladgar\EloquentBuilder;
 
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFactory;
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,7 +15,7 @@ class EloquentBuilder
      */
     protected $filterFactory;
 
-    public function __construct(IFactory $filterFactory)
+    public function __construct(FilterFactory $filterFactory)
     {
         $this->filterFactory = $filterFactory;
     }
@@ -38,7 +38,7 @@ class EloquentBuilder
             return $query;
         }
 
-        self::addFilters(
+        self::applyFilters(
             $query,
             $this->getFilters($filters)
         );
@@ -59,15 +59,19 @@ class EloquentBuilder
     }
 
     /**
-     * Add filters to Query Builder.
+     * Apply filters to Query Builder.
      *
-     * @param Builder $query
-     * @param array   $filters
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array                                 $filters
      */
-    private function addFilters(Builder &$query, array $filters)
+    private function applyFilters(Builder $query, array $filters): Builder
     {
         foreach ($filters as $filter => $value) {
-            $query = $this->filterFactory->factory($filter, $query->getModel())->apply($query, $value);
+            $query = $this->filterFactory
+                          ->factory($filter, $query->getModel())
+                          ->apply($query, $value);
         }
+
+        return $query;
     }
 }
