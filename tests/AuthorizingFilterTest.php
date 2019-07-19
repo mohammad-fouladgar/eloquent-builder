@@ -17,7 +17,7 @@ class AuthorizingFilterTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Fouladgar\EloquentBuilder\Exceptions\UnauthorizedFilterException
+     * @expectedException \Illuminate\Auth\Access\AuthorizationException
      */
     public function it_does_not_authorize_filter_to_apply()
     {

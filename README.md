@@ -11,7 +11,7 @@ This package allows you to build eloquent queries, based on request parameters.
 It greatly reduces the complexity of the queries and conditions, which will make your code cleaner.
 
 ## Basic Usage
-Suppose we want to get the list of the users with the requested parameters as follows:
+Suppose you want to get the list of the users with the requested parameters as follows:
 ```php
 //Get api/user/search?age_more_than=25&gender=male&has_published_post=true
 [
@@ -56,7 +56,7 @@ class UserController extends Controller
     }
 }
 ```
-**But** the new method with **EloquentBuilder** follows the steps below:
+**But** after using the **EloquentBuilder**, the above code refactor as follows:
 
 ```php
 <?php
@@ -78,7 +78,10 @@ class UserController extends Controller
 }
 ```
 You just need to [define filter](#define%20a%20filter) for each parameter that you want to add to the query.
-> **Note**: It's recommended validates the incoming requests before sending to filters.
+> **Tip**: It's recommended validates the incoming requests before sending to filters.
+
+> **Tip**: It's recommended present filters inside a filter key in query string like this:  `user/search?filter[age_more_than]=25&filter[gender]=male`              
+and then get them in this way: `$request->only('filter')`.
 
 ### Installation
 
@@ -154,13 +157,8 @@ $app->register(\Fouladgar\EloquentBuilder\LumenServiceProvider::class);
 > **Important** : this needs to be before the registration of the service provider.
 
 ### Default Filters Namespace
-The default namespace for all filters is ``App\EloquentFilters\`` with the base name of the Model.
+The default namespace for all filters is ``App\EloquentFilters`` with the base name of the Model. For example, the filters namespace will be `App\EloquentFilters\User` for the `User` model.
 
-For example, you can see a sample of the namespace filters for the `User` model in below:
-
-``
-App\EloquentFilters\User
-``
 #### With Config file
 You can optionally publish the config file with:
 ```sh
@@ -182,7 +180,7 @@ return [
 ```
 
 ## Define a Filter
-Writing a filter is simple. Define a class that implements the ``Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFilter`` interface. This interface requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query as needed.
+Writing a filter is simple. Define a class that `extends` the `Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter` abstract class. This class requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query as needed.
 Each filter class should be suffixed with the word `Filter`.
 
 For example, take a look at the filter defined below:
@@ -192,10 +190,10 @@ For example, take a look at the filter defined below:
 
 namespace App\EloquentFilters\User;
 
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\IFilter as Filter;
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
-class AgeMoreThanFilter implements Filter
+class AgeMoreThanFilter extends Filter
 {
     /**
      * Apply the age condition to the query.
@@ -213,21 +211,43 @@ class AgeMoreThanFilter implements Filter
 ```
 > Tip: Also, you can easily use [local scopes](https://laravel.com/docs/5.8/eloquent#local-scopes) in your filter. Because they are instance of the query builder.
 
+## Authorizing Filter
+The filter class also contains an `authorize` method. Within this method, you may check if the authenticated user actually has the authority to apply a given filter. For example, you may determine if a user has a premium account, can apply the `StatusFilter` to get listing the online or offline people:
+
+```php
+/**
+ * Determine if the user is authorized to make this filter.
+ *
+ * @return bool
+ */
+ public function authorize(): bool
+ {
+     if(auth()->user()->hasPremiumAccount()){
+        return true;
+     }
+
+    return false
+ }
+```
+By default, you do not need to implement the `authorize` method and the filter applies to your query builder.
+If the `authorize` method returns `false`, a HTTP response with a 403 status code will automatically be returned.
+
 ## Ignore Filters on null value
 Filter parameters are ignored if contain **empty** or **null** values.
 
-Suppose we have a request something like this:
+Suppose you have a request something like this:
 
 ```php
-//Get api/user/search?name&gender=null&age_more_than=''&published_post=true
+//Get api/user/search?filter[name]&filter[gender]=null&filter[age_more_than]=''&filter[published_post]=true
 
-// Request result will be:
+EloquentBuilder::to(User::class,$request->only('filter'));
+
+// filters result will be:
 $filters = [
     'published_post'  => true
 ];
 ```
 Only the **"published_post"** filter will be applied on your query.
-
 
 ## Work with existing queries
 You may also want to work with existing queries. For example, consider the following code:

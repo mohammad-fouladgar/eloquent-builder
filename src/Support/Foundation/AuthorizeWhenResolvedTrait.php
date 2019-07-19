@@ -2,7 +2,7 @@
 
 namespace Fouladgar\EloquentBuilder\Support\Foundation;
 
-use Fouladgar\EloquentBuilder\Exceptions\UnauthorizedFilterException;
+use Illuminate\Auth\Access\AuthorizationException;
 
 trait AuthorizeWhenResolvedTrait
 {
@@ -33,10 +33,10 @@ trait AuthorizeWhenResolvedTrait
     /**
      * Handle a failed authorization attempt.
      *
-     * @throws \Fouladgar\EloquentBuilder\Exceptions\UnauthorizedFilterException
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     protected function failedAuthorization()
     {
-        throw new UnauthorizedFilterException('This action is unauthorized.');
+        throw new AuthorizationException('This filter action is unauthorized.');
     }
 }
