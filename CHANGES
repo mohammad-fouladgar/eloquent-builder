@@ -1,4 +1,8 @@
-Version 1.0.0:
+Version 0.1.0
+ - release v1.0.0
+ - Version bump to 1.0.0
+ - Merge pull request #26 from mohammad-fouladgar/analysis-XZNQON
+ - Apply fixes from StyleCI
  - Squashed commit of the following:
  - Merge branch 'master' into develop
  - Update README.md
@@ -23,19 +27,17 @@ Version 1.0.0:
  - Fix change log
  - Merge branch 'release/0.5.1'
  - Version bump to 0.5.1
- - Version bump to 0.5.1
  - Merge pull request #14 from mohammad-fouladgar/develop
  - Merge pull request #13 from mohammad-fouladgar/analysis-zenrM4
  - Apply fixes from StyleCI
+ - Fix ignore filters on the null value
  - Merge pull request #11 from mohammad-fouladgar/develop
- - Merge branch 'release/0.5.0'
- - Merge pull request #9 from mohammad-fouladgar/develop
-
-Version 0.5.1:
- - Fix ignore filters on the null value #12
+ - Fix composer test-coverage script
  - Add support for Laravel 5.7
-
-Version 0.5.0:
+ - Merge branch 'release/0.5.0' into develop
+ - Merge branch 'release/0.5.0'
+ - Version bump to 0.5.0
+ - Merge pull request #9 from mohammad-fouladgar/develop
  - added DI and repository example
  - register bindings
  - refactor name of the Interfaces
@@ -43,18 +45,16 @@ Version 0.5.0:
  - Merge branch 'master' of github.com:mohammad-fouladgar/eloquent-builder
  - Merge branch 'hotfix/facade'
  - add Facade file to whitelist
+ - Version bump to 0.4.1
  - add Fecade file to whitelist exclude
  - Merge pull request #8 from mohammad-fouladgar/analysis-8AEJEB
  - Apply fixes from StyleCI
  - Merge branch 'develop' of github.com:mohammad-fouladgar/eloquent-builder into develop
  - Merge branch 'release/0.4.0' into develop
+ - Merge branch 'release/0.4.0'
+ - Version bump to 0.4.0
  - Merge pull request #7 from mohammad-fouladgar/analysis-zGyeyg
  - Apply fixes from StyleCI
-
-Version 0.4.1:
- - Merge branch 'release/0.4.0'
-
-Version 0.4.0:
  - added test for invalid filter and not found filter
  - use facade instead of class
  - remove this filter
@@ -89,11 +89,10 @@ Version 0.4.0:
  - Merge branch 'develop' of github.com:mohammad-fouladgar/eloquent-builder into develop
  - Merge branch 'release/0.2.0' into develop
  - merge with new release tag
+ - Version bump to 0.2.0
+ - added documentation to the readme file
  - Merge pull request #3 from mohammad-fouladgar/analysis-XNYNLg
  - Apply fixes from StyleCI
-
-Version 0.2.0:
- - added documentation to the readme file
  - Testing a combination filters
  - Merge pull request #2 from mohammad-fouladgar/analysis-8n9brO
  - Apply fixes from StyleCI
@@ -109,8 +108,7 @@ Version 0.2.0:
  - add some badge to readme
  - Merge branch 'release/0.1.0' into develop
  - New tag version '0.1.0'
-
-Version 0.1.0
+ - Added VERSION and CHANGES files, Version bump to v0.1.0
  - update readme
  - first commit
 
