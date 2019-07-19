@@ -1,3 +1,36 @@
+Version 1.0.0:
+ - Squashed commit of the following:
+ - Merge branch 'master' into develop
+ - Update README.md
+ - Support Lumen (#21)
+ - Merge branch 'develop' of github.com:mohammad-fouladgar/eloquent-builder into develop
+ - set allow failures in the .travis.yml file
+ - Merge pull request #20 from mohammad-fouladgar/analysis-8nPmbG
+ - Apply fixes from StyleCI
+ - Add support for Lumen
+ - Merge pull request #19 from mohammad-fouladgar/develop
+ - Merge branch 'master' into develop
+ - Merge pull request #18 from mohammad-fouladgar/analysis-qo1xE7
+ - Apply fixes from StyleCI
+ - Add support for Laravel 5.8
+ - Update .travis.yml
+ - Add Laravel 5.8 support
+ - Merge pull request #16 from mohammad-fouladgar/develop
+ - update readme
+ - check for travis
+ - add issue number to change log
+ - Merge branch 'master' of github.com:mohammad-fouladgar/eloquent-builder
+ - Fix change log
+ - Merge branch 'release/0.5.1'
+ - Version bump to 0.5.1
+ - Version bump to 0.5.1
+ - Merge pull request #14 from mohammad-fouladgar/develop
+ - Merge pull request #13 from mohammad-fouladgar/analysis-zenrM4
+ - Apply fixes from StyleCI
+ - Merge pull request #11 from mohammad-fouladgar/develop
+ - Merge branch 'release/0.5.0'
+ - Merge pull request #9 from mohammad-fouladgar/develop
+
 Version 0.5.1:
  - Fix ignore filters on the null value #12
  - Add support for Laravel 5.7
