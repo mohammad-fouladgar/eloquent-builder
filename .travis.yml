@@ -29,6 +29,8 @@ matrix:
       env: LARAVEL='5.7.*' TESTBENCH='3.7.*'
     - php: 7.2
       env: LARAVEL='5.8.*' TESTBENCH='3.8.*'
+    - php: 7.2
+      env: LARAVEL='6.0.x' TESTBENCH='3.9.x@dev'
     - php: 7.3
       env: LARAVEL='5.5.*' TESTBENCH='3.5.*'
     - php: 7.3
@@ -37,6 +39,10 @@ matrix:
       env: LARAVEL='5.7.*' TESTBENCH='3.7.*'
     - php: 7.3
       env: LARAVEL='5.8.*' TESTBENCH='3.8.*'
+    - php: 7.3
+      env: LARAVEL='6.0.x' TESTBENCH='3.9.x@dev'
+    - php: 7.4
+      env: LARAVEL='6.0.x' TESTBENCH='3.9.x@dev'
   allow_failures:
     - php: 7.1
       env: LARAVEL='5.5.*' TESTBENCH='3.5.*' COMPOSER_FLAGS='--prefer-lowest'
