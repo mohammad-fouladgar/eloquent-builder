@@ -74,12 +74,12 @@ class FilterFactory implements Factory
     {
         $config = config('eloquent-builder.namespace', 'App\\EloquentFilters\\');
 
-        $this->namespace = $config . class_basename($model) . '\\' . $this->resolveFilterName($filter);
+        $this->namespace = $config.class_basename($model).'\\'.$this->resolveFilterName($filter);
     }
 
     private function resolveFilterName(string $filter): string
     {
-        return Str::studly($filter) . 'Filter';
+        return Str::studly($filter).'Filter';
     }
 
     private function filterBasename(): string

@@ -32,7 +32,7 @@ class EloquentBuilderTest extends TestCase
     public function it_should_return_not_found_filter_exception()
     {
         $this->expectException(\Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException::class);
-        
+
         $this->eloquentBuilder->to(User::class, ['not_exists_filter'=>'any_value']);
     }
 
