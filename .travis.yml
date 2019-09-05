@@ -13,14 +13,9 @@ php:
    - 7.2
    - 7.3
 
-env:   
-    matrix:
-        - COMPOSER_FLAGS="--prefer-lowest"
-        - COMPOSER_FLAGS=""
-
 before_script:
   - travis_retry composer self-update --stable -n
-  - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-source
+  - travis_retry composer update  --no-interaction --prefer-source
 
 script:
   - composer test
