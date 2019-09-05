@@ -28,19 +28,21 @@ class EloquentBuilderTest extends TestCase
 
     /**
      * @test
-     * @expectedException  \Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException
      */
     public function it_should_return_not_found_filter_exception()
     {
+        $this->expectException(\Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException::class);
+        
         $this->eloquentBuilder->to(User::class, ['not_exists_filter'=>'any_value']);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function it_should_return_invalid_argument_exception()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $this->eloquentBuilder->to(User::class, ['invalid_implemented'=>'any_value']);
     }
 

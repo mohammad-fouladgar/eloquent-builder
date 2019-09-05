@@ -17,10 +17,11 @@ class AuthorizingFilterTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Illuminate\Auth\Access\AuthorizationException
      */
     public function it_does_not_authorize_filter_to_apply()
     {
+        $this->expectException(\Illuminate\Auth\Access\AuthorizationException::class);
+
         factory(User::class)->create(['status'=>'online']);
 
         $this->eloquentBuilder

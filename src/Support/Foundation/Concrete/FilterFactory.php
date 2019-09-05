@@ -6,6 +6,7 @@ use Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory as Factory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class FilterFactory implements Factory
@@ -73,12 +74,12 @@ class FilterFactory implements Factory
     {
         $config = config('eloquent-builder.namespace', 'App\\EloquentFilters\\');
 
-        $this->namespace = $config.class_basename($model).'\\'.$this->resolveFilterName($filter);
+        $this->namespace = $config . class_basename($model) . '\\' . $this->resolveFilterName($filter);
     }
 
     private function resolveFilterName(string $filter): string
     {
-        return studly_case($filter).'Filter';
+        return Str::studly($filter) . 'Filter';
     }
 
     private function filterBasename(): string
