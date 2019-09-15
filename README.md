@@ -77,7 +77,7 @@ class UserController extends Controller
     }
 }
 ```
-You just need to [define filter](#define%20a%20filter) for each parameter that you want to add to the query.
+You just need to [define a filter](#define-a-filter) for each parameter that you want to add to the query.
 > **Tip**: It's recommended validates the incoming requests before sending to filters.
 
 > **Tip**: It's recommended present filters inside a filter key in query string like this:  `user/search?filter[age_more_than]=25&filter[gender]=male`              
