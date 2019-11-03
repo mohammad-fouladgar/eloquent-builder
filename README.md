@@ -116,7 +116,7 @@ And add the **facade** to your ``config/app.php`` file
 |--------------------------------------------------------------------------
 */
 'aliases' => [
-    "EloquentBuilder" => Fouladgar\EloquentBuilder\Facade::class,
+    'EloquentBuilder' => Fouladgar\EloquentBuilder\Facade::class,
 ]
 ```
 ### Lumen
