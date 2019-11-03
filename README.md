@@ -80,8 +80,8 @@ class UserController extends Controller
 You just need to [define a filter](#define-a-filter) for each parameter that you want to add to the query.
 > **Tip**: It's recommended validates the incoming requests before sending to filters.
 
-> **Tip**: It's recommended present filters inside a filter key in query string like this:  `user/search?filter[age_more_than]=25&filter[gender]=male`              
-and then get them in this way: `$request->only('filter')`.
+> **Tip**: It's recommended to put your query params inside a filter key as below:  `user/search?filter[age_more_than]=25&filter[gender]=male`              
+and then get them in this way: `$request->filter`.
 
 ### Installation
 
@@ -116,7 +116,7 @@ And add the **facade** to your ``config/app.php`` file
 |--------------------------------------------------------------------------
 */
 'aliases' => [
-    "EloquentBuilder" => Fouladgar\EloquentBuilder\Facade::class,
+    'EloquentBuilder' => Fouladgar\EloquentBuilder\Facade::class,
 ]
 ```
 ### Lumen
@@ -240,7 +240,7 @@ Suppose you have a request something like this:
 ```php
 //Get api/user/search?filter[name]&filter[gender]=null&filter[age_more_than]=''&filter[published_post]=true
 
-EloquentBuilder::to(User::class,$request->only('filter'));
+EloquentBuilder::to(User::class,$request->filter);
 
 // filters result will be:
 $filters = [
