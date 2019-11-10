@@ -18,11 +18,23 @@ class FilterFactory implements Factory
      */
     protected $namespace = '';
 
+    /**
+     * @param string $filter
+     * @param Model $model
+     * @return Filter
+     * @throws NotFoundFilterException
+     */
     public function factory(string $filter, Model $model): Filter
     {
         return $this->make($filter, $model);
     }
 
+    /**
+     * @param string $filter
+     * @param Model $model
+     * @return Filter
+     * @throws NotFoundFilterException
+     */
     protected function make(string $filter, Model $model): Filter
     {
         $this->setNamespace($filter, $model);
@@ -47,21 +59,21 @@ class FilterFactory implements Factory
      */
     protected function notFoundFilter()
     {
-        throw new NotFoundFilterException('Not found the filter: '.$this->filterBasename());
+        throw new NotFoundFilterException('Not found the filter: ' . $this->filterBasename());
     }
 
     /**
      * Handle a failed implementation filter.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function failedImplementation()
     {
-        throw new InvalidArgumentException('The '.$this->filterBasename().' filter must be an instance of Filter.');
+        throw new InvalidArgumentException('The ' . $this->filterBasename() . ' filter must be an instance of Filter.');
     }
 
     /**
-     * Check a filter exists.
+     * Check if a filter exists
      *
      * @return bool
      */
@@ -70,18 +82,29 @@ class FilterFactory implements Factory
         return class_exists($this->namespace);
     }
 
+    /**
+     * @param string $filter
+     * @param Model $model
+     */
     private function setNamespace(string $filter, Model $model)
     {
         $config = config('eloquent-builder.namespace', 'App\\EloquentFilters\\');
 
-        $this->namespace = $config.class_basename($model).'\\'.$this->resolveFilterName($filter);
+        $this->namespace = $config . class_basename($model) . '\\' . $this->resolveFilterName($filter);
     }
 
+    /**
+     * @param string $filter
+     * @return string
+     */
     private function resolveFilterName(string $filter): string
     {
-        return Str::studly($filter).'Filter';
+        return Str::studly($filter) . 'Filter';
     }
 
+    /**
+     * @return string
+     */
     private function filterBasename(): string
     {
         return class_basename($this->namespace);
