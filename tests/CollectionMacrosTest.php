@@ -8,12 +8,12 @@ class CollectionMacrosTest extends TestCase
     public function it_can_remove_lacking_value()
     {
         $inputs = collect([
-            'city'=> 'isfahan',
+            'city'   => 'isfahan',
             'name',
-            'gender'=> '',
-            'age'   => null,
+            'gender' => '',
+            'age'    => null,
         ]);
 
-        $this->assertEquals(['city'=>'isfahan'], $inputs->getFilters());
+        $this->assertEquals(['city' => 'isfahan'], $inputs->getFilters());
     }
 }
