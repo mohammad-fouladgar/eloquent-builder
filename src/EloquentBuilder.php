@@ -4,7 +4,6 @@ namespace Fouladgar\EloquentBuilder;
 
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 
 class EloquentBuilder
 {
