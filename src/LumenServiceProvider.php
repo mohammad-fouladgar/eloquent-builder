@@ -11,10 +11,10 @@ class LumenServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        static $facadeRegistred = false;
+        static $facadeRegistered = false;
 
-        if (!$facadeRegistred) {
-            $facadeRegistred = true;
+        if (!$facadeRegistered) {
+            $facadeRegistered = true;
 
             class_alias(\Fouladgar\EloquentBuilder\Facade::class, 'EloquentBuilder');
         }
