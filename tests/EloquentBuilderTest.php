@@ -66,7 +66,7 @@ class EloquentBuilderTest extends TestCase
         );
 
         $this->assertEquals(
-            'select * from "users" where "age" > ? and "gender" = ?',
+            'select * from `users` where `age` > ? and `gender` = ?',
             $users->toSql()
         );
 
