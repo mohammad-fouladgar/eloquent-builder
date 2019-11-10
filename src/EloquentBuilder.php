@@ -37,7 +37,7 @@ class EloquentBuilder
             return $query;
         }
 
-        self::applyFilters(
+        $this->applyFilters(
             $query,
             $this->getFilters($filters)
         );
