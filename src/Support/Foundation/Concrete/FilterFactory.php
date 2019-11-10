@@ -27,7 +27,7 @@ class FilterFactory implements Factory
     {
         $this->setNamespace($filter, $model);
 
-        if (!$this->filterExists($filter)) {
+        if (!$this->filterExists()) {
             $this->notFoundFilter();
         }
 
