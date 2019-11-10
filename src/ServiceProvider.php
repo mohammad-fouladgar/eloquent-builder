@@ -24,7 +24,7 @@ class ServiceProvider extends BaseServiceProvider
         });
     }
 
-    /*
+    /**
      * Register bindings in the container.
      */
     public function register()
@@ -45,9 +45,12 @@ class ServiceProvider extends BaseServiceProvider
         ], 'config');
     }
 
+    /**
+     * @return string
+     */
     protected function configPath()
     {
-        return __DIR__.'/../config/eloquent-builder.php';
+        return __DIR__ . '/../config/eloquent-builder.php';
     }
 
     /**
