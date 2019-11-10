@@ -20,7 +20,7 @@ class FilterFactory implements Factory
 
     public function factory(string $filter, Model $model): Filter
     {
-        return self::make($filter, $model);
+        return $this->make($filter, $model);
     }
 
     protected function make(string $filter, Model $model): Filter
