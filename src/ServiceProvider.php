@@ -24,7 +24,7 @@ class ServiceProvider extends BaseServiceProvider
         });
     }
 
-    /*
+    /**
      * Register bindings in the container.
      */
     public function register()
@@ -45,6 +45,9 @@ class ServiceProvider extends BaseServiceProvider
         ], 'config');
     }
 
+    /**
+     * @return string
+     */
     protected function configPath()
     {
         return __DIR__.'/../config/eloquent-builder.php';
@@ -71,7 +74,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         Collection::macro('getFilters', function () {
             $filters = $this->filter(function ($value, $filter) {
-                return !is_int($filter) && '' !== $value && !is_null($value);
+                return !is_int($filter) && !empty($value);
             });
 
             return $filters->all();

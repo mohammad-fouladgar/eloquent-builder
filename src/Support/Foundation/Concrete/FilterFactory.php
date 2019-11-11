@@ -18,16 +18,32 @@ class FilterFactory implements Factory
      */
     protected $namespace = '';
 
+    /**
+     * @param string $filter
+     * @param Model  $model
+     *
+     * @throws NotFoundFilterException
+     *
+     * @return Filter
+     */
     public function factory(string $filter, Model $model): Filter
     {
-        return self::make($filter, $model);
+        return $this->make($filter, $model);
     }
 
+    /**
+     * @param string $filter
+     * @param Model  $model
+     *
+     * @throws NotFoundFilterException
+     *
+     * @return Filter
+     */
     protected function make(string $filter, Model $model): Filter
     {
         $this->setNamespace($filter, $model);
 
-        if (!$this->filterExists($filter)) {
+        if (!$this->filterExists()) {
             $this->notFoundFilter();
         }
 
@@ -53,7 +69,7 @@ class FilterFactory implements Factory
     /**
      * Handle a failed implementation filter.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function failedImplementation()
     {
@@ -61,7 +77,7 @@ class FilterFactory implements Factory
     }
 
     /**
-     * Check a filter exists.
+     * Check if a filter exists.
      *
      * @return bool
      */
@@ -70,6 +86,10 @@ class FilterFactory implements Factory
         return class_exists($this->namespace);
     }
 
+    /**
+     * @param string $filter
+     * @param Model  $model
+     */
     private function setNamespace(string $filter, Model $model)
     {
         $config = config('eloquent-builder.namespace', 'App\\EloquentFilters\\');
@@ -77,11 +97,19 @@ class FilterFactory implements Factory
         $this->namespace = $config.class_basename($model).'\\'.$this->resolveFilterName($filter);
     }
 
+    /**
+     * @param string $filter
+     *
+     * @return string
+     */
     private function resolveFilterName(string $filter): string
     {
         return Str::studly($filter).'Filter';
     }
 
+    /**
+     * @return string
+     */
     private function filterBasename(): string
     {
         return class_basename($this->namespace);

@@ -35,6 +35,11 @@ class PublishCommand extends Command
      */
     protected $fileMap = [];
 
+    /**
+     * PublishCommand constructor.
+     *
+     * @param Filesystem $files
+     */
     public function __construct(Filesystem $files)
     {
         parent::__construct();
@@ -52,7 +57,7 @@ class PublishCommand extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         foreach ($this->fileMap as $from => $to) {
             if ($this->files->exists($to) && !$this->option('force')) {
@@ -61,7 +66,7 @@ class PublishCommand extends Command
 
             $this->createParentDirectory(dirname($to));
             $this->files->copy($from, $to);
-            $this->status($from, $to, 'File');
+            $this->status($from, $to);
         }
     }
 
