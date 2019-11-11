@@ -8,6 +8,7 @@ trait LumenServiceRegister
 {
     /**
      * @param $app
+     *
      * @return array
      */
     protected function getPackageProviders($app)

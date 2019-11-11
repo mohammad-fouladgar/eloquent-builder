@@ -16,6 +16,7 @@ class EloquentBuilder
 
     /**
      * EloquentBuilder constructor.
+     *
      * @param FilterFactory $filterFactory
      */
     public function __construct(FilterFactory $filterFactory)
@@ -26,8 +27,8 @@ class EloquentBuilder
     /**
      * Create a new EloquentBuilder for a request and model.
      *
-     * @param string|Builder $query Model class or eloquent builder
-     * @param array $filters
+     * @param string|Builder $query   Model class or eloquent builder
+     * @param array          $filters
      *
      * @return Builder
      */
@@ -65,7 +66,8 @@ class EloquentBuilder
      * Apply filters to Query Builder.
      *
      * @param Builder $query
-     * @param array $filters
+     * @param array   $filters
+     *
      * @return Builder
      */
     private function applyFilters(Builder $query, array $filters): Builder
