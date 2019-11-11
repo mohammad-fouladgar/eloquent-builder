@@ -2,7 +2,7 @@
 
 namespace Fouladgar\EloquentBuilder;
 
-use Illuminate\Support\Facades\Facade;
+use Fouladgar\EloquentBuilder\Console\PublishCommand;
 
 class LumenServiceProvider extends ServiceProvider
 {
@@ -11,12 +11,12 @@ class LumenServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        static $facadeRegistred = false;
+        static $facadeRegistered = false;
 
-        if (!$facadeRegistred) {
-            $facadeRegistred = true;
+        if (!$facadeRegistered) {
+            $facadeRegistered = true;
 
-            class_alias(\Fouladgar\EloquentBuilder\Facade::class, 'EloquentBuilder');
+            class_alias(Facade::class, 'EloquentBuilder');
         }
 
         parent::register();
@@ -29,7 +29,7 @@ class LumenServiceProvider extends ServiceProvider
     {
         parent::registerConsole();
 
-        $this->commands(\Fouladgar\EloquentBuilder\Console\PublishCommand::class);
+        $this->commands(PublishCommand::class);
     }
 
     protected function bootPublishes()

@@ -2,7 +2,9 @@
 
 namespace Fouladgar\EloquentBuilder\Tests;
 
+use Illuminate\Foundation\Application;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use Fouladgar\EloquentBuilder\ServiceProvider;
 
 class TestCase extends BaseTestCase
 {
@@ -13,15 +15,15 @@ class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
 
-        $this->withFactories(__DIR__.'/database/factories');
+        $this->withFactories(__DIR__ . '/database/factories');
     }
 
     /**
      * Define environment setup.
      *
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      */
     protected function getEnvironmentSetUp($app): void
     {
@@ -43,8 +45,12 @@ class TestCase extends BaseTestCase
         $app['config']->set('eloquent-builder.namespace', 'Fouladgar\\EloquentBuilder\\Tests\\EloquentFilters\\');
     }
 
+    /**
+     * @param Application $app
+     * @return array
+     */
     protected function getPackageProviders($app)
     {
-        return ['Fouladgar\\EloquentBuilder\\ServiceProvider'];
+        return [ServiceProvider::class];
     }
 }
