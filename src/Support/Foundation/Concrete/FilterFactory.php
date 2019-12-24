@@ -26,20 +26,7 @@ class FilterFactory implements Factory
      *
      * @return Filter
      */
-    public function factory(string $filter, Model $model): Filter
-    {
-        return $this->make($filter, $model);
-    }
-
-    /**
-     * @param string $filter
-     * @param Model  $model
-     *
-     * @throws NotFoundFilterException
-     *
-     * @return Filter
-     */
-    protected function make(string $filter, Model $model): Filter
+    public function make(string $filter, Model $model): Filter
     {
         $this->setNamespace($filter, $model);
 
