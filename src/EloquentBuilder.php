@@ -73,9 +73,8 @@ class EloquentBuilder
     private function applyFilters(Builder $query, array $filters): Builder
     {
         foreach ($filters as $filter => $value) {
-            $query = $this->filterFactory
-                ->factory($filter, $query->getModel())
-                ->apply($query, $value);
+            $query = $this->filterFactory->make($filter, $query->getModel())
+                                         ->apply($query, $value);
         }
 
         return $query;
