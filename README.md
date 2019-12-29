@@ -8,7 +8,7 @@
 [![License](https://poser.pugx.org/mohammad-fouladgar/eloquent-builder/license)](https://packagist.org/packages/mohammad-fouladgar/eloquent-builder)
 
 This package allows you to build eloquent queries, based on request parameters.
-It greatly reduces the complexity of the queries and conditions, which will make your code cleaner.
+It greatly reduces the complexity of the queries and conditions, which will make your code clean and maintainable.
 
 ## Basic Usage
 Suppose you want to get the list of the users with the requested parameters as follows:
@@ -20,7 +20,7 @@ Suppose you want to get the list of the users with the requested parameters as f
     'has_published_post' => 'true',
 ]
 ```
-In the __legacy__ code the method written below was followed:
+In a __common__ implementation, following code will be expected:
 ```php
 <?php
 
@@ -56,7 +56,7 @@ class UserController extends Controller
     }
 }
 ```
-**But** after using the **EloquentBuilder**, the above code refactor as follows:
+**But** after using the **EloquentBuilder**, the above code will turns into this:
 
 ```php
 <?php
@@ -78,14 +78,6 @@ class UserController extends Controller
 }
 ```
 You just need to [define a filter](#define-a-filter) for each parameter that you want to add to the query.
-
-It's recommended to put your query params inside a filter key as below: 
- ```
- user/search?filter[age_more_than]=25&filter[gender]=male
- ```              
-And then get them in this way:  `$request->filter`.
-
-> **Tip**: It's recommended validates the incoming requests before sending to filters.
 
 ### Installation
 
@@ -160,10 +152,21 @@ $app->register(\Fouladgar\EloquentBuilder\LumenServiceProvider::class);
 ```
 > **Important** : this needs to be before the registration of the service provider.
 
-### Default Filters Namespace
-The default namespace for all filters is ``App\EloquentFilters`` with the base name of the Model. For example, the filters namespace will be `App\EloquentFilters\User` for the `User` model.
+### Filters Namespace
+The default namespace for all filters is ``App\EloquentFilters`` with the base name of the Model. For example, the filters namespace will be `App\EloquentFilters\User` for the `User` model:
 
-#### With Config file
+```
+├── app
+├── Console
+│   └── Kernel.php
+├── EloquentFilters
+│   └── User
+│       ├── AgeMoreThanFilter.php
+│       └── GenderFilter.php
+└── Exceptions
+    └── Handler.php
+```
+#### Customize via Config file
 You can optionally publish the config file with:
 ```sh
 php artisan vendor:publish --provider="Fouladgar\EloquentBuilder\ServiceProvider" --tag="config"
@@ -182,6 +185,51 @@ return [
     'namespace' => 'App\\EloquentFilters\\',
 ];
 ```
+
+#### Customize per domain/module
+When you have a laravel project with custom directory structure, you might need to have multiple filters in multiple directories. For this purpose, you can use `setFilterNamespace()` method and pass the desired namespace to it.
+
+For example, let's assume you have a project which implement a domain based structure:
+
+```
+.
+├── app
+├── bootstrap
+├── config
+├── database
+├── Domains
+│   ├── Store
+│   │   ├── database
+│   │   │   └── migrations
+│   │   ├── src
+│   │       ├── Filters // we put our Store domain filters here!
+│   │       │   └── StoreFilter.php
+│   │       ├── Entities
+│   │       ├── Http
+│   │          └── Controllers
+│   │       ├── routes
+│   │       └── Services
+│   ├── User
+│   │   ├── database
+│   │   │   └── migrations
+│   │   ├── src
+│   │       ├── Filters // we put our User domain filters here!
+│   │       │   └── UserFilter.php
+│   │       ├── Entities
+│   │       ├── Http
+│   │          └── Controllers
+│   │       ├── routes
+│   │       └── Services
+...
+```
+In the above example, each domain has its own filters directory. So we can set and use filters custom namespace as following:
+
+```php
+$stores = EloquentBuilder::setFilterNamespace('Domains\\Store\\Filters')
+                        ->to(\Domains\Entities\Store::class, $filters)->get();
+```
+
+> **Note**: When using `setFilterNamespace()`, default namespace and config file will be ignored. 
 
 ## Define a Filter
 Writing a filter is simple. Define a class that `extends` the `Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter` abstract class. This class requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query as needed.
@@ -221,15 +269,22 @@ You can use filters in multiple approaches:
 <?php
 
 // Use by a model class name
-$users = EloquentBuilder::to(\App\User::class, $filters)->get();
+$users = EloquentBuilder::to(\App\User::class, request()->all())->get();
 
 // Use by existing query
-$query = User::where('is_active', true);
-$users = EloquentBuilder::to($query, $request->all())->where('city', 'london')->get();
+$query = \App\User::where('is_active', true);
+$users = EloquentBuilder::to($query, request()->all())->where('city', 'london')->get();
 
 // Use by instance of a model
-$users = EloquentBuilder::to(new \App\User(), $filters)->get();
+$users = EloquentBuilder::to(new \App\User(), request()->filter)->get();
 ```
+
+> **Tip**: It's recommended to put your query params inside a filter key as below: 
+ ```
+ user/search?filter[age_more_than]=25&filter[gender]=male
+ ```              
+And then use them this way: `request()->filter`.
+
 ## Authorizing Filter
 The filter class also contains an `authorize` method. Within this method, you may check if the authenticated user actually has the authority to apply a given filter. For example, you may determine if a user has a premium account, can apply the `StatusFilter` to get listing the online or offline people:
 
@@ -245,7 +300,7 @@ The filter class also contains an `authorize` method. Within this method, you ma
         return true;
      }
 
-    return false
+    return false;
  }
 ```
 By default, you do not need to implement the `authorize` method and the filter applies to your query builder.

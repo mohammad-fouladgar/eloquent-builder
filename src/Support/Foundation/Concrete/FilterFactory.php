@@ -5,12 +5,14 @@ namespace Fouladgar\EloquentBuilder\Support\Foundation\Concrete;
 use Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory as Factory;
+use Fouladgar\EloquentBuilder\Support\Foundation\FilterResolverTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class FilterFactory implements Factory
 {
+    use FilterResolverTrait;
+
     /**
      * Namespace of the model filter.
      *
@@ -19,48 +21,40 @@ class FilterFactory implements Factory
     protected $namespace = '';
 
     /**
-     * @param string $filter
-     * @param Model  $model
+     * Custom filters namespace
      *
-     * @throws NotFoundFilterException
-     *
-     * @return Filter
+     * @var string
+     */
+    protected $customNamespace = '';
+
+    /**
+     * {@inheritDoc}
      */
     public function make(string $filter, Model $model): Filter
     {
-        $this->setNamespace($filter, $model);
+        $this->resolveFilter($filter, $model);
 
         if (!$this->filterExists()) {
             $this->notFoundFilter();
         }
 
-        $filter = app($this->namespace);
+        $filter = app($this->getNamespace());
 
         if (!$filter instanceof Filter) {
-            $this->failedImplementation();
+            $this->invalidFilter();
         }
 
         return $filter;
     }
 
     /**
-     * Handle a not found filter.
-     *
-     * @throws NotFoundFilterException
+     * {@inheritDoc}
      */
-    protected function notFoundFilter()
+    public function setCustomNamespace(string $namespace = ''): self
     {
-        throw new NotFoundFilterException('Not found the filter: '.$this->filterBasename());
-    }
+        $this->customNamespace = $namespace;
 
-    /**
-     * Handle a failed implementation filter.
-     *
-     * @throws InvalidArgumentException
-     */
-    protected function failedImplementation()
-    {
-        throw new InvalidArgumentException('The '.$this->filterBasename().' filter must be an instance of Filter.');
+        return $this;
     }
 
     /**
@@ -74,24 +68,23 @@ class FilterFactory implements Factory
     }
 
     /**
-     * @param string $filter
-     * @param Model  $model
+     * Handle a not found filter.
+     *
+     * @throws NotFoundFilterException
      */
-    private function setNamespace(string $filter, Model $model)
+    protected function notFoundFilter(): void
     {
-        $config = config('eloquent-builder.namespace', 'App\\EloquentFilters\\');
-
-        $this->namespace = $config.class_basename($model).'\\'.$this->resolveFilterName($filter);
+        throw new NotFoundFilterException('Not found the filter: ' . $this->filterBasename());
     }
 
     /**
-     * @param string $filter
+     * Handle a failed implementation filter.
      *
-     * @return string
+     * @throws InvalidArgumentException
      */
-    private function resolveFilterName(string $filter): string
+    protected function invalidFilter(): void
     {
-        return Str::studly($filter).'Filter';
+        throw new InvalidArgumentException('The ' . $this->filterBasename() . ' filter must be an instance of Filter.');
     }
 
     /**
@@ -100,5 +93,29 @@ class FilterFactory implements Factory
     private function filterBasename(): string
     {
         return class_basename($this->namespace);
+    }
+
+    /**
+     * @return string
+     */
+    private function getNamespace(): string
+    {
+        return $this->namespace;
+    }
+
+    /**
+     * @return string
+     */
+    private function getCustomNamespace(): string
+    {
+        return $this->customNamespace;
+    }
+
+    /**
+     * @param string $namespace
+     */
+    private function setNamespace(string $namespace): void
+    {
+        $this->namespace = $namespace;
     }
 }

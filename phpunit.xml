@@ -8,9 +8,9 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-       >
+>
     <testsuites>
-         <testsuite name="Unit">
+        <testsuite name="Unit">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
@@ -19,6 +19,8 @@
             <directory suffix=".php">./src</directory>
             <exclude>
                 <file>src/Facade.php</file>
+                <file>src/ServiceProvider.php</file>
+                <file>src/LumenServiceProvider.php</file>
             </exclude>
         </whitelist>
     </filter>
@@ -34,5 +36,3 @@
     </logging>
 
 </phpunit>
-
-    
