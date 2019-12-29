@@ -12,16 +12,17 @@ interface FilterFactory
      * Create applied filter.
      *
      * @param string $filter
-     * @param Model $model
-     *
-     * @return Filter
+     * @param Model  $model
      *
      * @throws NotFoundFilterException
+     *
+     * @return Filter
      */
     public function make(string $filter, Model $model): Filter;
 
     /**
      * @param string $namespace
+     *
      * @return FilterFactoryConcrete
      */
     public function setCustomNamespace(string $namespace = ''): FilterFactoryConcrete;

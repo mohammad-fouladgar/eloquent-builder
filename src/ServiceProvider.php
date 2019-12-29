@@ -40,7 +40,7 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->mergeConfigFrom($configPath, 'eloquent-builder');
 
-        $this->publishes([$configPath => config_path('eloquent-builder.php'),], 'config');
+        $this->publishes([$configPath => config_path('eloquent-builder.php')], 'config');
     }
 
     /**
@@ -48,7 +48,7 @@ class ServiceProvider extends BaseServiceProvider
      */
     protected function configPath(): string
     {
-        return __DIR__ . '/../config/eloquent-builder.php';
+        return __DIR__.'/../config/eloquent-builder.php';
     }
 
     /**

@@ -21,14 +21,14 @@ class FilterFactory implements Factory
     protected $namespace = '';
 
     /**
-     * Custom filters namespace
+     * Custom filters namespace.
      *
      * @var string
      */
     protected $customNamespace = '';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function make(string $filter, Model $model): Filter
     {
@@ -48,7 +48,7 @@ class FilterFactory implements Factory
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setCustomNamespace(string $namespace = ''): self
     {
@@ -74,7 +74,7 @@ class FilterFactory implements Factory
      */
     protected function notFoundFilter(): void
     {
-        throw new NotFoundFilterException('Not found the filter: ' . $this->filterBasename());
+        throw new NotFoundFilterException('Not found the filter: '.$this->filterBasename());
     }
 
     /**
@@ -84,7 +84,7 @@ class FilterFactory implements Factory
      */
     protected function invalidFilter(): void
     {
-        throw new InvalidArgumentException('The ' . $this->filterBasename() . ' filter must be an instance of Filter.');
+        throw new InvalidArgumentException('The '.$this->filterBasename().' filter must be an instance of Filter.');
     }
 
     /**

@@ -11,12 +11,12 @@ class EloquentBuilder
     /**
      * the filter factory.
      *
-     * @var $filterFactory
+     * @var
      */
     protected $filterFactory;
 
     /**
-     * Custom filters namespace
+     * Custom filters namespace.
      *
      * @var string
      */
@@ -35,11 +35,12 @@ class EloquentBuilder
     /**
      * Create a new EloquentBuilder for a request and model.
      *
-     * @param string|Builder $query Model class or eloquent builder
-     * @param array $filters
+     * @param string|Builder $query   Model class or eloquent builder
+     * @param array          $filters
+     *
+     * @throws Exceptions\NotFoundFilterException
      *
      * @return Builder
-     * @throws Exceptions\NotFoundFilterException
      */
     public function to($query, array $filters = null): Builder
     {
@@ -56,12 +57,13 @@ class EloquentBuilder
     }
 
     /**
-     * Set custom filters namespace
+     * Set custom filters namespace.
      *
      * @param string $namespace
+     *
      * @return EloquentBuilder
      */
-    public function setFilterNamespace(string $namespace = ''): EloquentBuilder
+    public function setFilterNamespace(string $namespace = ''): self
     {
         $this->filterNamespace = $namespace;
 
@@ -69,9 +71,10 @@ class EloquentBuilder
     }
 
     /**
-     * Resolve the incoming query to Builder
+     * Resolve the incoming query to Builder.
      *
      * @param string/EloquentModel/Builder $query
+     *
      * @return Builder
      */
     private function resolveQuery($query): Builder
@@ -91,6 +94,7 @@ class EloquentBuilder
      * Returns only filters that have value.
      *
      * @param array $filters
+     *
      * @return array
      */
     private function getFilters(array $filters = []): array
@@ -102,10 +106,11 @@ class EloquentBuilder
      * Apply filters to Query Builder.
      *
      * @param Builder $query
-     * @param array $filters
+     * @param array   $filters
+     *
+     * @throws Exceptions\NotFoundFilterException
      *
      * @return Builder
-     * @throws Exceptions\NotFoundFilterException
      */
     private function applyFilters(Builder $query, array $filters): Builder
     {
