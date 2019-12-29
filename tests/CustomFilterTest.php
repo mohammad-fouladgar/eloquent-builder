@@ -25,6 +25,7 @@ class CustomFilterTest extends TestCase
 
     /**
      * @test
+     *
      * @throws NotFoundFilterException
      */
     public function it_can_resolve_namespaces_per_domain(): void

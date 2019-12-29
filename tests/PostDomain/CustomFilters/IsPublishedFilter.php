@@ -11,7 +11,7 @@ class IsPublishedFilter extends Filter
      * Undocumented function.
      *
      * @param Builder $builder
-     * @param mixed $value
+     * @param mixed   $value
      *
      * @return Builder
      */

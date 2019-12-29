@@ -13,7 +13,7 @@ abstract class Filter implements AuthorizeWhenResolved
      * Apply the filter to a given Eloquent query builder.
      *
      * @param Builder $builder
-     * @param mixed $value
+     * @param mixed   $value
      *
      * @return Builder
      */

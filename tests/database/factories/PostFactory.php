@@ -1,7 +1,6 @@
 <?php
 
 /** @var Factory $factory */
-
 use Faker\Generator as Faker;
 use Fouladgar\EloquentBuilder\Tests\Models\Post;
 use Illuminate\Database\Eloquent\Factory;

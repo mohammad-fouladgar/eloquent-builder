@@ -8,10 +8,10 @@ use Illuminate\Support\Str;
 trait FilterResolverTrait
 {
     /**
-     * Resolve namespace filters
+     * Resolve namespace filters.
      *
      * @param string $filter
-     * @param Model $model
+     * @param Model  $model
      */
     private function resolveFilter(string $filter, Model $model): void
     {
@@ -21,27 +21,29 @@ trait FilterResolverTrait
     }
 
     /**
-     * Resolve default or custom namespace
+     * Resolve default or custom namespace.
      *
      * @param string $filter
-     * @param Model $model
+     * @param Model  $model
+     *
      * @return string
      */
     private function resolveNamespace(string $filter, Model $model): string
     {
         if ($custom = $this->getCustomNamespace()) {
-            return $custom . '\\' . $this->resolveFilterName($filter);
+            return $custom.'\\'.$this->resolveFilterName($filter);
         }
 
         $config = config('eloquent-builder.namespace', 'App\\EloquentFilters\\');
 
-        return $config . class_basename($model) . '\\' . $this->resolveFilterName($filter);
+        return $config.class_basename($model).'\\'.$this->resolveFilterName($filter);
     }
 
     /**
-     * Sanitizing a namespace
+     * Sanitizing a namespace.
      *
      * @param $namespace
+     *
      * @return string|string[]
      */
     private function sanitizeNamespace($namespace)
@@ -56,6 +58,6 @@ trait FilterResolverTrait
      */
     private function resolveFilterName(string $filter): string
     {
-        return Str::studly($filter) . 'Filter';
+        return Str::studly($filter).'Filter';
     }
 }
