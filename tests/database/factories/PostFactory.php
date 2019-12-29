@@ -1,7 +1,9 @@
 <?php
 
+/** @var Factory $factory */
 use Faker\Generator as Faker;
 use Fouladgar\EloquentBuilder\Tests\Models\Post;
+use Illuminate\Database\Eloquent\Factory;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,10 +16,18 @@ use Fouladgar\EloquentBuilder\Tests\Models\Post;
 |
 */
 
-$factory->define(Post::class, function (Faker $faker) {
+$factory->define(Post::class, static function (Faker $faker) {
     return [
         'title'        => $faker->title,
         'content'      => $faker->paragraph,
         'is_published' => $faker->boolean,
     ];
 });
+
+$factory->state(Post::class, 'true', [
+    'is_published' => true,
+]);
+
+$factory->state(Post::class, 'false', [
+    'is_published' => false,
+]);
