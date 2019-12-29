@@ -26,8 +26,8 @@ class EloquentBuilder
     /**
      * Create a new EloquentBuilder for a request and model.
      *
-     * @param string/EloquentModel/Builder  $query  Model class,Eloquent model instance or Eloquent builder
-     * @param array                         $filters
+     * @param string/EloquentModel/Builder $query   Model class,Eloquent model instance or Eloquent builder
+     * @param array                        $filters
      */
     public function to($query, array $filters = null): Builder
     {
@@ -47,18 +47,19 @@ class EloquentBuilder
     }
 
     /**
-     * Resolve the incoming query to Builder
+     * Resolve the incoming query to Builder.
      *
      * @param string/EloquentModel/Builder $query
+     *
      * @return void
      */
     private function resolveQuery($query):Builder
     {
         if (is_string($query)) {
-           return  $query::query();
+            return  $query::query();
         }
 
-        if($query instanceof EloquentModel){
+        if ($query instanceof EloquentModel) {
             return $query->query();
         }
 

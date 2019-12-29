@@ -59,13 +59,13 @@ class EloquentBuilderTest extends TestCase
         );
     }
 
-     /** @test */
-     public function it_should_return_builder_with_an_instance_of_the_model()
-     {
+    /** @test */
+    public function it_should_return_builder_with_an_instance_of_the_model()
+    {
         $userInstance = new User();
-        
+
         $this->assertInstanceOf(Builder::class, $this->eloquentBuilder->to($userInstance));
-     }
+    }
 
     /** @test */
     public function it_can_make_with_existing_query()
