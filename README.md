@@ -78,10 +78,14 @@ class UserController extends Controller
 }
 ```
 You just need to [define a filter](#define-a-filter) for each parameter that you want to add to the query.
-> **Tip**: It's recommended validates the incoming requests before sending to filters.
 
-> **Tip**: It's recommended to put your query params inside a filter key as below:  `user/search?filter[age_more_than]=25&filter[gender]=male`              
-and then get them in this way: `$request->filter`.
+It's recommended to put your query params inside a filter key as below: 
+ ```
+ user/search?filter[age_more_than]=25&filter[gender]=male
+ ```              
+And then get them in this way:  `$request->filter`.
+
+> **Tip**: It's recommended validates the incoming requests before sending to filters.
 
 ### Installation
 
@@ -211,6 +215,21 @@ class AgeMoreThanFilter extends Filter
 ```
 > Tip: Also, you can easily use [local scopes](https://laravel.com/docs/5.8/eloquent#local-scopes) in your filter. Because they are instance of the query builder.
 
+## Use a filter
+You can use filters in multiple approaches:
+```php
+<?php
+
+// Use by a model class name
+$users = EloquentBuilder::to(\App\User::class, $filters)->get();
+
+// Use by existing query
+$query = User::where('is_active', true);
+$users = EloquentBuilder::to($query, $request->all())->where('city', 'london')->get();
+
+// Use by instance of a model
+$users = EloquentBuilder::to(new \App\User(), $filters)->get();
+```
 ## Authorizing Filter
 The filter class also contains an `authorize` method. Within this method, you may check if the authenticated user actually has the authority to apply a given filter. For example, you may determine if a user has a premium account, can apply the `StatusFilter` to get listing the online or offline people:
 
@@ -249,30 +268,6 @@ $filters = [
 ```
 Only the **"published_post"** filter will be applied on your query.
 
-## Work with existing queries
-You may also want to work with existing queries. For example, consider the following code:
-```php
-<?php
-
-namespace App\Http\Controllers;
-
-use App\User;
-use EloquentBuilder;
-use Illuminate\Http\Request;
-
-class UserController extends Controller
-{
-    public function index(Request $request)
-    {
-        $query = User::where('is_active', true);
-        $users = EloquentBuilder::to($query, $request->all())
-            ->where('city', 'london')
-            ->paginate();
-
-        return $users;
-    }
-}
-```
 ## Use as Dependency Injection
 Suppose you want use the ``EloquentBuilder`` as ``DependencyInjection`` in a ``Repository``.
 
@@ -285,42 +280,28 @@ namespace App\Repositories;
 use App\User;
 use Fouladgar\EloquentBuilder\EloquentBuilder;
 
-class UserRepository extends BaseRepository
+class UserRepository implements UserRepositoryInterface
 {
     
-    public function __construct(EloquentBuilder $eloquentBuilder)
+    public function __construct(EloquentBuilder $eloquentBuilder,User $user)
     {
         $this->eloquentBuilder = $eloquentBuilder;
-        $this->makeModel();
+        $this->model = $user;
     }
 
-    public function makeModel()
+    /**
+     * On method call
+     */
+    public function __call($method, $arguments)
     {
-        return $this->setModel($this->model());
-    }
-    
-    public function setModel($model)
-    {
-        $this->model = app()->make($model);
-
-        return $this;
-    }
-    
-    public function model()
-    {
-        return User::class;
-    }
-    
-    public function all($columns = ['*'])
-    {
-        return $this->model->get($columns);
+        return $this->model->$method(...$arguments);
     }
 
     // other methods ...
 
     public function filters(array $filters)
     {
-        $this->model = $this->eloquentBuilder->to($this->model(), $filters);
+        $this->model = $this->eloquentBuilder->to($this->model, $filters);
 
         return $this;
     }
@@ -351,7 +332,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        return $this->users->filters($request->all())->get();
+        return $this->users->filters($request->filters)->get();
     }
 }
 ```

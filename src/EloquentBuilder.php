@@ -4,6 +4,7 @@ namespace Fouladgar\EloquentBuilder;
 
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 
 class EloquentBuilder
 {
@@ -16,8 +17,6 @@ class EloquentBuilder
 
     /**
      * EloquentBuilder constructor.
-     *
-     * @param FilterFactory $filterFactory
      */
     public function __construct(FilterFactory $filterFactory)
     {
@@ -27,16 +26,13 @@ class EloquentBuilder
     /**
      * Create a new EloquentBuilder for a request and model.
      *
-     * @param string|Builder $query   Model class or eloquent builder
-     * @param array          $filters
-     *
-     * @return Builder
+     * @param string/EloquentModel/Builder  $query  Model class,Eloquent model instance or Eloquent builder
+     * @param array                         $filters
      */
     public function to($query, array $filters = null): Builder
     {
-        if (is_string($query)) {
-            $query = $query::query();
-        }
+        /** @var Builder $query */
+        $query = $this->resolveQuery($query);
 
         if (!$filters) {
             return $query;
@@ -51,11 +47,26 @@ class EloquentBuilder
     }
 
     /**
+     * Resolve the incoming query to Builder
+     *
+     * @param string/EloquentModel/Builder $query
+     * @return void
+     */
+    private function resolveQuery($query):Builder
+    {
+        if (is_string($query)) {
+           return  $query::query();
+        }
+
+        if($query instanceof EloquentModel){
+            return $query->query();
+        }
+
+        return $query;
+    }
+
+    /**
      * Returns only filters that have value.
-     *
-     * @param array $filters
-     *
-     * @return array
      */
     private function getFilters(array $filters = []): array
     {
@@ -64,11 +75,6 @@ class EloquentBuilder
 
     /**
      * Apply filters to Query Builder.
-     *
-     * @param Builder $query
-     * @param array   $filters
-     *
-     * @return Builder
      */
     private function applyFilters(Builder $query, array $filters): Builder
     {
