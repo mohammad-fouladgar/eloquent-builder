@@ -11,12 +11,21 @@ class EloquentBuilder
     /**
      * the filter factory.
      *
-     * @var
+     * @var $filterFactory
      */
     protected $filterFactory;
 
     /**
+     * Custom filters namespace
+     *
+     * @var string
+     */
+    protected $filterNamespace = '';
+
+    /**
      * EloquentBuilder constructor.
+     *
+     * @param FilterFactory $filterFactory
      */
     public function __construct(FilterFactory $filterFactory)
     {
@@ -26,8 +35,11 @@ class EloquentBuilder
     /**
      * Create a new EloquentBuilder for a request and model.
      *
-     * @param string/EloquentModel/Builder $query   Model class,Eloquent model instance or Eloquent builder
-     * @param array                        $filters
+     * @param string|Builder $query Model class or eloquent builder
+     * @param array $filters
+     *
+     * @return Builder
+     * @throws Exceptions\NotFoundFilterException
      */
     public function to($query, array $filters = null): Builder
     {
@@ -38,25 +50,34 @@ class EloquentBuilder
             return $query;
         }
 
-        $this->applyFilters(
-            $query,
-            $this->getFilters($filters)
-        );
+        $this->applyFilters($query, $this->getFilters($filters));
 
         return $query;
     }
 
     /**
-     * Resolve the incoming query to Builder.
+     * Set custom filters namespace
+     *
+     * @param string $namespace
+     * @return EloquentBuilder
+     */
+    public function setFilterNamespace(string $namespace = ''): EloquentBuilder
+    {
+        $this->filterNamespace = $namespace;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the incoming query to Builder
      *
      * @param string/EloquentModel/Builder $query
-     *
-     * @return void
+     * @return Builder
      */
-    private function resolveQuery($query):Builder
+    private function resolveQuery($query): Builder
     {
         if (is_string($query)) {
-            return  $query::query();
+            return $query::query();
         }
 
         if ($query instanceof EloquentModel) {
@@ -68,6 +89,9 @@ class EloquentBuilder
 
     /**
      * Returns only filters that have value.
+     *
+     * @param array $filters
+     * @return array
      */
     private function getFilters(array $filters = []): array
     {
@@ -76,11 +100,18 @@ class EloquentBuilder
 
     /**
      * Apply filters to Query Builder.
+     *
+     * @param Builder $query
+     * @param array $filters
+     *
+     * @return Builder
+     * @throws Exceptions\NotFoundFilterException
      */
     private function applyFilters(Builder $query, array $filters): Builder
     {
         foreach ($filters as $filter => $value) {
-            $query = $this->filterFactory->make($filter, $query->getModel())
+            $query = $this->filterFactory->setCustomNamespace($this->filterNamespace)
+                                         ->make($filter, $query->getModel())
                                          ->apply($query, $value);
         }
 
