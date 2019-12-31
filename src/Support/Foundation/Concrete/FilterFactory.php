@@ -56,7 +56,7 @@ class FilterFactory implements Factory
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setCustomNamespace(string $namespace = ''): self
     {
@@ -66,7 +66,7 @@ class FilterFactory implements Factory
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getCustomNamespace(): string
     {
