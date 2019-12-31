@@ -50,11 +50,27 @@ class FilterFactory implements Factory
     /**
      * {@inheritdoc}
      */
+    public function setNamespace(string $namespace): void
+    {
+        $this->namespace = $namespace;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setCustomNamespace(string $namespace = ''): self
     {
         $this->customNamespace = $namespace;
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCustomNamespace(): string
+    {
+        return $this->customNamespace;
     }
 
     /**
@@ -101,21 +117,5 @@ class FilterFactory implements Factory
     private function getNamespace(): string
     {
         return $this->namespace;
-    }
-
-    /**
-     * @return string
-     */
-    private function getCustomNamespace(): string
-    {
-        return $this->customNamespace;
-    }
-
-    /**
-     * @param string $namespace
-     */
-    private function setNamespace(string $namespace): void
-    {
-        $this->namespace = $namespace;
     }
 }

@@ -45,10 +45,10 @@ class PublishCommand extends Command
         parent::__construct();
 
         $this->files = $files;
-        $fromPath = __DIR__.'/../..';
+        $fromPath    = __DIR__ . '/../..';
 
         $this->fileMap = [
-            $fromPath.'/config/eloquent-builder.php' => app()->basePath('config/eloquent-builder.php'),
+            $fromPath . '/config/eloquent-builder.php' => app()->basePath('config/eloquent-builder.php'),
         ];
     }
 
@@ -75,7 +75,7 @@ class PublishCommand extends Command
      *
      * @param string $directory
      */
-    protected function createParentDirectory($directory)
+    protected function createParentDirectory($directory): void
     {
         if (!$this->files->isDirectory($directory)) {
             $this->files->makeDirectory($directory, 0755, true);
@@ -88,10 +88,10 @@ class PublishCommand extends Command
      * @param string $from
      * @param string $to
      */
-    protected function status($from, $to)
+    protected function status($from, $to): void
     {
         $from = str_replace(base_path(), '', realpath($from));
-        $to = str_replace(base_path(), '', realpath($to));
+        $to   = str_replace(base_path(), '', realpath($to));
         $this->line("<info>Copied File</info> <comment>[{$from}]</comment> <info>To</info> <comment>[{$to}]</comment>");
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 class EloquentBuilder
 {
     /**
-     * the filter factory.
+     * The filter factory.
      *
      * @var
      */
@@ -35,12 +35,12 @@ class EloquentBuilder
     /**
      * Create a new EloquentBuilder for a request and model.
      *
-     * @param string|Builder $query   Model class or eloquent builder
-     * @param array          $filters
-     *
-     * @throws Exceptions\NotFoundFilterException
+     * @param string|EloquentModel|Builder $query
+     * @param array $filters
      *
      * @return Builder
+     * @throws Exceptions\NotFoundFilterException
+     *
      */
     public function to($query, array $filters = null): Builder
     {
@@ -73,8 +73,7 @@ class EloquentBuilder
     /**
      * Resolve the incoming query to Builder.
      *
-     * @param string/EloquentModel/Builder $query
-     *
+     * @param string|EloquentModel|Builder $query
      * @return Builder
      */
     private function resolveQuery($query): Builder
@@ -106,11 +105,11 @@ class EloquentBuilder
      * Apply filters to Query Builder.
      *
      * @param Builder $query
-     * @param array   $filters
-     *
-     * @throws Exceptions\NotFoundFilterException
+     * @param array $filters
      *
      * @return Builder
+     * @throws Exceptions\NotFoundFilterException
+     *
      */
     private function applyFilters(Builder $query, array $filters): Builder
     {
