@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 class EloquentBuilder
 {
     /**
-     * the filter factory.
+     * The filter factory.
      *
      * @var
      */
@@ -35,8 +35,8 @@ class EloquentBuilder
     /**
      * Create a new EloquentBuilder for a request and model.
      *
-     * @param string|Builder $query   Model class or eloquent builder
-     * @param array          $filters
+     * @param string|EloquentModel|Builder $query
+     * @param array                        $filters
      *
      * @throws Exceptions\NotFoundFilterException
      *
@@ -73,7 +73,7 @@ class EloquentBuilder
     /**
      * Resolve the incoming query to Builder.
      *
-     * @param string/EloquentModel/Builder $query
+     * @param string|EloquentModel|Builder $query
      *
      * @return Builder
      */

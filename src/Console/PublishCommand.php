@@ -75,7 +75,7 @@ class PublishCommand extends Command
      *
      * @param string $directory
      */
-    protected function createParentDirectory($directory)
+    protected function createParentDirectory($directory): void
     {
         if (!$this->files->isDirectory($directory)) {
             $this->files->makeDirectory($directory, 0755, true);
@@ -88,7 +88,7 @@ class PublishCommand extends Command
      * @param string $from
      * @param string $to
      */
-    protected function status($from, $to)
+    protected function status($from, $to): void
     {
         $from = str_replace(base_path(), '', realpath($from));
         $to = str_replace(base_path(), '', realpath($to));
