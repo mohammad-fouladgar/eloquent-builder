@@ -19,7 +19,7 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->registerMacros();
 
-        $this->app->afterResolving(AuthorizeWhenResolved::class, function ($resolved) {
+        $this->app->afterResolving(AuthorizeWhenResolved::class, static function ($resolved) {
             $resolved->authorizeResolved();
         });
     }
@@ -63,7 +63,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->app->bind(Factory::class, FilterFactory::class);
 
-        $this->app->singleton('eloquentbuilder', function () {
+        $this->app->singleton('eloquentbuilder', static function () {
             return new EloquentBuilder(new FilterFactory());
         });
     }
@@ -71,7 +71,7 @@ class ServiceProvider extends BaseServiceProvider
     private function registerMacros()
     {
         Collection::macro('getFilters', function () {
-            $filters = $this->filter(function ($value, $filter) {
+            $filters = $this->filter(static function ($value, $filter) {
                 return !is_int($filter) && !empty($value);
             });
 
