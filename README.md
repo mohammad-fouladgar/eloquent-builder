@@ -1,5 +1,7 @@
 # Provides a Eloquent query builder for Laravel or Lumen
 
+![alt text](./cover.jpg "EloquentBuilder")
+
 [![Build Status](https://travis-ci.org/mohammad-fouladgar/eloquent-builder.svg?branch=master)](https://travis-ci.org/mohammad-fouladgar/eloquent-builder)
 [![Coverage Status](https://coveralls.io/repos/github/mohammad-fouladgar/eloquent-builder/badge.svg?branch=develop)](https://coveralls.io/github/mohammad-fouladgar/eloquent-builder?branch=develop)
 [![Quality Score](https://img.shields.io/scrutinizer/g/mohammad-fouladgar/eloquent-builder.svg?style=flat-square)](https://scrutinizer-ci.com/g/mohammad-fouladgar/eloquent-builder)
