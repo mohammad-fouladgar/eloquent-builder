@@ -9,7 +9,7 @@ class LumenServiceProvider extends ServiceProvider
     /**
      * Register facade.
      */
-    public function register()
+    public function register(): void
     {
         static $facadeRegistered = false;
 
@@ -25,14 +25,14 @@ class LumenServiceProvider extends ServiceProvider
     /**
      * Register the helper command to publish the config file.
      */
-    protected function registerConsole()
+    protected function registerConsole(): void
     {
         parent::registerConsole();
 
         $this->commands(PublishCommand::class);
     }
 
-    protected function bootPublishes()
+    protected function bootPublishes(): void
     {
         $this->mergeConfigFrom($this->configPath(), 'eloquent-builder');
     }
