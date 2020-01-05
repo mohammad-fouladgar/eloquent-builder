@@ -266,6 +266,19 @@ class AgeMoreThanFilter extends Filter
 ```
 > Tip: Also, you can easily use [local scopes](https://laravel.com/docs/5.8/eloquent#local-scopes) in your filter. Because they are instance of the query builder.
 
+### Define filter[s] by artisan command
+If you want to create a filter easily, you can use `eloquent-builder:make` artisan command. This command will accept at least two arguments which are `Model` and `Filter`:
+
+```
+php artisan eloquent-builder:make user age_more_than
+```
+
+There is also a possibility of creating multiple filters at the same time. To achieve this goal, you should pass multiple names to `Filter` argument:
+
+```
+php artisan eloquent-builder:make user age_more_than gender
+```
+
 ## Use a filter
 You can use filters in multiple approaches:
 ```php
