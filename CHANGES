@@ -1,3 +1,25 @@
+Version 2.1.0:
+ - Merge pull request #61 from mohammad-fouladgar/analysis-jLLZM7
+ - Apply fixes from StyleCI
+ - Merge pull request #60 from 50bhan/add-filter-command
+ - Fix FilterMakeCommand on php 7.1
+ - Update README
+ - Add test for FilterMakeCommand
+ - Add a command to make filter[s]
+ - Merge pull request #59 from mohammad-fouladgar/develop
+ - Merge pull request #58 from 50bhan/update-readme-image
+ - Update README image
+ - Merge pull request #57 from mohammad-fouladgar/develop
+ - Merge pull request #56 from mohammad-fouladgar/analysis-0ggvO4
+ - Apply fixes from StyleCI
+ - Merge pull request #55 from 50bhan/add-quality-badge
+ - Add code quality badge and some stylings
+ - Merge branch 'develop'
+ - Merge branch 'release/2.0.0' into develop
+ - Merge branch 'release/2.0.0'
+ - Update Changes file
+ - Merge pull request #50 from mohammad-fouladgar/develop
+
 Version 2.0.0:
 - Add support for Domain/Module
 - Add support for Eloquent Model Instance
