@@ -14,14 +14,14 @@ class FilterMakeCommandTest extends TestCase
     protected $command;
 
     /**
-     * Orchestra app directory path
+     * Orchestra app directory path.
      *
      * @var string
      */
     protected $basePath;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setUp(): void
     {
@@ -46,14 +46,14 @@ class FilterMakeCommandTest extends TestCase
     {
         $this->artisan('eloquent-builder:make user age_more_than gender');
 
-        $basePath = $this->basePath . '/app/EloquentFilters/User/';
+        $basePath = $this->basePath.'/app/EloquentFilters/User/';
 
-        $this->assertFileExists($basePath . 'AgeMoreThanFilter.php');
-        $this->assertFileExists($basePath . 'GenderFilter.php');
+        $this->assertFileExists($basePath.'AgeMoreThanFilter.php');
+        $this->assertFileExists($basePath.'GenderFilter.php');
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function tearDown(): void
     {
@@ -61,6 +61,6 @@ class FilterMakeCommandTest extends TestCase
 
         m::close();
 
-        exec('rm -rf ' . $this->basePath . '/app/EloquentFilters');
+        exec('rm -rf '.$this->basePath.'/app/EloquentFilters');
     }
 }
