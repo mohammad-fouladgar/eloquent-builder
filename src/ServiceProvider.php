@@ -2,6 +2,7 @@
 
 namespace Fouladgar\EloquentBuilder;
 
+use Fouladgar\EloquentBuilder\Console\FilterMakeCommand;
 use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterFactory;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\AuthorizeWhenResolved;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory as Factory;
@@ -13,7 +14,7 @@ class ServiceProvider extends BaseServiceProvider
     /**
      * Perform post-registration booting of services.
      */
-    public function boot()
+    public function boot(): void
     {
         $this->bootPublishes();
 
@@ -27,14 +28,14 @@ class ServiceProvider extends BaseServiceProvider
     /**
      * Register bindings in the container.
      */
-    public function register()
+    public function register(): void
     {
         $this->registerBindings();
 
         $this->registerConsole();
     }
 
-    protected function bootPublishes()
+    protected function bootPublishes(): void
     {
         $configPath = $this->configPath();
 
@@ -54,9 +55,9 @@ class ServiceProvider extends BaseServiceProvider
     /**
      * Register console commands.
      */
-    protected function registerConsole()
+    protected function registerConsole(): void
     {
-        // commands...
+        $this->commands(FilterMakeCommand::class);
     }
 
     private function registerBindings()
