@@ -55,7 +55,7 @@ class FilterMakeCommand extends GeneratorCommand
             $name   = $this->qualifyClass($filter);
             $path   = $this->getPath($name);
             $this->makeDirectory($path);
-            $this->files->put($path, $this->sortImports($this->buildClass($name)));
+            $this->files->put($path, $this->buildClass($name));
         }
 
         $this->info($this->type . ' created successfully.');
