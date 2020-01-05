@@ -2,8 +2,8 @@
 
 namespace Fouladgar\EloquentBuilder\Console;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Str;
 
 class FilterMakeCommand extends GeneratorCommand
@@ -41,8 +41,9 @@ class FilterMakeCommand extends GeneratorCommand
     /**
      * Execute the console command.
      *
-     * @return mixed
      * @throws FileNotFoundException
+     *
+     * @return mixed
      */
     public function handle(): void
     {
@@ -52,13 +53,13 @@ class FilterMakeCommand extends GeneratorCommand
 
         foreach ($filters as $filter) {
             $filter = $this->sanitizeNameInput($filter);
-            $name   = $this->qualifyClass($filter);
-            $path   = $this->getPath($name);
+            $name = $this->qualifyClass($filter);
+            $path = $this->getPath($name);
             $this->makeDirectory($path);
             $this->files->put($path, $this->buildClass($name));
         }
 
-        $this->info($this->type . ' created successfully.');
+        $this->info($this->type.' created successfully.');
     }
 
     /**
@@ -76,23 +77,24 @@ class FilterMakeCommand extends GeneratorCommand
      */
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/filter.stub';
+        return __DIR__.'/stubs/filter.stub';
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getDefaultNamespace($rootNamespace): string
     {
-        return rtrim(config('eloquent-builder.namespace'), '\\') . '\\' . $this->model;
+        return rtrim(config('eloquent-builder.namespace'), '\\').'\\'.$this->model;
     }
 
     /**
      * @param $name
+     *
      * @return string
      */
     protected function sanitizeNameInput($name): string
     {
-        return Str::studly(trim($name)) . 'Filter';
+        return Str::studly(trim($name)).'Filter';
     }
 }

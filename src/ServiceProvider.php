@@ -49,7 +49,7 @@ class ServiceProvider extends BaseServiceProvider
      */
     protected function configPath(): string
     {
-        return __DIR__ . '/../config/eloquent-builder.php';
+        return __DIR__.'/../config/eloquent-builder.php';
     }
 
     /**
