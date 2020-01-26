@@ -13,9 +13,9 @@
 # a file called CHANGES (under the title of the new version
 # number) and create a GIT tag.
 
-if [ -f VERSION ]; then
+if [[ -f VERSION ]]; then
     BASE_STRING=`cat VERSION`
-    BASE_LIST=(`echo $BASE_STRING | tr '.' ' '`)
+    BASE_LIST=(`echo ${BASE_STRING} | tr '.' ' '`)
     V_MAJOR=${BASE_LIST[0]}
     V_MINOR=${BASE_LIST[1]}
     V_PATCH=${BASE_LIST[2]}
@@ -24,39 +24,35 @@ if [ -f VERSION ]; then
     V_PATCH=0
     SUGGESTED_VERSION="$V_MAJOR.$V_MINOR.$V_PATCH"
     read -p "Enter a version number [$SUGGESTED_VERSION]: " INPUT_STRING
-    if [ "$INPUT_STRING" = "" ]; then
-        INPUT_STRING=$SUGGESTED_VERSION
+    if [[ "$INPUT_STRING" = "" ]]; then
+        INPUT_STRING=${SUGGESTED_VERSION}
     fi
     echo "Will set new version to be $INPUT_STRING"
-    echo $INPUT_STRING > VERSION
-    echo "Version $INPUT_STRING:" > tmpfile
+    echo ${INPUT_STRING} > VERSION
+    tag_date=$(git log -1 --pretty=format:'%ad' --date=short)
+
+    echo "## $INPUT_STRING - ${tag_date}" > tmpfile
     git log --pretty=format:" - %s" "v$BASE_STRING"...HEAD >> tmpfile
     echo "" >> tmpfile
     echo "" >> tmpfile
-    cat CHANGES >> tmpfile
-    mv tmpfile CHANGES
-    git add CHANGES VERSION
-    git commit -m "Version bump to $INPUT_STRING"
-    git tag -a -m "Tagging version $INPUT_STRING" "v$INPUT_STRING"
-    git push origin --tags
+    cat CHANGELOG.md >> tmpfile
+    mv tmpfile CHANGELOG.md
+    echo "Version bump and update CHANGELOG file."
 else
     echo "Could not find a VERSION file"
     read -p "Do you want to create a version file and start from scratch? [y]" RESPONSE
-    if [ "$RESPONSE" = "" ]; then RESPONSE="y"; fi
-    if [ "$RESPONSE" = "Y" ]; then RESPONSE="y"; fi
-    if [ "$RESPONSE" = "Yes" ]; then RESPONSE="y"; fi
-    if [ "$RESPONSE" = "yes" ]; then RESPONSE="y"; fi
-    if [ "$RESPONSE" = "YES" ]; then RESPONSE="y"; fi
-    if [ "$RESPONSE" = "y" ]; then
+    if [[ "$RESPONSE" = "" ]]; then RESPONSE="y"; fi
+    if [[ "$RESPONSE" = "Y" ]]; then RESPONSE="y"; fi
+    if [[ "$RESPONSE" = "Yes" ]]; then RESPONSE="y"; fi
+    if [[ "$RESPONSE" = "yes" ]]; then RESPONSE="y"; fi
+    if [[ "$RESPONSE" = "YES" ]]; then RESPONSE="y"; fi
+    if [[ "$RESPONSE" = "y" ]]; then
+        tag_date=$(git log -1 --pretty=format:'%ad' --date=short)
         echo "0.1.0" > VERSION
-        echo "Version 0.1.0" > CHANGES
-        git log --pretty=format:" - %s" >> CHANGES
-        echo "" >> CHANGES
-        echo "" >> CHANGES
-        git add VERSION CHANGES
-        git commit -m "Added VERSION and CHANGES files, Version bump to v0.1.0"
-        git tag -a -m "Tagging version 0.1.0" "v0.1.0"
-        git push origin --tags
+        echo "## 0.1.0 - ${tag_date}" > CHANGELOG.md
+        git log --pretty=format:" - %s" >> CHANGELOG.md
+        echo "" >> CHANGELOG.md
+        echo "" >> CHANGELOG.md
+        echo "Version bump and make CHANGELOG file."
     fi
-
 fi
