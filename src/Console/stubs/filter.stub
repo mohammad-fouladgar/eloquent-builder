@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 class DummyClass extends Filter
 {
     /**
-     * Apply the age condition to the query.
+     * Apply the condition to the query.
      *
      * @param Builder $builder
      * @param mixed $value
