@@ -74,6 +74,8 @@ class PublishCommand extends Command
      * Create the directory to house the published files if needed.
      *
      * @param string $directory
+     *
+     * @codeCoverageIgnore
      */
     protected function createParentDirectory($directory): void
     {

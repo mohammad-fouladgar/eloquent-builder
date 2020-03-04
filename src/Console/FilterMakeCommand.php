@@ -82,6 +82,8 @@ class FilterMakeCommand extends GeneratorCommand
 
     /**
      * {@inheritdoc}
+     *
+     * @codeCoverageIgnore
      */
     protected function getDefaultNamespace($rootNamespace): string
     {
