@@ -29,8 +29,10 @@ class FilterMakeCommandTest extends TestCase
 
         $this->basePath = $this->getBasePath();
 
-        $this->command = m::mock('Fouladgar\EloquentBuilder\Console\FilterMakeCommand[info,rootNamespace,getDefaultNamespace]',
-            [new Filesystem()])->shouldAllowMockingProtectedMethods();
+        $this->command = m::mock(
+            'Fouladgar\EloquentBuilder\Console\FilterMakeCommand[info,rootNamespace,getDefaultNamespace]',
+            [new Filesystem()]
+        )->shouldAllowMockingProtectedMethods();
 
         $this->command->shouldReceive('info')->andReturn('Filter[s] created successfully.');
         $this->command->shouldReceive('rootNamespace')->andReturn('AppTest');
