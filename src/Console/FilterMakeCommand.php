@@ -42,8 +42,6 @@ class FilterMakeCommand extends GeneratorCommand
      * Execute the console command.
      *
      * @throws FileNotFoundException
-     *
-     * @return mixed
      */
     public function handle(): void
     {
