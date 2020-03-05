@@ -8,6 +8,8 @@ trait AuthorizeWhenResolvedTrait
 {
     /**
      * authorize the filter instance.
+     *
+     * @throws AuthorizationException
      */
     public function authorizeResolved()
     {
