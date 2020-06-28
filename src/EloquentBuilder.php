@@ -40,7 +40,7 @@ class EloquentBuilder
      *
      * @throws Exceptions\NotFoundFilterException
      *
-     * @return Builder
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function to($query, array $filters = null): Builder
     {
