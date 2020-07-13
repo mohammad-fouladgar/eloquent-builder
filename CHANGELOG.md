@@ -1,3 +1,6 @@
+## 2.2.1 - 2020-07-13
+ - Fix nested array in ignoring filters
+
 ## 2.2.0 - 2020-03-04
  - Add support for Laravel 7
 
