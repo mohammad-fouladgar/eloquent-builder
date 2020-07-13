@@ -76,15 +76,15 @@ class ServiceProvider extends BaseServiceProvider
                 if (is_array($value)) {
                     $result = [];
                     array_walk_recursive($value, static function ($val) use (&$result) {
-                        if(! empty($val)) {
+                        if (!empty($val)) {
                             $result[] = $val;
                         }
                     });
 
-                    return ! empty($result);
+                    return !empty($result);
                 }
 
-                return ! is_int($filter) && ! empty($value);
+                return !is_int($filter) && !empty($value);
             });
 
             return $filters->all();
