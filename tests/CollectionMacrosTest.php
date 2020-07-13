@@ -11,44 +11,46 @@ class CollectionMacrosTest extends TestCase
             'city' => 'isfahan',
             'name',
             'gender' => '',
-            'age' => null,
-            'date' => [
+            'age'    => null,
+            'date'   => [
                 'from' => '',
-                'to' => ''
+                'to'   => '',
             ],
             'price' => [
                 'min' => 10000,
-                'max' => ''
+                'max' => '',
             ],
             'area' => [
                 'min' => 50,
-                'max' => 100
+                'max' => 100,
             ],
             'rental' => [
                 'price' => [
                     'min' => '',
-                    'max' => 500
-                ]
+                    'max' => 500,
+                ],
             ],
         ]);
 
         $this->assertEquals(
             [
-                "city" => "isfahan",
-                "price" => [
-                    "min" => 10000,
-                    "max" => ""
+                'city'  => 'isfahan',
+                'price' => [
+                    'min' => 10000,
+                    'max' => '',
                 ],
-                "area" => [
-                    "min" => 50,
-                    "max" => 100
+                'area' => [
+                    'min' => 50,
+                    'max' => 100,
                 ],
-                "rental" => [
-                    "price" => [
-                        "min" => "",
-                        "max" => 500
-                    ]
-                ]
-            ], $inputs->getFilters());
+                'rental' => [
+                    'price' => [
+                        'min' => '',
+                        'max' => 500,
+                    ],
+                ],
+            ],
+            $inputs->getFilters()
+        );
     }
 }
