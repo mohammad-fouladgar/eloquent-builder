@@ -11,7 +11,7 @@ class CollectionMacrosTest extends TestCase
             'city' => 'isfahan',
             'name',
             'gender' => '',
-            'level' => 0,
+            'level'  => 0,
             'age'    => null,
             'date'   => [
                 'from' => '',
@@ -34,7 +34,7 @@ class CollectionMacrosTest extends TestCase
             'weight' => [
                 'min' => 0,
                 'max' => 0,
-            ]
+            ],
         ]);
 
         $this->assertEquals(
@@ -58,7 +58,7 @@ class CollectionMacrosTest extends TestCase
                 'weight' => [
                     'min' => 0,
                     'max' => 0,
-                ]
+                ],
             ],
             $inputs->getFilters()
         );
