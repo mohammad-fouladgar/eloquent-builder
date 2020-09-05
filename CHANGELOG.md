@@ -1,3 +1,6 @@
+## 2.2.2 - 2020-09-05
+ - Fix ignoring zero values filters (#78)
+
 ## 2.2.1 - 2020-07-13
  - Fix nested array in ignoring filters
 
