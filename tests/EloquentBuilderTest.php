@@ -37,7 +37,22 @@ class EloquentBuilderTest extends TestCase
     {
         $this->expectException(NotFoundFilterException::class);
 
-        $this->eloquentBuilder->to(User::class, ['not_exists_filter' => 'any_value']);
+        $this->eloquentBuilder
+             ->failOrSkipFilter(true)
+             ->to(User::class, ['not_exists_filter' => 'any_value']);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_skip_if_not_found_filter()
+    {
+        $this->assertInstanceOf(
+            Builder::class,
+            $this->eloquentBuilder
+                ->failOrSkipFilter(false)
+                ->to(User::class, ['not_exists_filter' => 'any_value'])
+        );
     }
 
     /**

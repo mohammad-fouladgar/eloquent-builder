@@ -10,4 +10,14 @@ return [
      |
      */
     'namespace' => 'App\\EloquentFilters\\',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Filter Not found Exception
+    |--------------------------------------------------------------------------
+    |
+    | Throw an exception if filter not found to a model.
+    |
+    */
+    'fail_filter_exception' => false,
 ];

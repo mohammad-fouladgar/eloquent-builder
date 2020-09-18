@@ -2,6 +2,7 @@
 
 namespace Fouladgar\EloquentBuilder;
 
+use Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
@@ -22,6 +23,8 @@ class EloquentBuilder
      */
     protected $filterNamespace = '';
 
+    protected $failFilterException = false;
+
     /**
      * EloquentBuilder constructor.
      *
@@ -30,17 +33,17 @@ class EloquentBuilder
     public function __construct(FilterFactory $filterFactory)
     {
         $this->filterFactory = $filterFactory;
+        $this->failFilterException = config('eloquent-builder.fail_filter_exception');
     }
 
     /**
      * Create a new EloquentBuilder for a request and model.
      *
      * @param string|EloquentModel|Builder $query
-     * @param array                        $filters
+     * @param array $filters
+     * @return \Illuminate\Database\Eloquent\Builder
      *
      * @throws Exceptions\NotFoundFilterException
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function to($query, array $filters = null): Builder
     {
@@ -66,6 +69,14 @@ class EloquentBuilder
     public function setFilterNamespace(string $namespace = ''): self
     {
         $this->filterNamespace = $namespace;
+
+        return $this;
+    }
+
+
+    public function failOrSkipFilter(bool $fail = false): self
+    {
+        $this->failFilterException = $fail;
 
         return $this;
     }
@@ -106,18 +117,21 @@ class EloquentBuilder
      * Apply filters to Query Builder.
      *
      * @param Builder $query
-     * @param array   $filters
-     *
-     * @throws Exceptions\NotFoundFilterException
-     *
+     * @param array $filters
      * @return Builder
+     *
+     * @throws NotFoundFilterException
      */
     private function applyFilters(Builder $query, array $filters): Builder
     {
-        foreach ($filters as $filter => $value) {
-            $query = $this->filterFactory->setCustomNamespace($this->filterNamespace)
-                                         ->make($filter, $query->getModel())
-                                         ->apply($query, $value);
+        try {
+            foreach ($filters as $filter => $value) {
+                $query = $this->filterFactory->setCustomNamespace($this->filterNamespace)
+                    ->make($filter, $query->getModel())
+                    ->apply($query, $value);
+            }
+        } catch (NotFoundFilterException $ex) {
+            throw_if($this->failFilterException, $ex);
         }
 
         return $query;
