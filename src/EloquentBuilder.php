@@ -40,10 +40,11 @@ class EloquentBuilder
      * Create a new EloquentBuilder for a request and model.
      *
      * @param string|EloquentModel|Builder $query
-     * @param array $filters
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param array                        $filters
      *
      * @throws Exceptions\NotFoundFilterException
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function to($query, array $filters = null): Builder
     {
@@ -72,7 +73,6 @@ class EloquentBuilder
 
         return $this;
     }
-
 
     public function failOrSkipFilter(bool $fail = false): self
     {
@@ -117,10 +117,11 @@ class EloquentBuilder
      * Apply filters to Query Builder.
      *
      * @param Builder $query
-     * @param array $filters
-     * @return Builder
+     * @param array   $filters
      *
      * @throws NotFoundFilterException
+     *
+     * @return Builder
      */
     private function applyFilters(Builder $query, array $filters): Builder
     {
