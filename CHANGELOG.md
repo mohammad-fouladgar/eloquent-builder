@@ -1,3 +1,6 @@
+## 2.3.0 - 2020-09-18
+ - Add support for Laravel 8.x (#82)
+
 ## 2.2.2 - 2020-09-05
  - Fix ignoring zero values filters (#78)
 
