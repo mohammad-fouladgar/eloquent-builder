@@ -16,9 +16,9 @@ use Fouladgar\EloquentBuilder\Tests\Models\User;
 
 $factory->define(User::class, function (Faker $faker) {
     return [
-        'name'     => $faker->name,
-        'age'      => $faker->numberBetween(15, 90),
-        'gender'   => $faker->randomElement(['male', 'female']),
-        'status'   => $faker->randomElement(['offline', 'online']),
+        'name' => $faker->name,
+        'age' => $faker->numberBetween(15, 90),
+        'gender' => $faker->randomElement(['male', 'female']),
+        'status' => $faker->randomElement(['offline', 'online']),
     ];
 });

@@ -81,10 +81,10 @@ class ServiceProvider extends BaseServiceProvider
                         }
                     });
 
-                    return !empty($result);
+                    return ! empty($result);
                 }
 
-                return !is_int($filter) && (isset($value) && strlen($value) !== 0);
+                return ! is_int($filter) && (isset($value) && strlen($value) !== 0);
             });
 
             return $filters->all();

@@ -34,13 +34,13 @@ class FilterFactory implements Factory
     {
         $this->resolveFilter($filter, $model);
 
-        if (!$this->filterExists()) {
+        if (! $this->filterExists()) {
             $this->notFoundFilter();
         }
 
         $filter = app($this->getNamespace());
 
-        if (!$filter instanceof Filter) {
+        if (! $filter instanceof Filter) {
             $this->invalidFilter();
         }
 

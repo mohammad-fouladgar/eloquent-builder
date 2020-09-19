@@ -11,11 +11,11 @@ class CollectionMacrosTest extends TestCase
             'city' => 'isfahan',
             'name',
             'gender' => '',
-            'level'  => 0,
-            'age'    => null,
-            'date'   => [
+            'level' => 0,
+            'age' => null,
+            'date' => [
                 'from' => '',
-                'to'   => '',
+                'to' => '',
             ],
             'price' => [
                 'min' => 10000,
@@ -39,7 +39,7 @@ class CollectionMacrosTest extends TestCase
 
         $this->assertEquals(
             [
-                'city'  => 'isfahan',
+                'city' => 'isfahan',
                 'level' => 0,
                 'price' => [
                     'min' => 10000,

@@ -18,8 +18,8 @@ use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Post::class, static function (Faker $faker) {
     return [
-        'title'        => $faker->title,
-        'content'      => $faker->paragraph,
+        'title' => $faker->title,
+        'content' => $faker->paragraph,
         'is_published' => $faker->boolean,
     ];
 });
