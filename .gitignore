@@ -6,4 +6,6 @@ vendor
 build
 .vscode
 .phpunit.result.cache
+.php_cs.cache
+.htaccess
 cache

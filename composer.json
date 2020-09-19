@@ -43,8 +43,7 @@
     }
   },
   "scripts": {
-    "test": "vendor/bin/phpunit --coverage-text",
-    "test-coverage": "vendor/bin/php-coveralls -v"
+    "test": "vendor/bin/phpunit --coverage-text"
   },
   "extra": {
     "laravel": {
