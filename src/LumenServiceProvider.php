@@ -13,7 +13,7 @@ class LumenServiceProvider extends ServiceProvider
     {
         static $facadeRegistered = false;
 
-        if (!$facadeRegistered) {
+        if (! $facadeRegistered) {
             $facadeRegistered = true;
 
             class_alias(Facade::class, 'EloquentBuilder');

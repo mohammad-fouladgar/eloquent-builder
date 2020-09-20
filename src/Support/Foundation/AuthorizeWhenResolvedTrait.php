@@ -13,7 +13,7 @@ trait AuthorizeWhenResolvedTrait
      */
     public function authorizeResolved()
     {
-        if (!$this->passesAuthorization()) {
+        if (! $this->passesAuthorization()) {
             $this->failedAuthorization();
         }
     }

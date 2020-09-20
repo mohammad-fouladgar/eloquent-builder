@@ -1,3 +1,7 @@
+## 2.3.0 - 2020-09-20
+  - Add support GitHub actions
+ - Add support for Laravel 8.x (#82)
+
 ## 2.2.2 - 2020-09-05
  - Fix ignoring zero values filters (#78)
 
