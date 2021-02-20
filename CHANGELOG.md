@@ -1,3 +1,6 @@
+## 3.1.0 - 2021-02-17
+  - Add support for PHP 8.0
+
 ## 3.0.0 - 2020-11-14
  - Deprecated Laravel 5
 
