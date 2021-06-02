@@ -32,27 +32,19 @@ class FilterFactory implements Factory
      */
     public function make(string $filter, Model $model): Filter
     {
-        $this->resolveFilter($filter, $model);
+        $this->namespace = $this->resolveFilter($filter, $model);
 
-        if (! $this->filterExists()) {
+        if (!$this->filterExists()) {
             $this->notFoundFilter();
         }
 
-        $filter = app($this->getNamespace());
+        $filter = app($this->namespace);
 
-        if (! $filter instanceof Filter) {
+        if (!$filter instanceof Filter) {
             $this->invalidFilter();
         }
 
         return $filter;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNamespace(string $namespace): void
-    {
-        $this->namespace = $namespace;
     }
 
     /**
@@ -63,14 +55,6 @@ class FilterFactory implements Factory
         $this->customNamespace = $namespace;
 
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCustomNamespace(): string
-    {
-        return $this->customNamespace;
     }
 
     /**
@@ -90,7 +74,7 @@ class FilterFactory implements Factory
      */
     protected function notFoundFilter(): void
     {
-        throw new NotFoundFilterException('Not found the filter: '.$this->filterBasename());
+        throw new NotFoundFilterException('Not found the filter: ' . $this->filterBasename());
     }
 
     /**
@@ -100,7 +84,7 @@ class FilterFactory implements Factory
      */
     protected function invalidFilter(): void
     {
-        throw new InvalidArgumentException('The '.$this->filterBasename().' filter must be an instance of Filter.');
+        throw new InvalidArgumentException('The ' . $this->filterBasename() . ' filter must be an instance of Filter.');
     }
 
     /**
@@ -109,13 +93,5 @@ class FilterFactory implements Factory
     private function filterBasename(): string
     {
         return class_basename($this->namespace);
-    }
-
-    /**
-     * @return string
-     */
-    private function getNamespace(): string
-    {
-        return $this->namespace;
     }
 }

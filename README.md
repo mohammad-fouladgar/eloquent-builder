@@ -95,28 +95,6 @@ composer require mohammad-fouladgar/eloquent-builder
 ```
 > Laravel 5.5 uses Package Auto-Discovery, so you are not required to add ServiceProvider manually.
 
-### Laravel <= 5.4.x
-If you don't use Auto-Discovery, add the ServiceProvider to the providers array in ``config/app.php`` file
-```php
-'providers' => [
-  /*
-   * Package Service Providers...
-   */
-  Fouladgar\EloquentBuilder\ServiceProvider::class,
-],
-
-```
-And add the **facade** to your ``config/app.php`` file
-```php
-/*
-|--------------------------------------------------------------------------
-| Class Aliases
-|--------------------------------------------------------------------------
-*/
-'aliases' => [
-    'EloquentBuilder' => Fouladgar\EloquentBuilder\Facade::class,
-]
-```
 ### Lumen
 
 You can install the package via composer:
@@ -329,83 +307,48 @@ Suppose you have a request something like this:
 ```php
 //Get api/user/search?filter[name]&filter[gender]=null&filter[age_more_than]=''&filter[published_post]=true
 
-EloquentBuilder::to(User::class,$request->filter);
+EloquentBuilder::to(User::class, $request->filter);
 
 // filters result will be:
 $filters = [
-    'published_post'  => true
+    'published_post' => true
 ];
 ```
 Only the **"published_post"** filter will be applied on your query.
 
 ## Use as Dependency Injection
-Suppose you want use the ``EloquentBuilder`` as ``DependencyInjection`` in a ``Repository``.
+You may need to use the `EloquentBuilder` as `DependencyInjection` in a `construct` or a `function` method.
 
-Let's have an example.We have a sample ``UserRepository`` as follows:
+Suppose you have an `UserController` and you want get a list of the users with applying some filters on them:
+
+
 ```php
 <?php
 
-namespace App\Repositories;
+namespace App\Controllers;
 
-use App\User;
-use Fouladgar\EloquentBuilder\EloquentBuilder;
-
-class UserRepository implements UserRepositoryInterface
-{
-    
-    public function __construct(EloquentBuilder $eloquentBuilder,User $user)
-    {
-        $this->eloquentBuilder = $eloquentBuilder;
-        $this->model = $user;
-    }
-
-    /**
-     * On method call
-     */
-    public function __call($method, $arguments)
-    {
-        return $this->model->$method(...$arguments);
-    }
-
-    // other methods ...
-
-    public function filters(array $filters)
-    {
-        $this->model = $this->eloquentBuilder->to($this->model, $filters);
-
-        return $this;
-    }
-}
-
-```
-The ``filters`` method applies the requested filters to the query by using ``EloquentBuilder`` injected.
-
-### Injecting The Repository
-Now,we can simply "type-hint" it in the constructor of our ``UserController``:
-```php
-<?php
-
-namespace App\Http\Controllers;
-
-use App\Repositories\UserRepository;
+use App\Models\User;
+use App\Http\Resources\UserResource;
+use Fouladgar\EloquentBuilder\EloquentBuilder as Builder;
+use Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class UserController
 {
-
-    protected $users;
-
-    public function __construct(UserRepository $users)
+    public function index(Request $request, User $user, Builder $builder)
     {
-        $this->users = $users;
-    }
+        $users = $user->newQuery()->where('is_active', true);
+        try {
+            $builder->to($users, $request->filter);
+        } catch (NotFoundFilterException $filterException) {
+            //...
+        }
 
-    public function index(Request $request)
-    {
-        return $this->users->filters($request->filters)->get();
+        return UserResource::collection($users->get());
     }
 }
 ```
+That's it.
 ## Testing
 ```sh
 composer test

@@ -73,18 +73,19 @@ class ServiceProvider extends BaseServiceProvider
     {
         Collection::macro('getFilters', function () {
             $filters = $this->filter(static function ($value, $filter) {
-                if (is_array($value)) {
-                    $result = [];
-                    array_walk_recursive($value, static function ($val) use (&$result) {
+                if (!is_array($value)) {
+                    return ! is_int($filter) && (isset($value) && strlen($value) !== 0);
+                }
+
+                $result = [];
+                array_walk_recursive($value,
+                    static function ($val) use (&$result) {
                         if (isset($val) && strlen($val) !== 0) {
                             $result[] = $val;
                         }
                     });
 
-                    return ! empty($result);
-                }
-
-                return ! is_int($filter) && (isset($value) && strlen($value) !== 0);
+                return !empty($result);
             });
 
             return $filters->all();

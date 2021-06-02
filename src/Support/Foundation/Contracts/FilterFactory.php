@@ -26,14 +26,4 @@ interface FilterFactory
      * @return FilterFactoryConcrete
      */
     public function setCustomNamespace(string $namespace = ''): FilterFactoryConcrete;
-
-    /**
-     * @param string $namespace
-     */
-    public function setNamespace(string $namespace): void;
-
-    /**
-     * @return string
-     */
-    public function getCustomNamespace(): string;
 }

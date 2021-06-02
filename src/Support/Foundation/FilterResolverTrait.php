@@ -11,32 +11,32 @@ trait FilterResolverTrait
      * Resolve namespace filters.
      *
      * @param string $filter
-     * @param Model  $model
+     * @param Model $model
+     *
+     * @return string
      */
-    private function resolveFilter(string $filter, Model $model): void
+    private function resolveFilter(string $filter, Model $model): string
     {
-        $namespace = $this->sanitizeNamespace($this->resolveNamespace($filter, $model));
-
-        $this->setNamespace($namespace);
+        return $this->sanitizeNamespace($this->resolveNamespace($filter, $model));
     }
 
     /**
      * Resolve default or custom namespace.
      *
      * @param string $filter
-     * @param Model  $model
+     * @param Model $model
      *
      * @return string
      */
     private function resolveNamespace(string $filter, Model $model): string
     {
-        if ($custom = $this->getCustomNamespace()) {
-            return $custom.'\\'.$this->resolveFilterName($filter);
+        if ($custom = $this->customNamespace) {
+            return $custom . '\\' . $this->resolveFilterName($filter);
         }
 
         $config = config('eloquent-builder.namespace', 'App\\EloquentFilters\\');
 
-        return $config.class_basename($model).'\\'.$this->resolveFilterName($filter);
+        return $config . class_basename($model) . '\\' . $this->resolveFilterName($filter);
     }
 
     /**
@@ -58,6 +58,6 @@ trait FilterResolverTrait
      */
     private function resolveFilterName(string $filter): string
     {
-        return Str::studly($filter).'Filter';
+        return Str::studly($filter) . 'Filter';
     }
 }
