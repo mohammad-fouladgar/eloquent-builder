@@ -1,6 +1,6 @@
 name: run-tests
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   test:
@@ -8,25 +8,33 @@ jobs:
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
     strategy:
       matrix:
-        php: [8.0, 7.4, 7.3]
-        laravel: [8.*, 7.*, 6.*]
-        dependency-version: [prefer-lowest, prefer-stable]
+        php: [ 8.0, 7.4, 7.3 ]
+        laravel: [ 8.*, 7.*, 6.* ]
+        dependency-version: [ prefer-lowest, prefer-stable ]
         include:
-              - laravel: 8.*
-                testbench: ^6.3
-              - laravel: 7.*
-                testbench: ^5.8
-              - laravel: 6.*
-                testbench: ^4.9
-    steps:
-    - uses: actions/checkout@v1
+          - laravel: 8.*
+            testbench: ^6.3
+          - laravel: 7.*
+            testbench: ^5.8
+          - laravel: 6.*
+            testbench: ^4.9
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate
-   
-    - name: Install dependencies
-      run: |
-            composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-suggest --no-interaction --no-update
-            composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
-    - name: Run test suite
-      run: composer test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-suggest --no-interaction --no-update
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
+
+      - name: Run test suite
+        run: composer test
