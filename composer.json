@@ -30,7 +30,7 @@
     "phpunit/phpunit": "^9.3",
     "laravel/legacy-factories": "^1.0.4",
     "orchestra/testbench": "^4.0|^5.0|^6.0",
-    "mockery/mockery": "^1.0.0",
+    "mockery/mockery": "^1.4",
     "php-coveralls/php-coveralls": "^2.1"
   },
   "autoload": {
