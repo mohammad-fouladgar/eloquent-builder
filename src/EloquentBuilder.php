@@ -22,7 +22,7 @@ class EloquentBuilder
         /** @var Builder $query */
         $query = $this->resolveQuery($query);
 
-        if (!$filters) {
+        if (! $filters) {
             return $query;
         }
 

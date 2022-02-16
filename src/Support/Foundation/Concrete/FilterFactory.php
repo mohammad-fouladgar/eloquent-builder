@@ -24,13 +24,13 @@ class FilterFactory implements Factory
     {
         $this->namespace = $this->resolveFilter($filter, $model);
 
-        if (!$this->filterExists()) {
+        if (! $this->filterExists()) {
             $this->notFoundFilter();
         }
 
         $filter = app($this->namespace);
 
-        if (!$filter instanceof Filter) {
+        if (! $filter instanceof Filter) {
             $this->invalidFilter();
         }
 

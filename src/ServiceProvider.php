@@ -52,15 +52,15 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->app->bind(Factory::class, FilterFactory::class);
 
-        $this->app->singleton('eloquentbuilder', static fn() => new EloquentBuilder(new FilterFactory()));
+        $this->app->singleton('eloquentbuilder', static fn () => new EloquentBuilder(new FilterFactory()));
     }
 
     private function registerMacros()
     {
         Collection::macro('getFilters', function () {
             $filters = $this->filter(static function ($value, $filter) {
-                if (!is_array($value)) {
-                    return !is_int($filter) && (isset($value) && strlen($value) !== 0);
+                if (! is_array($value)) {
+                    return ! is_int($filter) && (isset($value) && strlen($value) !== 0);
                 }
 
                 $result = [];
@@ -73,7 +73,7 @@ class ServiceProvider extends BaseServiceProvider
                     }
                 );
 
-                return !empty($result);
+                return ! empty($result);
             });
 
             return $filters->all();

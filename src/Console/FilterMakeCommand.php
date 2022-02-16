@@ -22,7 +22,7 @@ class FilterMakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected  $description = 'Create a new EloquentBuilder filter';
+    protected $description = 'Create a new EloquentBuilder filter';
 
     /**
      * The type of class being generated.
