@@ -93,7 +93,6 @@ You can install the package via composer:
 ```shell
 composer require mohammad-fouladgar/eloquent-builder
 ```
-> Laravel 5.5 uses Package Auto-Discovery, so you are not required to add ServiceProvider manually.
 
 ### Lumen
 
@@ -120,11 +119,11 @@ After uncommenting this line you have the ``EloquentBuilder`` facade enabled
 $app->withFacades();
 ```
 
-Publish the configuration file 
+Publish the configuration file
 ```shell
 php artisan eloquent-builder:publish
 ```
-and  add the configuration to the ``bootstrap/app.php`` file 
+and  add the configuration to the ``bootstrap/app.php`` file
 ```php
 $app->configure('eloquent-builder');
 ...
@@ -159,7 +158,7 @@ return [
      | Eloquent Filter Settings
      |--------------------------------------------------------------------------
      |
-     | This is the namespace all you Eloquent Model Filters will reside
+     | Here you should specify default all you Eloquent Model Filters.
      |
      */
     'namespace' => 'App\\EloquentFilters\\',
@@ -209,7 +208,7 @@ $stores = EloquentBuilder::setFilterNamespace('Domains\\Store\\Filters')
                         ->to(\Domains\Entities\Store::class, $filters)->get();
 ```
 
-> **Note**: When using `setFilterNamespace()`, default namespace and config file will be ignored. 
+> **Note**: When using `setFilterNamespace()`, default namespace and config file will be ignored.
 
 ## Define a Filter
 Writing a filter is simple. Define a class that `extends` the `Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter` abstract class. This class requires you to implement one method: ``apply``. The ``apply`` method may add where constraints to the query as needed.
@@ -272,10 +271,10 @@ $users = EloquentBuilder::to($query, request()->all())->where('city', 'london')-
 $users = EloquentBuilder::to(new \App\User(), request()->filter)->get();
 ```
 
-> **Tip**: It's recommended to put your query params inside a filter key as below: 
+> **Tip**: It's recommended to put your query params inside a filter key as below:
  ```
  user/search?filter[age_more_than]=25&filter[gender]=male
- ```              
+ ```
 And then use them this way: `request()->filter`.
 
 ## Authorizing Filter
