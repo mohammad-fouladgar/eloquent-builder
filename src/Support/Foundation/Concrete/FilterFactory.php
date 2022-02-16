@@ -13,19 +13,9 @@ class FilterFactory implements Factory
 {
     use FilterResolverTrait;
 
-    /**
-     * Namespace of the model filter.
-     *
-     * @var string
-     */
-    protected $namespace = '';
+    protected string $namespace = '';
 
-    /**
-     * Custom filters namespace.
-     *
-     * @var string
-     */
-    protected $customNamespace = '';
+    protected string $customNamespace = '';
 
     /**
      * {@inheritdoc}
@@ -34,13 +24,13 @@ class FilterFactory implements Factory
     {
         $this->namespace = $this->resolveFilter($filter, $model);
 
-        if (! $this->filterExists()) {
+        if (!$this->filterExists()) {
             $this->notFoundFilter();
         }
 
         $filter = app($this->namespace);
 
-        if (! $filter instanceof Filter) {
+        if (!$filter instanceof Filter) {
             $this->invalidFilter();
         }
 
@@ -57,39 +47,27 @@ class FilterFactory implements Factory
         return $this;
     }
 
-    /**
-     * Check if a filter exists.
-     *
-     * @return bool
-     */
     protected function filterExists(): bool
     {
         return class_exists($this->namespace);
     }
 
     /**
-     * Handle a not found filter.
-     *
      * @throws NotFoundFilterException
      */
     protected function notFoundFilter(): void
     {
-        throw new NotFoundFilterException('Not found the filter: ' . $this->filterBasename());
+        throw new NotFoundFilterException('Not found the filter: '.$this->filterBasename());
     }
 
     /**
-     * Handle a failed implementation filter.
-     *
      * @throws InvalidArgumentException
      */
     protected function invalidFilter(): void
     {
-        throw new InvalidArgumentException('The ' . $this->filterBasename() . ' filter must be an instance of Filter.');
+        throw new InvalidArgumentException('The '.$this->filterBasename().' filter must be an instance of Filter.');
     }
 
-    /**
-     * @return string
-     */
     private function filterBasename(): string
     {
         return class_basename($this->namespace);

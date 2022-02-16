@@ -30,13 +30,13 @@ class CustomFilterTest extends TestCase
      */
     public function it_can_resolve_namespaces_per_domain(): void
     {
-        factory(User::class)->create(['age' => 15]);
-        factory(User::class)->create(['age' => 20]);
-        factory(User::class)->create(['age' => 30]);
-        factory(User::class)->create(['age' => 40]);
+        User::factory()->create(['age' => 15]);
+        User::factory()->create(['age' => 20]);
+        User::factory()->create(['age' => 30]);
+        User::factory()->create(['age' => 40]);
 
-        factory(Post::class, 3)->state('true')->create(['user_id' => 20]);
-        factory(Post::class, 2)->state('false')->create(['user_id' => 20]);
+        Post::factory(3)->create(['user_id' => 20, 'is_published' => true]);
+        Post::factory(2)->create(['user_id' => 20, 'is_published' => false]);
 
         $users = $this->eloquentBuilder->setFilterNamespace('Fouladgar\\EloquentBuilder\\Tests\\UserDomain\\CustomFilters\\')
                                        ->to(User::class, ['age_more_than' => 25])

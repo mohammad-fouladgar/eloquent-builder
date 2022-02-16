@@ -22,20 +22,20 @@
   ],
   "license": "MIT",
   "require": {
-    "php": "^7.3 || ^8.0 || ^8.1",
-    "illuminate/database": "~6.0|~7.0|~8.0|~9.0",
-    "illuminate/support": "~6.0|~7.0|~8.0|~9.0"
+    "php": "^8.0",
+    "illuminate/database": "^9.0",
+    "illuminate/support": "^9.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.3",
-    "laravel/legacy-factories": "^1.0.4",
-    "orchestra/testbench": "^4.0|^5.0|^6.0|^7.0",
+    "orchestra/testbench": "^7.0",
     "mockery/mockery": "^1.4",
     "php-coveralls/php-coveralls": "^2.1"
   },
   "autoload": {
     "psr-4": {
-      "Fouladgar\\EloquentBuilder\\": "src/"
+      "Fouladgar\\EloquentBuilder\\": "src/",
+      "Fouladgar\\EloquentBuilder\\Database\\Factories\\": "database/factories"
     }
   },
   "autoload-dev": {

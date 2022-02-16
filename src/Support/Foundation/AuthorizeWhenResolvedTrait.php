@@ -11,19 +11,17 @@ trait AuthorizeWhenResolvedTrait
      *
      * @throws AuthorizationException
      */
-    public function authorizeResolved()
+    public function authorizeResolved(): void
     {
-        if (! $this->passesAuthorization()) {
+        if (!$this->passesAuthorization()) {
             $this->failedAuthorization();
         }
     }
 
     /**
      * Determine if the filter passes the authorization check.
-     *
-     * @return bool
      */
-    protected function passesAuthorization()
+    protected function passesAuthorization(): bool
     {
         if (method_exists($this, 'authorize')) {
             return $this->authorize();
@@ -35,7 +33,7 @@ trait AuthorizeWhenResolvedTrait
     /**
      * Handle a failed authorization attempt.
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     protected function failedAuthorization()
     {

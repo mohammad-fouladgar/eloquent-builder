@@ -7,57 +7,29 @@ use Illuminate\Support\Str;
 
 trait FilterResolverTrait
 {
-    /**
-     * Resolve namespace filters.
-     *
-     * @param string $filter
-     * @param Model $model
-     *
-     * @return string
-     */
     private function resolveFilter(string $filter, Model $model): string
     {
         return $this->sanitizeNamespace($this->resolveNamespace($filter, $model));
     }
 
-    /**
-     * Resolve default or custom namespace.
-     *
-     * @param string $filter
-     * @param Model $model
-     *
-     * @return string
-     */
     private function resolveNamespace(string $filter, Model $model): string
     {
         if ($custom = $this->customNamespace) {
-            return $custom . '\\' . $this->resolveFilterName($filter);
+            return $custom.'\\'.$this->resolveFilterName($filter);
         }
 
         $config = config('eloquent-builder.namespace', 'App\\EloquentFilters\\');
 
-        return $config . class_basename($model) . '\\' . $this->resolveFilterName($filter);
+        return $config.class_basename($model).'\\'.$this->resolveFilterName($filter);
     }
 
-    /**
-     * Sanitizing a namespace.
-     *
-     * @param $namespace
-     *
-     * @return string|string[]
-     */
-    private function sanitizeNamespace($namespace)
+    private function sanitizeNamespace(string $namespace): array|string
     {
         return str_replace('\\\\', '\\', $namespace);
     }
 
-    /**
-     * @param string $filter
-     *
-     * @return string
-     */
     private function resolveFilterName(string $filter): string
     {
-        return Str::studly($filter) . 'Filter';
+        return Str::studly($filter).'Filter';
     }
 }

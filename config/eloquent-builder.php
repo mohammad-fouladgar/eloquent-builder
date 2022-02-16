@@ -6,7 +6,7 @@ return [
      | Eloquent Filter Settings
      |--------------------------------------------------------------------------
      |
-     | This is the namespace all you Eloquent Model Filters will reside
+     | Here you should specify default all you Eloquent Model Filters.
      |
      */
     'namespace' => 'App\\EloquentFilters\\',

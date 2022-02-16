@@ -7,15 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class NameFilter extends Filter
 {
-    /**
-     * Undocumented function.
-     *
-     * @param Builder $builder
-     * @param mixed   $value
-     *
-     * @return Builder
-     */
-    public function apply(Builder $builder, $value): Builder
+    public function apply(Builder $builder, mixed $value): Builder
     {
         return $builder->where('name', 'like', "%{$value}%");
     }

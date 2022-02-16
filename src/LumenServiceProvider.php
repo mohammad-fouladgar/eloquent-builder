@@ -6,9 +6,6 @@ use Fouladgar\EloquentBuilder\Console\PublishCommand;
 
 class LumenServiceProvider extends ServiceProvider
 {
-    /**
-     * Register facade.
-     */
     public function register(): void
     {
         static $facadeRegistered = false;
@@ -22,9 +19,6 @@ class LumenServiceProvider extends ServiceProvider
         parent::register();
     }
 
-    /**
-     * Register the helper command to publish the config file.
-     */
     protected function registerConsole(): void
     {
         parent::registerConsole();

@@ -26,9 +26,9 @@ class LumenEloquentBuilderTest extends TestCase
     /** @test */
     public function test_simple_filter()
     {
-        factory(User::class)->create(['age' => 10]);
-        factory(User::class)->create(['age' => 15]);
-        factory(User::class)->create(['age' => 20]);
+        User::factory()->create(['age' => 10]);
+        User::factory()->create(['age' => 15]);
+        User::factory()->create(['age' => 20]);
 
         $users = $this->eloquentBuilder->to(User::class, ['age_more_than' => 10])->get();
 

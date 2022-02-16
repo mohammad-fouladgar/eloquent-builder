@@ -7,20 +7,12 @@ use Illuminate\Database\Eloquent\Builder;
 
 class AgeMoreThanFilter extends Filter
 {
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Undocumented function.
-     *
-     * @param Builder $builder
-     * @param mixed   $value
-     *
-     * @return Builder
-     */
-    public function apply(Builder $builder, $value): Builder
+    public function apply(Builder $builder, mixed $value): Builder
     {
         return $builder->where('age', '>', $value);
     }

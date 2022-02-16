@@ -8,6 +8,7 @@ use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterFactory;
 use Fouladgar\EloquentBuilder\Tests\Models\Post;
 use Fouladgar\EloquentBuilder\Tests\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use InvalidArgumentException;
 
 /**
  * @property EloquentBuilder eloquentBuilder
@@ -45,7 +46,7 @@ class EloquentBuilderTest extends TestCase
      */
     public function it_should_return_invalid_argument_exception()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->eloquentBuilder->to(User::class, ['invalid_implemented' => 'any_value']);
     }
@@ -70,7 +71,7 @@ class EloquentBuilderTest extends TestCase
     /** @test */
     public function it_can_make_with_existing_query()
     {
-        factory(User::class)->create(['age' => 30, 'gender' => 'male']);
+        User::factory()->create(['age' => 30, 'gender' => 'male']);
 
         $users = $this->eloquentBuilder->to(
             User::where('age', '>', 20),
@@ -88,11 +89,11 @@ class EloquentBuilderTest extends TestCase
     /** @test */
     public function it_can_get_user_list_where_age_more_than_25()
     {
-        factory(User::class)->create(['age' => 15]);
-        factory(User::class)->create(['age' => 20]);
-        factory(User::class)->create(['age' => 22]);
-        factory(User::class)->create(['age' => 30]);
-        factory(User::class)->create(['age' => 40]);
+        User::factory()->create(['age' => 15]);
+        User::factory()->create(['age' => 20]);
+        User::factory()->create(['age' => 22]);
+        User::factory()->create(['age' => 30]);
+        User::factory()->create(['age' => 40]);
 
         $users = $this->eloquentBuilder->to(User::class, ['age_more_than' => 25])->get();
 
@@ -102,16 +103,16 @@ class EloquentBuilderTest extends TestCase
     /** @test */
     public function it_can_get_all_users_that_have_at_least_one_published_post()
     {
-        factory(User::class, 3)
+        User::factory(3)
             ->create()
             ->each(function ($user) {
-                $user->posts()->save(factory(Post::class)->make(['is_published' => true]));
+                $user->posts()->save(Post::factory()->make(['is_published' => true]));
             });
 
-        factory(User::class, 2)
+        User::factory(2)
             ->create()
             ->each(function ($user) {
-                $user->posts()->save(factory(Post::class)->make(['is_published' => false]));
+                $user->posts()->save(Post::factory()->make(['is_published' => false]));
             });
 
         $users = $this->eloquentBuilder->to(User::class, ['published_post' => true])->get();
@@ -124,10 +125,10 @@ class EloquentBuilderTest extends TestCase
     /** @test */
     public function it_can_get_female_users_over_30_years_old()
     {
-        factory(User::class)->create(['gender' => 'male', 'age' => 31]);
-        factory(User::class)->create(['gender' => 'female', 'age' => 25]);
-        factory(User::class)->create(['gender' => 'female', 'age' => 35]);
-        factory(User::class)->create(['gender' => 'female', 'age' => 40]);
+        User::factory()->create(['gender' => 'male', 'age' => 31]);
+        User::factory()->create(['gender' => 'female', 'age' => 25]);
+        User::factory()->create(['gender' => 'female', 'age' => 35]);
+        User::factory()->create(['gender' => 'female', 'age' => 40]);
 
         $users = $this->eloquentBuilder->to(User::class, ['age_more_than' => 30, 'gender' => 'female'])->get();
 
@@ -137,13 +138,13 @@ class EloquentBuilderTest extends TestCase
     /** @test */
     public function it_can_ignore_filters_lacking_value()
     {
-        factory(User::class, 1)
+        User::factory()
             ->create()
             ->each(function ($user) {
-                $user->posts()->save(factory(Post::class)->make(['is_published' => true]));
+                $user->posts()->save(Post::factory()->make(['is_published' => true]));
             });
 
-        factory(User::class)->create();
+        User::factory()->create();
 
         $users = $this->eloquentBuilder->to(
             User::class,

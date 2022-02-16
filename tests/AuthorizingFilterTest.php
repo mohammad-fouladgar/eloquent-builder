@@ -29,7 +29,7 @@ class AuthorizingFilterTest extends TestCase
     {
         $this->expectException(AuthorizationException::class);
 
-        factory(User::class)->create(['status' => 'online']);
+        User::factory()->create(['status' => 'online']);
 
         $this->eloquentBuilder->to(User::class, ['status' => 'online'])->count();
     }
@@ -37,8 +37,8 @@ class AuthorizingFilterTest extends TestCase
     /** @test */
     public function it_can_passes_authorize_and_apply_filter()
     {
-        factory(User::class)->create(['age' => 12]);
-        factory(User::class)->create(['age' => 19]);
+        User::factory()->create(['age' => 12]);
+        User::factory()->create(['age' => 19]);
 
         $userCount = $this->eloquentBuilder->to(User::class, ['age_more_than' => 18])->count('id');
 

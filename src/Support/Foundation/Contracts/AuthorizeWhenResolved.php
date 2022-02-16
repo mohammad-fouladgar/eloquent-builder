@@ -7,5 +7,5 @@ interface AuthorizeWhenResolved
     /**
      * Authorize the given filter instance.
      */
-    public function authorizeResolved();
+    public function authorizeResolved(): void;
 }

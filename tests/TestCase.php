@@ -3,6 +3,7 @@
 namespace Fouladgar\EloquentBuilder\Tests;
 
 use Fouladgar\EloquentBuilder\ServiceProvider;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Application;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
@@ -17,7 +18,9 @@ class TestCase extends BaseTestCase
 
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
 
-        $this->withFactories(__DIR__.'/database/factories');
+        Factory::guessFactoryNamesUsing(
+            fn (string $modelName) => 'Fouladgar\\EloquentBuilder\\Database\\Factories\\'.class_basename($modelName).'Factory'
+        );
     }
 
     /**
@@ -27,21 +30,6 @@ class TestCase extends BaseTestCase
      */
     protected function getEnvironmentSetUp($app): void
     {
-        // $app['config']->set('database.default', 'mysql');
-        // $app['config']->set('database.connections.mysql', [
-        //     'driver'       => 'mysql',
-        //     'host'         => 'mysql',
-        //     'port'         => '3306',
-        //     'database'     => 'eloquent-builder',
-        //     'username'     => 'root',
-        //     'password'     => '',
-        //     'charset'      => 'utf8mb4',
-        //     'collation'    => 'utf8mb4_unicode_ci',
-        //     'prefix'       => '',
-        //     'strict'       => true,
-        //     'engine'       => null,
-        //     ]);
-
         $app['config']->set('eloquent-builder.namespace', 'Fouladgar\\EloquentBuilder\\Tests\\EloquentFilters\\');
     }
 
@@ -50,7 +38,7 @@ class TestCase extends BaseTestCase
      *
      * @return array
      */
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [ServiceProvider::class];
     }

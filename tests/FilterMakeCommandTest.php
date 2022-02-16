@@ -15,10 +15,8 @@ class FilterMakeCommandTest extends TestCase
 
     /**
      * Orchestra app directory path.
-     *
-     * @var string
      */
-    protected $basePath;
+    protected string $basePath;
 
     /**
      * {@inheritdoc}
