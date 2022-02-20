@@ -12,6 +12,16 @@
 This package allows you to build eloquent queries, based on request parameters.
 It greatly reduces the complexity of the queries and conditions, which will make your code clean and maintainable.
 
+## Version Compatibility
+
+Laravel  | EloqunetBuilder
+:---------|:----------
+5.0.x    | 2.2.2
+6.0.x    | 3.0.x
+7.0.x    | 3.0.x
+8.0.x    | 3.0.x
+9.0.x    | 4.0.x
+
 ## Basic Usage
 Suppose you want to get the list of the users with the requested parameters as follows:
 ```php
