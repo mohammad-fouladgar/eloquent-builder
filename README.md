@@ -7,20 +7,18 @@
 ![Test Status](https://img.shields.io/github/workflow/status/mohammad-fouladgar/eloquent-builder/run-tests?label=tests)
 ![Code Style Status](https://img.shields.io/github/workflow/status/mohammad-fouladgar/eloquent-builder/Check%20&%20fix%20styling?label=code%20style)
 [![Total Downloads](https://poser.pugx.org/mohammad-fouladgar/eloquent-builder/downloads)](https://packagist.org/packages/mohammad-fouladgar/eloquent-builder)
-[![License](https://poser.pugx.org/mohammad-fouladgar/eloquent-builder/license)](https://packagist.org/packages/mohammad-fouladgar/eloquent-builder)
 
 This package allows you to build eloquent queries, based on request parameters.
 It greatly reduces the complexity of the queries and conditions, which will make your code clean and maintainable.
 
 ## Version Compatibility
 
-Laravel  | EloqunetBuilder
+Laravel  | EloquentBuilder
 :---------|:----------
-5.0.x    | 2.2.2
-6.0.x    | 3.0.x
-7.0.x    | 3.0.x
-8.0.x    | 3.0.x
-9.0.x    | 4.0.x
+9.0.x          | 4.0.x
+6.0.x to 8.0.x | 3.0.x
+5.0.x          | 2.2.2
+
 
 ## Basic Usage
 Suppose you want to get the list of the users with the requested parameters as follows:
@@ -238,19 +236,14 @@ class AgeMoreThanFilter extends Filter
 {
     /**
      * Apply the age condition to the query.
-     *
-     * @param Builder $builder
-     * @param mixed   $value
-     *
-     * @return Builder
      */
-    public function apply(Builder $builder, $value): Builder
+    public function apply(Builder $builder, mixed $value): Builder
     {
         return $builder->where('age', '>', $value);
     }
 }
 ```
-> Tip: Also, you can easily use [local scopes](https://laravel.com/docs/5.8/eloquent#local-scopes) in your filter. Because they are instance of the query builder.
+> Tip: Also, you can easily use [local scopes](https://laravel.com/docs/5.8/eloquent#local-scopes) in your filter. Because, they are instancing of the query builder.
 
 ### Define filter[s] by artisan command
 If you want to create a filter easily, you can use `eloquent-builder:make` artisan command. This command will accept at least two arguments which are `Model` and `Filter`:
@@ -293,8 +286,6 @@ The filter class also contains an `authorize` method. Within this method, you ma
 ```php
 /**
  * Determine if the user is authorized to make this filter.
- *
- * @return bool
  */
  public function authorize(): bool
  {
