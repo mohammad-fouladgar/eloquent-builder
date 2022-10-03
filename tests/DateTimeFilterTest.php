@@ -151,9 +151,9 @@ class DateTimeFilterTest extends TestCase
      */
     public function it_can_throw_validate_convention_exception_if_dates_are_not_a_valid_date(): void
     {
-//        $this->expectException(ValidateConventionException::class);
+        $this->expectException(ValidateConventionException::class);
         $this->eloquentBuilder
-            ->to(User::class, ['birth_date' => 'between:2016-01-01, 2017-001-01'])
+            ->to(User::class, ['birth_date' => 'between:2016-01-01,2017-001-01'])
             ->get(['id', 'birth_date']);
 
 
