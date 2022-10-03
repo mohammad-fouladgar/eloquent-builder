@@ -154,6 +154,11 @@ class NumberFilterTest extends TestCase
         $this->eloquentBuilder
             ->to(User::class, ['score' => ['invalid_numeric_1', 'invalid_numeric_2']])
             ->get(['id', 'score']);
+
+        $this->expectException(ValidateConventionException::class);
+        $this->eloquentBuilder
+            ->to(User::class, ['score' => 'invalid_numeric_1,invalid_numeric_2'])
+            ->get(['id', 'score']);
     }
 
     /**

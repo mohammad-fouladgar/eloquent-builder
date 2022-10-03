@@ -14,7 +14,7 @@ class FilterConventionParser
 
         [$operator, $value] = explode(':', $convention, 2);
 
-        return [Str::studly(trim($operator)), $value];
+        return [Str::studly(trim($operator)), trim($value)];
     }
 
     public static function parseStringValue(string $value): array|string
@@ -23,6 +23,6 @@ class FilterConventionParser
             return $value;
         }
 
-        return explode(',', $value);
+        return array_map('trim', explode(',', $value));
     }
 }
