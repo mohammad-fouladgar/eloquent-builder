@@ -8,7 +8,6 @@ use Throwable;
 
 class ValidatesConventionValues
 {
-
     private static string $exception = ValidateConventionException::class;
 
     /**
@@ -30,7 +29,7 @@ class ValidatesConventionValues
         $exceptionMessage = sprintf("The %s is not a valid date.", $column);
 
         throw_if(
-            ((!is_string($value) && !is_numeric($value)) || strtotime($value) === false),
+            ((! is_string($value) && ! is_numeric($value)) || strtotime($value) === false),
             static::$exception,
             $exceptionMessage
         );
@@ -38,7 +37,7 @@ class ValidatesConventionValues
         $date = date_parse($value);
 
         throw_if(
-            !checkdate($date['month'], $date['day'], $date['year']),
+            ! checkdate($date['month'], $date['day'], $date['year']),
             static::$exception,
             $exceptionMessage
         );
@@ -57,7 +56,7 @@ class ValidatesConventionValues
         }
 
         throw_if(
-            !is_numeric($value),
+            ! is_numeric($value),
             static::$exception,
             sprintf("The %s is not a valid number.", $column)
         );
@@ -69,13 +68,13 @@ class ValidatesConventionValues
     public static function validateSortable(string $column, string $direction, array $sortable): void
     {
         throw_if(
-            !in_array($column, $sortable),
+            ! in_array($column, $sortable),
             static::$exception,
             sprintf("The selected %s column is invalid", $column)
         );
 
         throw_if(
-            !in_array($direction, ['asc', 'desc']),
+            ! in_array($direction, ['asc', 'desc']),
             static::$exception,
             'The selected sort direction is invalid'
         );

@@ -81,5 +81,4 @@ class SortableFilterTest extends TestCase
             ->to(User::class, ['sort_by' => ['birth_date' => 'DSC', 'score' => 'asc']])
             ->select(['id', 'birth_date', 'score']);
     }
-
 }

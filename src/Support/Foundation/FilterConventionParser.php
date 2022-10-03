@@ -8,7 +8,7 @@ class FilterConventionParser
 {
     public static function parseStringConvention(string $convention): array
     {
-        if (!str_contains($convention, ':')) {
+        if (! str_contains($convention, ':')) {
             return [];
         }
 
@@ -19,7 +19,7 @@ class FilterConventionParser
 
     public static function parseStringValue(string $value): array|string
     {
-        if (!str_contains($value, ',')) {
+        if (! str_contains($value, ',')) {
             return $value;
         }
 

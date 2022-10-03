@@ -17,7 +17,6 @@ trait SortableTrait
      */
     protected function applySort(Builder $builder, mixed $value): Builder
     {
-
         Arr::isList($value) ?
             $this->sortByConventionValues($builder, $value) :
             $this->sortByAssociatedValues($builder, $value);
@@ -32,9 +31,9 @@ trait SortableTrait
     {
         foreach ($value as $convention) {
             $parsedConvention = FilterConventionParser::parseStringConvention($convention);
-            if (!count($parsedConvention)) {
+            if (! count($parsedConvention)) {
                 $direction = 'asc';
-                $column    = $convention;
+                $column = $convention;
             } else {
                 [$column, $direction] = $parsedConvention;
             }
@@ -58,7 +57,7 @@ trait SortableTrait
      */
     protected function prepareSort(Builder $builder, string $column, string $direction): void
     {
-        $column    = Str::lower(Str::snake($column));
+        $column = Str::lower(Str::snake($column));
         $direction = Str::lower($direction);
         ValidatesConventionValues::validateSortable($column, $direction, $this->sortable ?? []);
 

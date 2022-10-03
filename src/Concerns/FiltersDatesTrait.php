@@ -21,7 +21,7 @@ trait FiltersDatesTrait
             ['Between', implode(',', $value)] :
             FilterConventionParser::parseStringConvention($value);
 
-        if (!count($parsedConvention)) {
+        if (! count($parsedConvention)) {
             return $this->applyDefaultFilter($builder, $value, $column);
         }
 
@@ -34,7 +34,7 @@ trait FiltersDatesTrait
         $method = "filter{$operator}Date";
 
         throw_if(
-            !method_exists(static::class, $method),
+            ! method_exists(static::class, $method),
             BadMethodCallException::class,
             sprintf('Method %s::%s does not exist.', static::class, $method)
         );
