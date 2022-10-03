@@ -35,6 +35,7 @@ class ValidatesConventionValues
             $exceptionMessage
         );
 
+        dump($value);
         $date = date_parse($value);
 
         throw_if(
