@@ -156,15 +156,15 @@ class DateTimeFilterTest extends TestCase
             ->to(User::class, ['birth_date' => 'between:2016-01-01, 2017-001-01'])
             ->get(['id', 'birth_date']);
 
-        $this->expectException(ValidateConventionException::class);
-        $this->eloquentBuilder
-            ->to(User::class, ['birth_date' => ['2016-01-01', '2017-001-01']])
-            ->get(['id', 'birth_date']);
-
-        $this->expectException(ValidateConventionException::class);
-        $this->eloquentBuilder
-            ->to(User::class, ['birth_date' => '2016-01-01,2017-001-01'])
-            ->get(['id', 'birth_date']);
+//        $this->expectException(ValidateConventionException::class);
+//        $this->eloquentBuilder
+//            ->to(User::class, ['birth_date' => ['2016-01-01', '2017-001-01']])
+//            ->get(['id', 'birth_date']);
+//
+//        $this->expectException(ValidateConventionException::class);
+//        $this->eloquentBuilder
+//            ->to(User::class, ['birth_date' => '2016-01-01,2017-001-01'])
+//            ->get(['id', 'birth_date']);
     }
 
     /**
