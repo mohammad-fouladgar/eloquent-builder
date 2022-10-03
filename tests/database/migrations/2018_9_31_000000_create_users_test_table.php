@@ -17,6 +17,8 @@ class CreateUsersTestTable extends Migration
             $table->string('age');
             $table->enum('gender', ['male', 'female']);
             $table->enum('status', ['offline', 'online']);
+            $table->date('birth_date')->nullable();
+            $table->decimal('score', 10, 1)->default(0);
         });
     }
 
