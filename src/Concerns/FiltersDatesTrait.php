@@ -33,13 +33,19 @@ trait FiltersDatesTrait
 
         $method = "filter{$operator}Date";
 
+        return $this->$method($builder, $date, $column);
+    }
+
+    /**
+     * @throws Throwable|BadMethodCallException
+     */
+    public function __call(string $method, array $arguments)
+    {
         throw_if(
             ! method_exists(static::class, $method),
             BadMethodCallException::class,
             sprintf('Method %s::%s does not exist.', static::class, $method)
         );
-
-        return $this->$method($builder, $date, $column);
     }
 
     protected function filterBetweenDate(Builder $builder, array $dates, string $column): Builder

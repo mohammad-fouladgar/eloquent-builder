@@ -33,13 +33,19 @@ trait FiltersNumbersTrait
 
         $method = "filter{$operator}Number";
 
+        return $this->$method($builder, $number, $column);
+    }
+
+    /**
+     * @throws Throwable|BadMethodCallException
+     */
+    public function __call(string $method, array $arguments)
+    {
         throw_if(
             ! method_exists(static::class, $method),
             BadMethodCallException::class,
             sprintf('Method %s::%s does not exist.', static::class, $method)
         );
-
-        return $this->$method($builder, $number, $column);
     }
 
     protected function filterBetweenNumber(Builder $builder, array $numbers, string $column): Builder

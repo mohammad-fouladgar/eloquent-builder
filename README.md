@@ -330,12 +330,12 @@ conventions: `between:date1,date2`,`before:date`, `before_or_equal:date`, `after
 ```shell
 api/user/search?birth_date=before:2018-01-01
 
-// These are similar between convention:
+# These are similar between convention:
 api/user/search?birth_date=between:2018-01-01,2022-01-01
-api/article/search?published_at=2018-01-01,2022-01-01 
-api/article/search?published_at[]=2018-01-01&published_at[]=2022-01-01 
+api/article/search?birth_date=2018-01-01,2022-01-01 
+api/article/search?birth_date[]=2018-01-01&published_at[]=2022-01-01 
 
-// These are similar equals convention:
+# These are similar equals convention:
 api/user/search?birth_date=equals:2018-01-01
 api/user/search?birth_date=same:2018-01-01
 api/user/search?birth_date=2018-01-01
@@ -367,19 +367,19 @@ class BirthDateFilter extends Filter
 ### Number filters
 Another predefined filters is Number filters that you can use in your filters. For example, it would be useful for price
 filter,score filters, and any numeric filters. You can follow these numeric conventions:  
-`between:number1,number2`,`gt:number`,`gte:number`,`lt:number`,`lte:number`, and `equals:date`.
+`between:number1,number2`,`gt:number`,`gte:number`,`lt:number`,`lte:number`, and `equals:number`.
 
 **Examples:**
 
 ```shell
 api/user/search?score=gte:500
 
-// These are similar between convention:
+# These are similar between convention:
 api/user/search?score=between:100,1010
 api/article/search?score=100,1010
 api/article/search?score[]=100&score[]=1010
 
-// These are similar equals convention:
+# These are similar equals convention:
 api/user/search?score=equals:2222
 api/user/search?score=2222
 ```
@@ -415,7 +415,7 @@ api/user/search?sort_by[birth_date]=desc&sort_by[id]=asc
 
 api/user/search?sort_by[]=birth_date:desc&sort_by[]=id:asc
 
-// The defult directon is `asc`:
+# The default direction is `asc`:
 api/user/search?sort_by[]=birth_date
 ```
 For example make a `SortByFilter` and use the `Fouladgar\EloquentBuilder\Concerns\SortableTrait` trait. 
