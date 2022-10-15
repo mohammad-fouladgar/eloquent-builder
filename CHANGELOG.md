@@ -1,3 +1,5 @@
+## 4.1.0 - 2022-10-03
+ - Add support predefined filters
 ## 4.0.0 - 2022-02-16
 - Add Support PHP 8.0 and Laravel 9.0
 - Deprecated PHP <= 7.* and Laravel <=8.*
