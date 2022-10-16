@@ -333,7 +333,7 @@ api/user/search?birth_date=before:2018-01-01
 # These are similar between convention:
 api/user/search?birth_date=between:2018-01-01,2022-01-01
 api/article/search?birth_date=2018-01-01,2022-01-01 
-api/article/search?birth_date[]=2018-01-01&published_at[]=2022-01-01 
+api/article/search?birth_date[]=2018-01-01&birth_date[]=2022-01-01 
 
 # These are similar equals convention:
 api/user/search?birth_date=equals:2018-01-01
