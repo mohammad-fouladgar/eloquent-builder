@@ -1,3 +1,5 @@
+## 4.2.0 - 2023-02-28
+ - Add support Laravel 10.x
 ## 4.1.0 - 2022-10-03
  - Add support predefined filters
 ## 4.0.0 - 2022-02-16
