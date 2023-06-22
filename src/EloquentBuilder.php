@@ -53,7 +53,7 @@ class EloquentBuilder
      */
     public function thenApply(): Builder
     {
-        if (!count($this->filters)) {
+        if (! count($this->filters)) {
             return $this->builder;
         }
 
@@ -73,7 +73,7 @@ class EloquentBuilder
 
         $filters = $this->filters ?: $filters;
 
-        if (!$filters) {
+        if (! $filters) {
             return $query;
         }
 

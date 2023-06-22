@@ -50,15 +50,15 @@ class ServiceProvider extends BaseServiceProvider
 
     private function registerBindings()
     {
-        $this->app->singleton('eloquentbuilder', fn(Application $app) => new EloquentBuilder($app->make(Pipeline::class)));
+        $this->app->singleton('eloquentbuilder', fn (Application $app) => new EloquentBuilder($app->make(Pipeline::class)));
     }
 
     private function registerMacros()
     {
         Collection::macro('getFilters', function () {
             $filters = $this->filter(static function ($value, $filter) {
-                if (!is_array($value)) {
-                    return !is_int($filter) && (isset($value) && strlen($value) !== 0);
+                if (! is_array($value)) {
+                    return ! is_int($filter) && (isset($value) && strlen($value) !== 0);
                 }
 
                 $result = [];
@@ -71,7 +71,7 @@ class ServiceProvider extends BaseServiceProvider
                     }
                 );
 
-                return !empty($result);
+                return ! empty($result);
             });
 
             return $filters->all();

@@ -92,7 +92,7 @@ class Pipeline extends BasePipeline
     private static function notFoundFilterHandler($filterClass): void
     {
         throw_if(
-            !class_exists($filterClass),
+            ! class_exists($filterClass),
             NotFoundFilterException::class,
             'Not found the filter: ' . self::filterBasename($filterClass)
         );
@@ -104,7 +104,7 @@ class Pipeline extends BasePipeline
     private static function filterInstanceHandler($pipe, $filterClass): void
     {
         throw_if(
-            !$pipe instanceof Filter,
+            ! $pipe instanceof Filter,
             FilterInstanceException::class,
             'The ' . self::filterBasename($filterClass) . ' filter must be an instance of Filter.'
         );
