@@ -53,7 +53,7 @@ class EloquentBuilder
      */
     public function thenApply(): Builder
     {
-        if (!$this->filters) {
+        if (! $this->filters) {
             return $this->builder;
         }
 
