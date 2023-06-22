@@ -1,3 +1,6 @@
+## 4.3.1 - 2023-06-22
+ - Fix null filters
+ - 
 ## 4.3.0 - 2023-06-22
  - Improve structure and speed.
  - Lumen is unsupported
