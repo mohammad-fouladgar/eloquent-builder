@@ -15,7 +15,7 @@ queries and conditions, which will make your code clean and maintainable.
 
 | Laravel        | EloquentBuilder |
 |:---------------|:----------------|
-| 10.0.x         | 4.2.x , 5.x     |
+| 10.0.x         | 4.2.x           |
 | 9.0.x          | 4.0.x           |
 | 6.0.x to 8.0.x | 3.0.x           |
 | 5.0.x          | 2.2.2           |

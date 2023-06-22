@@ -1,3 +1,8 @@
+## 4.3.0 - 2023-06-22
+ - Improve structure and speed.
+ - Lumen is unsupported
+ - The `to` method is deprecated
+
 ## 4.2.0 - 2023-02-28
  - Add support Laravel 10.x
 ## 4.1.0 - 2022-10-03
