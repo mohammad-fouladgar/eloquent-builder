@@ -12,7 +12,7 @@ class EloquentBuilder
 {
     protected string $filterNamespace = '';
 
-    private array $filters = [];
+    private ?array $filters = null;
 
     private string|null|Builder|EloquentModel $builder = null;
 
@@ -20,7 +20,7 @@ class EloquentBuilder
     {
     }
 
-    public function filters(array $filters = []): static
+    public function filters(array $filters = null): static
     {
         $this->filters = $filters;
 
@@ -53,7 +53,7 @@ class EloquentBuilder
      */
     public function thenApply(): Builder
     {
-        if (! count($this->filters)) {
+        if (!$this->filters) {
             return $this->builder;
         }
 
@@ -66,7 +66,7 @@ class EloquentBuilder
      * @throws FilterException|Throwable
      * @deprecated Please use the `thenApply` method instead of this.
      */
-    public function to(string|EloquentModel|Builder $query = null, array $filters = []): Builder
+    public function to(string|EloquentModel|Builder $query = null, array $filters = null): Builder
     {
         /** @var Builder $query */
         $query = $this->builder ?: $this->resolveQuery($query);
