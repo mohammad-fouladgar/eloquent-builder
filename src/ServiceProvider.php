@@ -3,9 +3,9 @@
 namespace Fouladgar\EloquentBuilder;
 
 use Fouladgar\EloquentBuilder\Console\FilterMakeCommand;
-use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterFactory;
+use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\Pipeline;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\AuthorizeWhenResolved;
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory as Factory;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -40,7 +40,7 @@ class ServiceProvider extends BaseServiceProvider
 
     protected function configPath(): string
     {
-        return __DIR__.'/../config/eloquent-builder.php';
+        return __DIR__ . '/../config/eloquent-builder.php';
     }
 
     protected function registerConsole(): void
@@ -50,17 +50,15 @@ class ServiceProvider extends BaseServiceProvider
 
     private function registerBindings()
     {
-        $this->app->bind(Factory::class, FilterFactory::class);
-
-        $this->app->singleton('eloquentbuilder', static fn () => new EloquentBuilder(new FilterFactory()));
+        $this->app->singleton('eloquentbuilder', fn(Application $app) => new EloquentBuilder($app->make(Pipeline::class)));
     }
 
     private function registerMacros()
     {
         Collection::macro('getFilters', function () {
             $filters = $this->filter(static function ($value, $filter) {
-                if (! is_array($value)) {
-                    return ! is_int($filter) && (isset($value) && strlen($value) !== 0);
+                if (!is_array($value)) {
+                    return !is_int($filter) && (isset($value) && strlen($value) !== 0);
                 }
 
                 $result = [];
@@ -73,7 +71,7 @@ class ServiceProvider extends BaseServiceProvider
                     }
                 );
 
-                return ! empty($result);
+                return !empty($result);
             });
 
             return $filters->all();

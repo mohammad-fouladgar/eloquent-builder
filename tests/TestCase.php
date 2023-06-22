@@ -2,13 +2,17 @@
 
 namespace Fouladgar\EloquentBuilder\Tests;
 
+use Fouladgar\EloquentBuilder\EloquentBuilder;
 use Fouladgar\EloquentBuilder\ServiceProvider;
+use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\Pipeline;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Application;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
+    protected EloquentBuilder $eloquentBuilder;
+
     /**
      * Setup the test environment.
      */
@@ -21,6 +25,8 @@ class TestCase extends BaseTestCase
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Fouladgar\\EloquentBuilder\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
+
+        $this->eloquentBuilder = new EloquentBuilder(app(Pipeline::class));
     }
 
     /**

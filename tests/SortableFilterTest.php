@@ -2,25 +2,11 @@
 
 namespace Fouladgar\EloquentBuilder\Tests;
 
-use Fouladgar\EloquentBuilder\EloquentBuilder;
 use Fouladgar\EloquentBuilder\Exceptions\ValidateConventionException;
-use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterFactory;
 use Fouladgar\EloquentBuilder\Tests\Models\User;
 
 class SortableFilterTest extends TestCase
 {
-    private EloquentBuilder $eloquentBuilder;
-
-    /**
-     * Setup the test environment.
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->eloquentBuilder = new EloquentBuilder(new FilterFactory());
-    }
-
     /**
      * @test
      */
@@ -66,7 +52,7 @@ class SortableFilterTest extends TestCase
     public function it_can_throw_exception_if_selected_column_is_invalid(): void
     {
         $this->expectException(ValidateConventionException::class);
-        $users = $this->eloquentBuilder
+        $this->eloquentBuilder
             ->to(User::class, ['sort_by' => ['id_is_invalid' => 'DESC', 'score' => 'asc']])
             ->select(['id', 'birth_date', 'score']);
     }
@@ -77,7 +63,7 @@ class SortableFilterTest extends TestCase
     public function it_can_throw_exception_if_selected_direction_is_invalid(): void
     {
         $this->expectException(ValidateConventionException::class);
-        $users = $this->eloquentBuilder
+        $this->eloquentBuilder
             ->to(User::class, ['sort_by' => ['birth_date' => 'DSC', 'score' => 'asc']])
             ->select(['id', 'birth_date', 'score']);
     }

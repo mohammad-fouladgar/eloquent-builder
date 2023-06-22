@@ -1,4 +1,4 @@
-# Provides a Eloquent query builder for Laravel or Lumen
+# Provides a Eloquent query builder for Laravel
 
 ![alt text](./cover.jpg "EloquentBuilder")
 
@@ -13,12 +13,12 @@ queries and conditions, which will make your code clean and maintainable.
 
 ## Version Compatibility
 
-Laravel  | EloquentBuilder
-:---------|:----------
-10.0.x         | 4.2.x
-9.0.x          | 4.0.x
-6.0.x to 8.0.x | 3.0.x
-5.0.x          | 2.2.2
+| Laravel        | EloquentBuilder |
+|:---------------|:----------------|
+| 10.0.x         | 4.2.x , 5.x     |
+| 9.0.x          | 4.0.x           |
+| 6.0.x to 8.0.x | 3.0.x           |
+| 5.0.x          | 2.2.2           |
 
 ## Basic Usage
 
@@ -40,7 +40,7 @@ In a __common__ implementation, following code will be expected:
 
 namespace App\Http\Controllers;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -86,9 +86,10 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $users = EloquentBuilder::to(User::class, $request->all());
-
-        return $users->get();
+        return EloquentBuilder::model(User::class)
+            ->filters($request->all())
+            ->thenApply()
+            ->get();
     }
 }
 ```
@@ -96,61 +97,13 @@ class UserController extends Controller
 You just need to [define a filter](#define-a-filter) for each parameter that you want to add to the query.
 
 ### Installation
-
-- [Laravel](#laravel)
-- [Lumen](#lumen)
-
-### Laravel
-
 You can install the package via composer:
 
 ```shell
 composer require mohammad-fouladgar/eloquent-builder
 ```
 
-### Lumen
-
-You can install the package via composer:
-
-```shell
-composer require mohammad-fouladgar/eloquent-builder
-```
-
-For Lumen, add the ``LumenServiceProvider`` to the ``bootstrap/app.php`` file
-
-```php
-/*
-|--------------------------------------------------------------------------
-| Register Service Providers...
-|--------------------------------------------------------------------------
-*/
-
-$app->register(\Fouladgar\EloquentBuilder\LumenServiceProvider::class);
-```
-
-For using the facade you have to uncomment the line  ``$app->withFacades();`` in the ``bootstrap/app.php`` file
-
-After uncommenting this line you have the ``EloquentBuilder`` facade enabled
-
-```php
-$app->withFacades();
-```
-
-Publish the configuration file
-
-```shell
-php artisan eloquent-builder:publish
-```
-
-and add the configuration to the ``bootstrap/app.php`` file
-
-```php
-$app->configure('eloquent-builder');
-...
-$app->register(\Fouladgar\EloquentBuilder\LumenServiceProvider::class);
-```
-
-> **Important** : this needs to be before the registration of the service provider.
+>  **Warning:** The `Lumen` framework is no longer supported!
 
 ### Filters Namespace
 
@@ -236,8 +189,11 @@ In the above example, each domain has its own filters directory. So we can set a
 following:
 
 ```php
-$stores = EloquentBuilder::setFilterNamespace('Domains\\Store\\Filters')
-                        ->to(\Domains\Entities\Store::class, $filters)->get();
+$stores = EloquentBuilder::model(\Domains\Entities\Store::class)
+            ->filters($request->all())
+            ->setFilterNamespace('Domains\\Store\\Filters')
+            ->thenApply()
+            ->get();
 ```
 
 > **Note**: When using `setFilterNamespace()`, default namespace and config file will be ignored.
@@ -297,14 +253,25 @@ You can use filters in multiple approaches:
 <?php
 
 // Use by a model class name
-$users = EloquentBuilder::to(\App\User::class, request()->all())->get();
+// Note: This method is deprecated. 
+$users = EloquentBuilder::to(\App\Models\User::class, request()->all())->get();
 
 // Use by existing query
-$query = \App\User::where('is_active', true);
-$users = EloquentBuilder::to($query, request()->all())->where('city', 'london')->get();
+$query = \App\Models\User::where('is_active', true);
 
-// Use by instance of a model
-$users = EloquentBuilder::to(new \App\User(), request()->filter)->get();
+$users = EloquentBuilder::model($query)
+        ->filters(request()->all())
+        ->thenApply()
+        ->where('city', 'london')
+        ->get();
+
+// Use by instance of a model and push filter
+$users = EloquentBuilder::model(new \App\Models\User())
+        ->filters(request()->filter)
+        ->filter(['age_more_than' => '30'])
+        ->filter(['gender' => 'female'])
+        ->thenApply()
+        ->get();
 ```
 
 > **Tip**: It's recommended to put your query params inside a filter key as below:
@@ -476,7 +443,7 @@ Suppose you have a request something like this:
 ```php
 //Get api/user/search?filter[name]&filter[gender]=null&filter[age_more_than]=''&filter[published_post]=true
 
-EloquentBuilder::to(User::class, $request->filter);
+EloquentBuilder::model(User::class)->filters($request->filter)->thenApply();
 
 // filters result will be:
 $filters = [
@@ -497,10 +464,10 @@ Suppose you have an `UserController` and you want get a list of the users with a
 
 namespace App\Controllers;
 
-use App\Models\User;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use Fouladgar\EloquentBuilder\EloquentBuilder as Builder;
-use Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException;
+use Fouladgar\EloquentBuilder\Exceptions\FilterException;
 use Illuminate\Http\Request;
 
 class UserController
@@ -509,8 +476,10 @@ class UserController
     {
         $users = $user->newQuery()->where('is_active', true);
         try {
-            $builder->to($users, $request->filter);
-        } catch (NotFoundFilterException $filterException) {
+            $builder->model($users)
+                    ->filters($request->filter)
+                    ->thenApply();
+        } catch (FilterException $filterException) {
             //...
         }
 

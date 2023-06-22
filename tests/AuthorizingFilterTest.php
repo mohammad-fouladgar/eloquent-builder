@@ -2,26 +2,11 @@
 
 namespace Fouladgar\EloquentBuilder\Tests;
 
-use Fouladgar\EloquentBuilder\EloquentBuilder;
-use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterFactory;
 use Fouladgar\EloquentBuilder\Tests\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 
-/**
- * @property EloquentBuilder eloquentBuilder
- */
 class AuthorizingFilterTest extends TestCase
 {
-    /**
-     * Setup the test environment.
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->eloquentBuilder = new EloquentBuilder(new FilterFactory());
-    }
-
     /**
      * @test
      */

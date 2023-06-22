@@ -18,9 +18,9 @@ trait FilterResolverTrait
             return $custom.'\\'.$this->resolveFilterName($filter);
         }
 
-        $config = config('eloquent-builder.namespace', 'App\\EloquentFilters\\');
+        $base = config('eloquent-builder.namespace', 'App\\EloquentFilters\\');
 
-        return $config.class_basename($model).'\\'.$this->resolveFilterName($filter);
+        return $base.class_basename($model).'\\'.$this->resolveFilterName($filter);
     }
 
     private function sanitizeNamespace(string $namespace): array|string

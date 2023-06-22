@@ -2,6 +2,8 @@
 
 namespace Fouladgar\EloquentBuilder\Exceptions;
 
-class NotFoundFilterException extends FilterException
+use Exception;
+
+class FilterException extends Exception
 {
 }

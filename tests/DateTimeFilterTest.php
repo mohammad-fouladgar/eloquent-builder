@@ -2,23 +2,18 @@
 
 namespace Fouladgar\EloquentBuilder\Tests;
 
-use Fouladgar\EloquentBuilder\EloquentBuilder;
+use BadMethodCallException;
 use Fouladgar\EloquentBuilder\Exceptions\ValidateConventionException;
-use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterFactory;
 use Fouladgar\EloquentBuilder\Tests\Models\User;
 
 class DateTimeFilterTest extends TestCase
 {
-    private EloquentBuilder $eloquentBuilder;
-
     /**
      * Setup the test environment.
      */
     public function setUp(): void
     {
         parent::setUp();
-
-        $this->eloquentBuilder = new EloquentBuilder(new FilterFactory());
 
         User::factory()->create(['birth_date' => '2016-01-01']);
         User::factory()->create(['birth_date' => '2016-12-30']);
@@ -173,7 +168,7 @@ class DateTimeFilterTest extends TestCase
      */
     public function it_can_throw_bad_method_call_exception_if_a_filter_date_does_not_exist(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->eloquentBuilder
             ->to(User::class, ['birth_date' => 'does_not_exists_method:2017-12-30'])
             ->get(['id', 'birth_date']);

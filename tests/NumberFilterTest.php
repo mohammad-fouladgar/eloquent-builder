@@ -2,23 +2,18 @@
 
 namespace Fouladgar\EloquentBuilder\Tests;
 
-use Fouladgar\EloquentBuilder\EloquentBuilder;
+use BadMethodCallException;
 use Fouladgar\EloquentBuilder\Exceptions\ValidateConventionException;
-use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterFactory;
 use Fouladgar\EloquentBuilder\Tests\Models\User;
 
 class NumberFilterTest extends TestCase
 {
-    private EloquentBuilder $eloquentBuilder;
-
     /**
      * Setup the test environment.
      */
     public function setUp(): void
     {
         parent::setUp();
-
-        $this->eloquentBuilder = new EloquentBuilder(new FilterFactory());
 
         User::factory()->create(['score' => 100]);
         User::factory()->create(['score' => 200]);
@@ -111,7 +106,6 @@ class NumberFilterTest extends TestCase
         $this->assertEquals(3, $gteNumber->count());
     }
 
-
     /**
      * @test
      */
@@ -166,7 +160,7 @@ class NumberFilterTest extends TestCase
      */
     public function it_can_throw_bad_method_call_exception_if_a_filter_number_does_not_exist(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->eloquentBuilder
             ->to(User::class, ['score' => 'does_not_exists_method:400'])
             ->get(['id', 'score']);

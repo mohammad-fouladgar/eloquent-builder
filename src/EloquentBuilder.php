@@ -2,33 +2,43 @@
 
 namespace Fouladgar\EloquentBuilder;
 
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\FilterFactory;
+use Fouladgar\EloquentBuilder\Exceptions\FilterException;
+use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\Pipeline;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Throwable;
 
 class EloquentBuilder
 {
     protected string $filterNamespace = '';
 
-    public function __construct(protected FilterFactory $filterFactory)
+    private array $filters = [];
+
+    private string|null|Builder|EloquentModel $builder = null;
+
+    public function __construct(protected Pipeline $pipeline)
     {
     }
 
-    /**
-     * @throws Exceptions\NotFoundFilterException
-     */
-    public function to(string|EloquentModel|Builder $query, array $filters = null): Builder
+    public function filters(array $filters = []): static
     {
-        /** @var Builder $query */
-        $query = $this->resolveQuery($query);
+        $this->filters = $filters;
 
-        if (! $filters) {
-            return $query;
-        }
+        return $this;
+    }
 
-        $this->applyFilters($query, $this->getFilters($filters));
+    public function filter(array $filters): static
+    {
+        $this->filters += $filters;
 
-        return $query;
+        return $this;
+    }
+
+    public function model(string|EloquentModel|Builder $builder): static
+    {
+        $this->builder = $this->resolveQuery($builder);
+
+        return $this;
     }
 
     public function setFilterNamespace(string $namespace = ''): self
@@ -36,6 +46,40 @@ class EloquentBuilder
         $this->filterNamespace = $namespace;
 
         return $this;
+    }
+
+    /**
+     * @throws FilterException|Throwable
+     */
+    public function thenApply(): Builder
+    {
+        if (!count($this->filters)) {
+            return $this->builder;
+        }
+
+        $this->apply($this->builder, $this->getFilters($this->filters));
+
+        return $this->builder;
+    }
+
+    /**
+     * @throws FilterException|Throwable
+     * @deprecated Please use the `thenApply` method instead of this.
+     */
+    public function to(string|EloquentModel|Builder $query = null, array $filters = []): Builder
+    {
+        /** @var Builder $query */
+        $query = $this->builder ?: $this->resolveQuery($query);
+
+        $filters = $this->filters ?: $filters;
+
+        if (!$filters) {
+            return $query;
+        }
+
+        $this->apply($query, $this->getFilters($filters));
+
+        return $query;
     }
 
     private function resolveQuery(string|EloquentModel|Builder $query): Builder
@@ -60,14 +104,15 @@ class EloquentBuilder
     }
 
     /**
-     * @throws Exceptions\NotFoundFilterException
+     * @throws FilterException|Throwable
      */
-    private function applyFilters(Builder $query, array $filters): void
+    private function apply(Builder $builder, array $filters): void
     {
-        foreach ($filters as $filter => $value) {
-            $query = $this->filterFactory->setCustomNamespace($this->filterNamespace)
-                                         ->make($filter, $query->getModel())
-                                         ->apply($query, $value);
-        }
+        $this->pipeline
+            ->send($builder)
+            ->model($builder->getModel())
+            ->customNamespace($this->filterNamespace)
+            ->through($filters)
+            ->thenReturn();
     }
 }

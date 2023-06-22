@@ -2,29 +2,14 @@
 
 namespace Fouladgar\EloquentBuilder\Tests;
 
-use Fouladgar\EloquentBuilder\EloquentBuilder;
+use Fouladgar\EloquentBuilder\Exceptions\FilterInstanceException;
 use Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException;
-use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterFactory;
 use Fouladgar\EloquentBuilder\Tests\Models\Post;
 use Fouladgar\EloquentBuilder\Tests\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-use InvalidArgumentException;
 
-/**
- * @property EloquentBuilder eloquentBuilder
- */
 class EloquentBuilderTest extends TestCase
 {
-    /**
-     * Setup the test environment.
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->eloquentBuilder = new EloquentBuilder(new FilterFactory());
-    }
-
     /** @test */
     public function it_can_make_without_filters()
     {
@@ -37,7 +22,6 @@ class EloquentBuilderTest extends TestCase
     public function it_should_return_not_found_filter_exception()
     {
         $this->expectException(NotFoundFilterException::class);
-
         $this->eloquentBuilder->to(User::class, ['not_exists_filter' => 'any_value']);
     }
 
@@ -46,8 +30,7 @@ class EloquentBuilderTest extends TestCase
      */
     public function it_should_return_invalid_argument_exception()
     {
-        $this->expectException(InvalidArgumentException::class);
-
+        $this->expectException(FilterInstanceException::class);
         $this->eloquentBuilder->to(User::class, ['invalid_implemented' => 'any_value']);
     }
 
@@ -152,5 +135,59 @@ class EloquentBuilderTest extends TestCase
         )->get();
 
         $this->assertEquals(1, $users->count());
+    }
+
+    /** @test */
+    public function it_can_work_with_then_apply_method()
+    {
+        User::factory()->create(['gender' => 'male', 'age' => 31]);
+        User::factory()->create(['gender' => 'female', 'age' => 25]);
+        User::factory()->create(['gender' => 'female', 'age' => 35]);
+        User::factory()->create(['gender' => 'female', 'age' => 40]);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->filters(['age_more_than' => 30, 'gender' => 'female'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(2, $users->count());
+    }
+
+    /** @test */
+    public function it_can_work_when_filters_is_empty()
+    {
+        User::factory()->create(['gender' => 'male', 'age' => 31]);
+        User::factory()->create(['gender' => 'female', 'age' => 25]);
+        User::factory()->create(['gender' => 'female', 'age' => 35]);
+        User::factory()->create(['gender' => 'female', 'age' => 40]);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->filters()
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(4, $users->count());
+    }
+
+    /** @test */
+    public function it_can_work_by_pushing_filters()
+    {
+        User::factory()->create(['gender' => 'male', 'age' => 31]);
+        User::factory()->create(['gender' => 'female', 'age' => 25]);
+        User::factory()->create(['gender' => 'female', 'age' => 35]);
+        User::factory()->create(['gender' => 'female', 'age' => 40]);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->filters(['name' => null])
+            ->filter(['published_at' => null])
+            ->filter(['age_more_than' => 30])
+            ->filter(['gender' => 'female'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(2, $users->count());
     }
 }
