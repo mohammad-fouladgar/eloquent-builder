@@ -146,58 +146,6 @@ return [
 ];
 ```
 
-#### Customize per domain/module
-
-When you have a laravel project with custom directory structure, you might need to have multiple filters in multiple
-directories. For this purpose, you can use `setFilterNamespace()` method and pass the desired namespace to it.
-
-For example, let's assume you have a project which implement a domain based structure:
-
-```
-.
-├── app
-├── bootstrap
-├── config
-├── database
-├── Domains
-│   ├── Store
-│   │   ├── database
-│   │   │   └── migrations
-│   │   ├── src
-│   │       ├── Filters // we put our Store domain filters here!
-│   │       │   └── StoreFilter.php
-│   │       ├── Entities
-│   │       ├── Http
-│   │          └── Controllers
-│   │       ├── routes
-│   │       └── Services
-│   ├── User
-│   │   ├── database
-│   │   │   └── migrations
-│   │   ├── src
-│   │       ├── Filters // we put our User domain filters here!
-│   │       │   └── UserFilter.php
-│   │       ├── Entities
-│   │       ├── Http
-│   │          └── Controllers
-│   │       ├── routes
-│   │       └── Services
-...
-```
-
-In the above example, each domain has its own filters directory. So we can set and use filters custom namespace as
-following:
-
-```php
-$stores = EloquentBuilder::model(\Domains\Entities\Store::class)
-            ->filters($request->all())
-            ->setFilterNamespace('Domains\\Store\\Filters')
-            ->thenApply()
-            ->get();
-```
-
-> **Note**: When using `setFilterNamespace()`, default namespace and config file will be ignored.
-
 ## Defining a Filter
 
 Writing a filter is simple. Define a class that `extends`
@@ -452,6 +400,58 @@ $filters = [
 ```
 
 Only the **"published_post"** filter will be applied on your query.
+
+### Customize per domain/module
+
+When you have a laravel project with custom directory structure, you might need to have multiple filters in multiple
+directories. For this purpose, you can use `setFilterNamespace()` method and pass the desired namespace to it.
+
+For example, let's assume you have a project which implement a domain based structure:
+
+```
+.
+├── app
+├── bootstrap
+├── config
+├── database
+├── Domains
+│   ├── Store
+│   │   ├── database
+│   │   │   └── migrations
+│   │   ├── src
+│   │       ├── Filters // We put our Store domain filters here!
+│   │       │   └── StoreFilter.php
+│   │       ├── Entities
+│   │       ├── Http
+│   │          └── Controllers
+│   │       ├── routes
+│   │       └── Services
+│   ├── User
+│   │   ├── database
+│   │   │   └── migrations
+│   │   ├── src
+│   │       ├── Filters // We put our User domain filters here!
+│   │       │   └── UserFilter.php
+│   │       ├── Entities
+│   │       ├── Http
+│   │          └── Controllers
+│   │       ├── routes
+│   │       └── Services
+...
+```
+
+In the above example, each domain has its own filters directory. So we can set and use filters custom namespace as
+following:
+
+```php
+$stores = EloquentBuilder::model(\Domains\Entities\Store::class)
+            ->filters($request->all())
+            ->setFilterNamespace('Domains\\Store\\Filters')
+            ->thenApply()
+            ->get();
+```
+
+> **Note**: When using `setFilterNamespace()`, default namespace and config file will be ignored.
 
 ## Use as Dependency Injection
 

@@ -4,8 +4,6 @@ namespace Fouladgar\EloquentBuilder\Support\Foundation\Concrete;
 
 use Closure;
 use Fouladgar\EloquentBuilder\Exceptions\FilterException;
-use Fouladgar\EloquentBuilder\Exceptions\FilterInstanceException;
-use Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
 use Fouladgar\EloquentBuilder\Support\Foundation\FilterResolverTrait;
 use Illuminate\Container\Container;
@@ -92,9 +90,8 @@ class Pipeline extends BasePipeline
     private static function notFoundFilterHandler($filterClass): void
     {
         throw_if(
-            ! class_exists($filterClass),
-            NotFoundFilterException::class,
-            'Not found the filter: ' . self::filterBasename($filterClass)
+            !class_exists($filterClass),
+            FilterException::filterNotFound(self::filterBasename($filterClass)),
         );
     }
 
@@ -104,9 +101,8 @@ class Pipeline extends BasePipeline
     private static function filterInstanceHandler($pipe, $filterClass): void
     {
         throw_if(
-            ! $pipe instanceof Filter,
-            FilterInstanceException::class,
-            'The ' . self::filterBasename($filterClass) . ' filter must be an instance of Filter.'
+            !$pipe instanceof Filter,
+            FilterException::filterInstance(self::filterBasename($filterClass))
         );
     }
 

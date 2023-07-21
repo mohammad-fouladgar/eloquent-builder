@@ -3,15 +3,13 @@
 namespace Fouladgar\EloquentBuilder\Support\Foundation;
 
 use DateTimeInterface;
-use Fouladgar\EloquentBuilder\Exceptions\ValidateConventionException;
+use Fouladgar\EloquentBuilder\Exceptions\FilterException;
 use Throwable;
 
 class ValidatesConventionValues
 {
-    private static string $exception = ValidateConventionException::class;
-
     /**
-     * @throws ValidateConventionException|Throwable
+     * @throws FilterException|Throwable
      */
     public static function validateDate(mixed $value, string $column): void
     {
@@ -26,25 +24,21 @@ class ValidatesConventionValues
             return;
         }
 
-        $exceptionMessage = sprintf("The %s is not a valid date.", $column);
-
         throw_if(
-            ((! is_string($value) && ! is_numeric($value)) || strtotime($value) === false),
-            static::$exception,
-            $exceptionMessage
+            ((!is_string($value) && !is_numeric($value)) || strtotime($value) === false),
+            FilterException::invalidDate($column)
         );
 
         $date = date_parse($value);
 
         throw_if(
-            ! checkdate($date['month'], $date['day'], $date['year']),
-            static::$exception,
-            $exceptionMessage
+            !checkdate($date['month'], $date['day'], $date['year']),
+            FilterException::invalidDate($column)
         );
     }
 
     /**
-     * @throws ValidateConventionException|Throwable
+     * @throws FilterException|Throwable
      */
     public static function validateNumber(mixed $value, string $column): void
     {
@@ -56,27 +50,24 @@ class ValidatesConventionValues
         }
 
         throw_if(
-            ! is_numeric($value),
-            static::$exception,
-            sprintf("The %s is not a valid number.", $column)
+            !is_numeric($value),
+            FilterException::invalidNumber($column),
         );
     }
 
     /**
-     * @throws ValidateConventionException|Throwable
+     * @throws FilterException|Throwable
      */
     public static function validateSortable(string $column, string $direction, array $sortable): void
     {
         throw_if(
-            ! in_array($column, $sortable),
-            static::$exception,
-            sprintf("The selected %s column is invalid", $column)
+            !in_array($column, $sortable),
+            FilterException::invalidSelectedSort($column),
         );
 
         throw_if(
-            ! in_array($direction, ['asc', 'desc']),
-            static::$exception,
-            'The selected sort direction is invalid'
+            !in_array($direction, ['asc', 'desc']),
+            FilterException::invalidSortDirection($direction),
         );
     }
 }

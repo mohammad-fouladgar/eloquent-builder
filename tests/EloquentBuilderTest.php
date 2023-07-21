@@ -2,8 +2,7 @@
 
 namespace Fouladgar\EloquentBuilder\Tests;
 
-use Fouladgar\EloquentBuilder\Exceptions\FilterInstanceException;
-use Fouladgar\EloquentBuilder\Exceptions\NotFoundFilterException;
+use Fouladgar\EloquentBuilder\Exceptions\FilterException;
 use Fouladgar\EloquentBuilder\Tests\Models\Post;
 use Fouladgar\EloquentBuilder\Tests\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,7 +20,7 @@ class EloquentBuilderTest extends TestCase
      */
     public function it_should_return_not_found_filter_exception()
     {
-        $this->expectException(NotFoundFilterException::class);
+        $this->expectException(FilterException::class);
         $this->eloquentBuilder->to(User::class, ['not_exists_filter' => 'any_value']);
     }
 
@@ -30,7 +29,7 @@ class EloquentBuilderTest extends TestCase
      */
     public function it_should_return_invalid_argument_exception()
     {
-        $this->expectException(FilterInstanceException::class);
+        $this->expectException(FilterException::class);
         $this->eloquentBuilder->to(User::class, ['invalid_implemented' => 'any_value']);
     }
 

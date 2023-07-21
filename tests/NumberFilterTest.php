@@ -3,7 +3,7 @@
 namespace Fouladgar\EloquentBuilder\Tests;
 
 use BadMethodCallException;
-use Fouladgar\EloquentBuilder\Exceptions\ValidateConventionException;
+use Fouladgar\EloquentBuilder\Exceptions\FilterException;
 use Fouladgar\EloquentBuilder\Tests\Models\User;
 
 class NumberFilterTest extends TestCase
@@ -128,7 +128,7 @@ class NumberFilterTest extends TestCase
      */
     public function it_can_throw_validate_convention_exception_if_number_is_not_a_valid_numeric(): void
     {
-        $this->expectException(ValidateConventionException::class);
+        $this->expectException(FilterException::class);
         $this->eloquentBuilder
             ->to(User::class, ['score' => 'invalid_numeric'])
             ->get(['id', 'score']);
@@ -139,17 +139,17 @@ class NumberFilterTest extends TestCase
      */
     public function it_can_throw_validate_convention_exception_if_numbers_are_not_a_valid_numeric(): void
     {
-        $this->expectException(ValidateConventionException::class);
+        $this->expectException(FilterException::class);
         $this->eloquentBuilder
             ->to(User::class, ['score' => 'between:300,200A'])
             ->get(['id', 'score']);
 
-        $this->expectException(ValidateConventionException::class);
+        $this->expectException(FilterException::class);
         $this->eloquentBuilder
             ->to(User::class, ['score' => ['invalid_numeric_1', 'invalid_numeric_2']])
             ->get(['id', 'score']);
 
-        $this->expectException(ValidateConventionException::class);
+        $this->expectException(FilterException::class);
         $this->eloquentBuilder
             ->to(User::class, ['score' => 'invalid_numeric_1,invalid_numeric_2'])
             ->get(['id', 'score']);

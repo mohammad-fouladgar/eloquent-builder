@@ -2,7 +2,7 @@
 
 namespace Fouladgar\EloquentBuilder\Concerns;
 
-use Fouladgar\EloquentBuilder\Exceptions\ValidateConventionException;
+use Fouladgar\EloquentBuilder\Exceptions\FilterException;
 use Fouladgar\EloquentBuilder\Support\Foundation\FilterConventionParser;
 use Fouladgar\EloquentBuilder\Support\Foundation\ValidatesConventionValues;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,7 +13,7 @@ use Throwable;
 trait SortableTrait
 {
     /**
-     * @throws ValidateConventionException|Throwable
+     * @throws FilterException|Throwable
      */
     protected function applySort(Builder $builder, mixed $value): Builder
     {
@@ -25,7 +25,7 @@ trait SortableTrait
     }
 
     /**
-     * @throws ValidateConventionException|Throwable
+     * @throws FilterException|Throwable
      */
     protected function sortByConventionValues(Builder $builder, mixed $value): void
     {
@@ -43,7 +43,7 @@ trait SortableTrait
     }
 
     /**
-     * @throws ValidateConventionException|Throwable
+     * @throws FilterException|Throwable
      */
     protected function sortByAssociatedValues(Builder $builder, mixed $value): void
     {
@@ -53,7 +53,7 @@ trait SortableTrait
     }
 
     /**
-     * @throws ValidateConventionException|Throwable
+     * @throws FilterException|Throwable
      */
     protected function prepareSort(Builder $builder, string $column, string $direction): void
     {

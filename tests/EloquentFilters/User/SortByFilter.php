@@ -3,7 +3,6 @@
 namespace Fouladgar\EloquentBuilder\Tests\EloquentFilters\User;
 
 use Fouladgar\EloquentBuilder\Concerns\SortableTrait;
-use Fouladgar\EloquentBuilder\Exceptions\ValidateConventionException;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Throwable;
@@ -17,7 +16,7 @@ class SortByFilter extends Filter
     ];
 
     /**
-     * @throws ValidateConventionException|Throwable
+     * @throws FilterException|Throwable
      */
     public function apply(Builder $builder, mixed $value): Builder
     {

@@ -3,7 +3,7 @@
 namespace Fouladgar\EloquentBuilder\Concerns;
 
 use BadMethodCallException;
-use Fouladgar\EloquentBuilder\Exceptions\ValidateConventionException;
+use Fouladgar\EloquentBuilder\Exceptions\FilterException;
 use Fouladgar\EloquentBuilder\Support\Foundation\FilterConventionParser;
 use Fouladgar\EloquentBuilder\Support\Foundation\ValidatesConventionValues;
 use Illuminate\Database\Eloquent\Builder;
@@ -79,7 +79,7 @@ trait FiltersNumbersTrait
     }
 
     /**
-     * @throws ValidateConventionException|Throwable
+     * @throws FilterException|Throwable
      */
     private function applyDefaultFilter(Builder $builder, mixed $value, string $column): Builder
     {

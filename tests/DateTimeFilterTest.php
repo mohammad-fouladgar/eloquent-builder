@@ -3,7 +3,7 @@
 namespace Fouladgar\EloquentBuilder\Tests;
 
 use BadMethodCallException;
-use Fouladgar\EloquentBuilder\Exceptions\ValidateConventionException;
+use Fouladgar\EloquentBuilder\Exceptions\FilterException;
 use Fouladgar\EloquentBuilder\Tests\Models\User;
 
 class DateTimeFilterTest extends TestCase
@@ -135,7 +135,7 @@ class DateTimeFilterTest extends TestCase
      */
     public function it_can_throw_validate_convention_exception_if_date_is_not_a_valid_date(): void
     {
-        $this->expectException(ValidateConventionException::class);
+        $this->expectException(FilterException::class);
         $this->eloquentBuilder
             ->to(User::class, ['birth_date' => 'after_or_equal:2017-30-30'])
             ->get(['id', 'birth_date']);
@@ -146,18 +146,18 @@ class DateTimeFilterTest extends TestCase
      */
     public function it_can_throw_validate_convention_exception_if_dates_are_not_a_valid_date(): void
     {
-        $this->expectException(ValidateConventionException::class);
+        $this->expectException(FilterException::class);
         $this->eloquentBuilder
             ->to(User::class, ['birth_date' => 'between:2016-01-01, 2017-AA1-01'])
             ->get(['id', 'birth_date']);
 
 
-        $this->expectException(ValidateConventionException::class);
+        $this->expectException(FilterException::class);
         $this->eloquentBuilder
             ->to(User::class, ['birth_date' => ['2016-01-01', '2017-BB-01']])
             ->get(['id', 'birth_date']);
 
-        $this->expectException(ValidateConventionException::class);
+        $this->expectException(FilterException::class);
         $this->eloquentBuilder
             ->to(User::class, ['birth_date' => '2016-01-CC,2017-01-01'])
             ->get(['id', 'birth_date']);
