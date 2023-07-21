@@ -25,14 +25,14 @@ class ValidatesConventionValues
         }
 
         throw_if(
-            ((!is_string($value) && !is_numeric($value)) || strtotime($value) === false),
+            ((! is_string($value) && ! is_numeric($value)) || strtotime($value) === false),
             FilterException::invalidDate($column)
         );
 
         $date = date_parse($value);
 
         throw_if(
-            !checkdate($date['month'], $date['day'], $date['year']),
+            ! checkdate($date['month'], $date['day'], $date['year']),
             FilterException::invalidDate($column)
         );
     }
@@ -50,7 +50,7 @@ class ValidatesConventionValues
         }
 
         throw_if(
-            !is_numeric($value),
+            ! is_numeric($value),
             FilterException::invalidNumber($column),
         );
     }
@@ -61,12 +61,12 @@ class ValidatesConventionValues
     public static function validateSortable(string $column, string $direction, array $sortable): void
     {
         throw_if(
-            !in_array($column, $sortable),
+            ! in_array($column, $sortable),
             FilterException::invalidSelectedSort($column),
         );
 
         throw_if(
-            !in_array($direction, ['asc', 'desc']),
+            ! in_array($direction, ['asc', 'desc']),
             FilterException::invalidSortDirection($direction),
         );
     }
