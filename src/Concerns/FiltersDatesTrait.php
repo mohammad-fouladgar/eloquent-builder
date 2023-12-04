@@ -55,22 +55,22 @@ trait FiltersDatesTrait
 
     protected function filterAfterDate(Builder $builder, string $date, string $column): Builder
     {
-        return $builder->where($column, ">", $date);
+        return $builder->where($column, '>', $date);
     }
 
     protected function filterAfterOrEqualDate(Builder $builder, string $date, string $column): Builder
     {
-        return $builder->where($column, ">=", $date);
+        return $builder->where($column, '>=', $date);
     }
 
     protected function filterBeforeDate(Builder $builder, string $date, string $column): Builder
     {
-        return $builder->where($column, "<", $date);
+        return $builder->where($column, '<', $date);
     }
 
     protected function filterBeforeOrEqualDate(Builder $builder, string $date, string $column): Builder
     {
-        return $builder->where($column, "<=", $date);
+        return $builder->where($column, '<=', $date);
     }
 
     protected function filterEqualsDate(Builder $builder, string $date, string $column): Builder

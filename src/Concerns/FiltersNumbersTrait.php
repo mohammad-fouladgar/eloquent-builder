@@ -55,22 +55,22 @@ trait FiltersNumbersTrait
 
     protected function filterGtNumber(Builder $builder, string $number, string $column): Builder
     {
-        return $builder->where($column, ">", $number);
+        return $builder->where($column, '>', $number);
     }
 
     protected function filterGteNumber(Builder $builder, string $number, string $column): Builder
     {
-        return $builder->where($column, ">=", $number);
+        return $builder->where($column, '>=', $number);
     }
 
     protected function filterLtNumber(Builder $builder, string $number, string $column): Builder
     {
-        return $builder->where($column, "<", $number);
+        return $builder->where($column, '<', $number);
     }
 
     protected function filterLteNumber(Builder $builder, string $number, string $column): Builder
     {
-        return $builder->where($column, "<=", $number);
+        return $builder->where($column, '<=', $number);
     }
 
     protected function filterEqualsNumber(Builder $builder, string $number, string $column): Builder

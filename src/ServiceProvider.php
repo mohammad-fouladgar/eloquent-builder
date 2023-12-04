@@ -48,12 +48,12 @@ class ServiceProvider extends BaseServiceProvider
         $this->commands(FilterMakeCommand::class);
     }
 
-    private function registerBindings()
+    private function registerBindings(): void
     {
         $this->app->singleton('eloquentbuilder', fn (Application $app) => new EloquentBuilder($app->make(Pipeline::class)));
     }
 
-    private function registerMacros()
+    private function registerMacros(): void
     {
         Collection::macro('getFilters', function () {
             $filters = $this->filter(static function ($value, $filter) {

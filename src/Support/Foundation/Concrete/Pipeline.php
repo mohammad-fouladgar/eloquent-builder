@@ -39,6 +39,9 @@ class Pipeline extends BasePipeline
         return $this;
     }
 
+    /**
+     * @throws Throwable
+     */
     public function then(Closure $destination)
     {
         $pipeline = array_reduce(
@@ -51,7 +54,7 @@ class Pipeline extends BasePipeline
     }
 
     /**
-     * @throws FilterException|Throwable
+     * @throws Throwable
      */
     protected function carry(): Closure
     {

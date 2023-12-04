@@ -23,17 +23,13 @@ class PublishCommand extends Command
 
     /**
      * Filesystem instance for fs operations.
-     *
-     * @var Filesystem
      */
-    protected $files;
+    protected Filesystem $files;
 
     /**
      * A list of files (source => destination).
-     *
-     * @var array
      */
-    protected $fileMap = [];
+    protected array $fileMap = [];
 
     /**
      * PublishCommand constructor.
@@ -45,10 +41,10 @@ class PublishCommand extends Command
         parent::__construct();
 
         $this->files = $files;
-        $fromPath = __DIR__.'/../..';
+        $fromPath = __DIR__ . '/../..';
 
         $this->fileMap = [
-            $fromPath.'/config/eloquent-builder.php' => app()->basePath('config/eloquent-builder.php'),
+            $fromPath . '/config/eloquent-builder.php' => app()->basePath('config/eloquent-builder.php'),
         ];
     }
 
@@ -58,7 +54,7 @@ class PublishCommand extends Command
     public function handle(): void
     {
         foreach ($this->fileMap as $from => $to) {
-            if ($this->files->exists($to) && ! $this->option('force')) {
+            if ($this->files->exists($to) && !$this->option('force')) {
                 continue;
             }
 
@@ -71,24 +67,19 @@ class PublishCommand extends Command
     /**
      * Create the directory to house the published files if needed.
      *
-     * @param string $directory
-     *
      * @codeCoverageIgnore
      */
-    protected function createParentDirectory($directory): void
+    protected function createParentDirectory(string $directory): void
     {
-        if (! $this->files->isDirectory($directory)) {
+        if (!$this->files->isDirectory($directory)) {
             $this->files->makeDirectory($directory, 0755, true);
         }
     }
 
     /**
      * Write a status message to the console.
-     *
-     * @param string $from
-     * @param string $to
      */
-    protected function status($from, $to): void
+    protected function status(string $from, string $to): void
     {
         $from = str_replace(base_path(), '', realpath($from));
         $to = str_replace(base_path(), '', realpath($to));

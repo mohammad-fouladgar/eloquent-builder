@@ -57,7 +57,7 @@ trait SortableTrait
      */
     protected function prepareSort(Builder $builder, string $column, string $direction): void
     {
-        $column = Str::lower(Str::snake($column));
+        $column = Str::of($column)->snake()->lower();
         $direction = Str::lower($direction);
         ValidatesConventionValues::validateSortable($column, $direction, $this->sortable ?? []);
 
