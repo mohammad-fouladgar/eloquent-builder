@@ -5,24 +5,22 @@ on: [ push, pull_request ]
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }}
     strategy:
+      fail-fast: false
       matrix:
-        php: [8.2, 8.1, 8.0]
-        laravel: [9.*, 10.*]
-        dependency-version: [prefer-lowest, prefer-stable]
+        php: [ 8.3, 8.2 ]
+        laravel: [ 10.*, 11.* ]
+        stability: [ prefer-stable ]
         include:
+          - laravel: 11.*
+            testbench: 9.*
           - laravel: 10.*
             testbench: 8.*
-          - laravel: 9.*
-            testbench: 7.*
-        exclude:
-          - laravel: 10.*
-            php: 8.0
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -35,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Run test suite
         run: composer test
