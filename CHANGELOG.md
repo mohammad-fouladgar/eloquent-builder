@@ -1,6 +1,10 @@
+## 5.0.0 - 2024-04-06
+- Add support Laravel 11.x
+- Laravel 9 is deprecated
+- The `to` is deprecated
+
 ## 4.3.1 - 2023-06-22
  - Fix null filters
- - 
 ## 4.3.0 - 2023-06-22
  - Improve structure and speed.
  - Lumen is unsupported
