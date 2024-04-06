@@ -131,8 +131,8 @@ class EloquentBuilderTest extends TestCase
         $users = $this->eloquentBuilder->model(User::class)
                                        ->filters([
                                            'published_post' => true,
-                                           'gender'         => null,
-                                           'age_more_than'  => '',
+                                           'gender' => null,
+                                           'age_more_than' => '',
                                            'name',
                                        ])
                                        ->thenApply()
