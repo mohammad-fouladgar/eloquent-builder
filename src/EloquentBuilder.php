@@ -62,26 +62,6 @@ class EloquentBuilder
         return $this->builder;
     }
 
-    /**
-     * @throws FilterException|Throwable
-     * @deprecated Please use the `thenApply` method instead of this.
-     */
-    public function to(string|EloquentModel|Builder $query = null, array $filters = null): Builder
-    {
-        /** @var Builder $query */
-        $query = $this->builder ?: $this->resolveQuery($query);
-
-        $filters = $this->filters ?: $filters;
-
-        if (! $filters) {
-            return $query;
-        }
-
-        $this->apply($query, $this->getFilters($filters));
-
-        return $query;
-    }
-
     private function resolveQuery(string|EloquentModel|Builder $query): Builder
     {
         if (is_string($query)) {

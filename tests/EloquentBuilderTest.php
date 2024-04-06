@@ -12,7 +12,7 @@ class EloquentBuilderTest extends TestCase
     /** @test */
     public function it_can_make_without_filters()
     {
-        $this->assertInstanceOf(Builder::class, $this->eloquentBuilder->to(User::class));
+        $this->assertInstanceOf(Builder::class, $this->eloquentBuilder->model(User::class)->thenApply());
     }
 
     /**
@@ -21,7 +21,7 @@ class EloquentBuilderTest extends TestCase
     public function it_should_return_not_found_filter_exception()
     {
         $this->expectException(FilterException::class);
-        $this->eloquentBuilder->to(User::class, ['not_exists_filter' => 'any_value']);
+        $this->eloquentBuilder->model(User::class)->filters(['not_exists_filter' => 'any_value'])->thenApply();
     }
 
     /**
@@ -30,7 +30,7 @@ class EloquentBuilderTest extends TestCase
     public function it_should_return_invalid_argument_exception()
     {
         $this->expectException(FilterException::class);
-        $this->eloquentBuilder->to(User::class, ['invalid_implemented' => 'any_value']);
+        $this->eloquentBuilder->model(User::class)->filters(['invalid_implemented' => 'any_value'])->thenApply();
     }
 
     /** @test */
@@ -38,7 +38,7 @@ class EloquentBuilderTest extends TestCase
     {
         $this->assertInstanceOf(
             Builder::class,
-            $this->eloquentBuilder->to(User::class, ['age_more_than' => 25])
+            $this->eloquentBuilder->model(User::class)->filters(['age_more_than' => 25])->thenApply()
         );
     }
 
@@ -47,7 +47,7 @@ class EloquentBuilderTest extends TestCase
     {
         $userInstance = new User();
 
-        $this->assertInstanceOf(Builder::class, $this->eloquentBuilder->to($userInstance));
+        $this->assertInstanceOf(Builder::class, $this->eloquentBuilder->model($userInstance)->thenApply());
     }
 
     /** @test */
@@ -55,10 +55,7 @@ class EloquentBuilderTest extends TestCase
     {
         User::factory()->create(['age' => 30, 'gender' => 'male']);
 
-        $users = $this->eloquentBuilder->to(
-            User::where('age', '>', 20),
-            ['gender' => 'male']
-        );
+        $users = $this->eloquentBuilder->model(User::where('age', '>', 20))->filters(['gender' => 'male'])->thenApply();
 
         $this->assertEquals(
             'select * from "users" where "age" > ? and "gender" = ?',
@@ -77,7 +74,7 @@ class EloquentBuilderTest extends TestCase
         User::factory()->create(['age' => 30]);
         User::factory()->create(['age' => 40]);
 
-        $users = $this->eloquentBuilder->to(User::class, ['age_more_than' => 25])->get();
+        $users = $this->eloquentBuilder->model(User::class)->filters(['age_more_than' => 25])->thenApply()->get();
 
         $this->assertEquals(2, $users->count());
     }
@@ -97,7 +94,7 @@ class EloquentBuilderTest extends TestCase
                 $user->posts()->save(Post::factory()->make(['is_published' => false]));
             });
 
-        $users = $this->eloquentBuilder->to(User::class, ['published_post' => true])->get();
+        $users = $this->eloquentBuilder->model(User::class)->filters(['published_post' => true])->thenApply()->get();
 
         $this->assertEquals(5, User::get()->count());
         $this->assertEquals(5, Post::get()->count());
@@ -112,7 +109,10 @@ class EloquentBuilderTest extends TestCase
         User::factory()->create(['gender' => 'female', 'age' => 35]);
         User::factory()->create(['gender' => 'female', 'age' => 40]);
 
-        $users = $this->eloquentBuilder->to(User::class, ['age_more_than' => 30, 'gender' => 'female'])->get();
+        $users = $this->eloquentBuilder->model(User::class)
+                                       ->filters(['age_more_than' => 30, 'gender' => 'female'])
+                                       ->thenApply()
+                                       ->get();
 
         $this->assertEquals(2, $users->count());
     }
@@ -128,10 +128,15 @@ class EloquentBuilderTest extends TestCase
 
         User::factory()->create();
 
-        $users = $this->eloquentBuilder->to(
-            User::class,
-            ['published_post' => true, 'gender' => null, 'age_more_than' => '', 'name']
-        )->get();
+        $users = $this->eloquentBuilder->model(User::class)
+                                       ->filters([
+                                           'published_post' => true,
+                                           'gender'         => null,
+                                           'age_more_than'  => '',
+                                           'name',
+                                       ])
+                                       ->thenApply()
+                                       ->get();
 
         $this->assertEquals(1, $users->count());
     }

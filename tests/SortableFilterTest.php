@@ -13,11 +13,15 @@ class SortableFilterTest extends TestCase
     public function it_can_make_query_for_sorting_convention(): void
     {
         $users = $this->eloquentBuilder
-            ->to(User::class, ['sort_by' => ['birth_date' => 'DESC', 'score' => 'asc']])
+            ->model(User::class)
+            ->filters(['sort_by' => ['birth_date' => 'DESC', 'score' => 'asc']])
+            ->thenApply()
             ->select(['id', 'birth_date', 'score']);
 
         $users2 = $this->eloquentBuilder
-            ->to(User::class, ['sort_by' => ['birth_date:DESC', 'score:asc']])
+            ->model(User::class)
+            ->filters(['sort_by' => ['birth_date:DESC', 'score:asc']])
+            ->thenApply()
             ->select(['id', 'birth_date', 'score']);
 
         $this->assertEquals(
@@ -37,7 +41,9 @@ class SortableFilterTest extends TestCase
     public function it_can_make_query_for_default_sorting_convention(): void
     {
         $users = $this->eloquentBuilder
-            ->to(User::class, ['sort_by' => ['birth_date', 'score:desc']])
+            ->model(User::class)
+            ->filters(['sort_by' => ['birth_date', 'score:desc']])
+            ->thenApply()
             ->select(['id', 'birth_date', 'score']);
 
         $this->assertEquals(
@@ -53,7 +59,9 @@ class SortableFilterTest extends TestCase
     {
         $this->expectException(FilterException::class);
         $this->eloquentBuilder
-            ->to(User::class, ['sort_by' => ['id_is_invalid' => 'DESC', 'score' => 'asc']])
+            ->model(User::class)
+            ->filters(['sort_by' => ['id_is_invalid' => 'DESC', 'score' => 'asc']])
+            ->thenApply()
             ->select(['id', 'birth_date', 'score']);
     }
 
@@ -64,7 +72,9 @@ class SortableFilterTest extends TestCase
     {
         $this->expectException(FilterException::class);
         $this->eloquentBuilder
-            ->to(User::class, ['sort_by' => ['birth_date' => 'DSC', 'score' => 'asc']])
+            ->model(User::class)
+            ->filters(['sort_by' => ['birth_date' => 'DSC', 'score' => 'asc']])
+            ->thenApply()
             ->select(['id', 'birth_date', 'score']);
     }
 }

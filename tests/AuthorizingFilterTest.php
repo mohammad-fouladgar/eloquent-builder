@@ -16,7 +16,7 @@ class AuthorizingFilterTest extends TestCase
 
         User::factory()->create(['status' => 'online']);
 
-        $this->eloquentBuilder->to(User::class, ['status' => 'online'])->count();
+        $this->eloquentBuilder->model(User::class)->filters(['status' => 'online'])->thenApply()->count();
     }
 
     /** @test */
@@ -25,7 +25,11 @@ class AuthorizingFilterTest extends TestCase
         User::factory()->create(['age' => 12]);
         User::factory()->create(['age' => 19]);
 
-        $userCount = $this->eloquentBuilder->to(User::class, ['age_more_than' => 18])->count('id');
+        $userCount = $this->eloquentBuilder
+            ->model(User::class)
+            ->filters(['age_more_than' => 18])
+            ->thenApply()
+            ->count('id');
 
         $this->assertEquals(1, $userCount);
     }

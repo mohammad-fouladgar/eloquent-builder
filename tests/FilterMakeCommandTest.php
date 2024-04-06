@@ -8,10 +8,6 @@ use Mockery as m;
 
 class FilterMakeCommandTest extends TestCase
 {
-    /**
-     * @var m\Mock
-     */
-    protected $command;
 
     /**
      * Orchestra app directory path.
@@ -27,16 +23,16 @@ class FilterMakeCommandTest extends TestCase
 
         $this->basePath = $this->getBasePath();
 
-        $this->command = m::mock(
+        $command = m::mock(
             'Fouladgar\EloquentBuilder\Console\FilterMakeCommand[info,rootNamespace,getDefaultNamespace]',
             [new Filesystem()]
         )->shouldAllowMockingProtectedMethods();
 
-        $this->command->shouldReceive('info')->andReturn('Filter[s] created successfully.');
-        $this->command->shouldReceive('rootNamespace')->andReturn('AppTest');
-        $this->command->shouldReceive('getDefaultNamespace')->andReturn('AppTest\EloquentFilters\User');
+        $command->shouldReceive('info')->andReturn('Filter[s] created successfully.');
+        $command->shouldReceive('rootNamespace')->andReturn('AppTest');
+        $command->shouldReceive('getDefaultNamespace')->andReturn('AppTest\EloquentFilters\User');
 
-        $this->app[Kernel::class]->registerCommand($this->command);
+        $this->app[Kernel::class]->registerCommand($command);
     }
 
     /**

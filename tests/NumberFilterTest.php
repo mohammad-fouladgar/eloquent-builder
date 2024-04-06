@@ -28,7 +28,9 @@ class NumberFilterTest extends TestCase
     public function it_can_filter_between_number_by_using_array(): void
     {
         $users = $this->eloquentBuilder
-            ->to(User::class, ['score' => [300, 500]])
+            ->model(User::class)
+            ->filters(['score' => [300, 500]])
+            ->thenApply()
             ->get(['id', 'score']);
 
         $this->assertEquals(3, $users->count());
@@ -40,7 +42,9 @@ class NumberFilterTest extends TestCase
     public function it_can_filter_between_number_by_using_convention(): void
     {
         $users = $this->eloquentBuilder
-            ->to(User::class, ['score' => 'between:300,500'])
+            ->model(User::class)
+            ->filters(['score' => 'between:300,500'])
+            ->thenApply()
             ->get(['id', 'score']);
 
         $this->assertEquals(3, $users->count());
@@ -52,7 +56,9 @@ class NumberFilterTest extends TestCase
     public function it_can_filter_between_number_by_simple_value_separated_by_comma(): void
     {
         $users = $this->eloquentBuilder
-            ->to(User::class, ['score' => '300,500'])
+            ->model(User::class)
+            ->filters(['score' => '300,500'])
+            ->thenApply()
             ->get(['id', 'score']);
 
         $this->assertEquals(3, $users->count());
@@ -64,7 +70,9 @@ class NumberFilterTest extends TestCase
     public function it_can_filter_less_than_number(): void
     {
         $ltNumber = $this->eloquentBuilder
-            ->to(User::class, ['score' => 'lt:300'])
+            ->model(User::class)
+            ->filters(['score' => 'lt:300'])
+            ->thenApply()
             ->get(['id', 'score']);
 
         $this->assertEquals(2, $ltNumber->count());
@@ -76,7 +84,9 @@ class NumberFilterTest extends TestCase
     public function it_can_filter_less_than__or_equals_a_number(): void
     {
         $lteNumber = $this->eloquentBuilder
-            ->to(User::class, ['score' => 'lte:300'])
+            ->model(User::class)
+            ->filters(['score' => 'lte:300'])
+            ->thenApply()
             ->get(['id', 'score']);
 
         $this->assertEquals(3, $lteNumber->count());
@@ -88,7 +98,9 @@ class NumberFilterTest extends TestCase
     public function it_can_filter_greater_than_a_number(): void
     {
         $gtNumber = $this->eloquentBuilder
-            ->to(User::class, ['score' => 'gt:300'])
+            ->model(User::class)
+            ->filters(['score' => 'gt:300'])
+            ->thenApply()
             ->get(['id', 'score']);
 
         $this->assertEquals(2, $gtNumber->count());
@@ -100,7 +112,9 @@ class NumberFilterTest extends TestCase
     public function it_can_filter_greater_than_or_equals_a_number(): void
     {
         $gteNumber = $this->eloquentBuilder
-            ->to(User::class, ['score' => 'gte:300'])
+            ->model(User::class)
+            ->filters(['score' => 'gte:300'])
+            ->thenApply()
             ->get(['id', 'score']);
 
         $this->assertEquals(3, $gteNumber->count());
@@ -112,11 +126,15 @@ class NumberFilterTest extends TestCase
     public function it_can_filter_equal_a_number(): void
     {
         $defaultNumber = $this->eloquentBuilder
-            ->to(User::class, ['score' => '500'])
+            ->model(User::class)
+            ->filters(['score' => '500'])
+            ->thenApply()
             ->get(['id', 'score']);
 
         $equalNumber = $this->eloquentBuilder
-            ->to(User::class, ['score' => 'equals:500'])
+            ->model(User::class)
+            ->filters(['score' => 'equals:500'])
+            ->thenApply()
             ->get(['id', 'score']);
 
         $this->assertEquals(1, $defaultNumber->count());
@@ -130,7 +148,9 @@ class NumberFilterTest extends TestCase
     {
         $this->expectException(FilterException::class);
         $this->eloquentBuilder
-            ->to(User::class, ['score' => 'invalid_numeric'])
+            ->model(User::class)
+            ->filters(['score' => 'invalid_numeric'])
+            ->thenApply()
             ->get(['id', 'score']);
     }
 
@@ -141,17 +161,23 @@ class NumberFilterTest extends TestCase
     {
         $this->expectException(FilterException::class);
         $this->eloquentBuilder
-            ->to(User::class, ['score' => 'between:300,200A'])
+            ->model(User::class)
+            ->filters(['score' => 'between:300,200A'])
+            ->thenApply()
             ->get(['id', 'score']);
 
         $this->expectException(FilterException::class);
         $this->eloquentBuilder
-            ->to(User::class, ['score' => ['invalid_numeric_1', 'invalid_numeric_2']])
+            ->model(User::class)
+            ->filters(['score' => ['invalid_numeric_1', 'invalid_numeric_2']])
+            ->thenApply()
             ->get(['id', 'score']);
 
         $this->expectException(FilterException::class);
         $this->eloquentBuilder
-            ->to(User::class, ['score' => 'invalid_numeric_1,invalid_numeric_2'])
+            ->model(User::class)
+            ->filters(['score' => 'invalid_numeric_1,invalid_numeric_2'])
+            ->thenApply()
             ->get(['id', 'score']);
     }
 
@@ -162,7 +188,9 @@ class NumberFilterTest extends TestCase
     {
         $this->expectException(BadMethodCallException::class);
         $this->eloquentBuilder
-            ->to(User::class, ['score' => 'does_not_exists_method:400'])
+            ->model(User::class)
+            ->filters(['score' => 'does_not_exists_method:400'])
+            ->thenApply()
             ->get(['id', 'score']);
     }
 }
