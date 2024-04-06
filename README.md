@@ -14,6 +14,7 @@ queries and conditions, which will make your code clean and maintainable.
 
 | Laravel        | EloquentBuilder |
 |:---------------|:----------------|
+| 11.0.x         | 5.x.x           |
 | 10.0.x         | 4.2.x           |
 | 9.0.x          | 4.0.x           |
 | 6.0.x to 8.0.x | 3.0.x           |
@@ -200,8 +201,7 @@ You can use filters in multiple approaches:
 <?php
 
 // Use by a model class name
-// Note: This method is deprecated. 
-$users = EloquentBuilder::to(\App\Models\User::class, request()->all())->get();
+$users = EloquentBuilder::model(\App\Models\User::class)->filters(request()->all())->thenApply()->get();
 
 // Use by existing query
 $query = \App\Models\User::where('is_active', true);
