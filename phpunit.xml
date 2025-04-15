@@ -1,28 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" backupStaticAttributes="false" bootstrap="vendor/autoload.php" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-  <coverage>
-    <include>
-      <directory suffix=".php">./src</directory>
-    </include>
-    <exclude>
-      <file>src/Facade.php</file>
-      <file>src/ServiceProvider.php</file>
-      <file>src/LumenServiceProvider.php</file>
-    </exclude>
-    <report>
-      <clover outputFile="build/logs/clover.xml"/>
-      <html outputDirectory="build/coverage"/>
-      <text outputFile="build/coverage.txt"/>
-    </report>
-  </coverage>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/autoload.php" backupGlobals="false" colors="true" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
   <testsuites>
-    <testsuite name="Unit">
+    <testsuite name="Test Unit">
       <directory suffix="Test.php">./tests</directory>
     </testsuite>
   </testsuites>
-  <php>
-    <env name="APP_ENV" value="testing"/>
-    <env name="DB_CONNECTION" value="testing"/>
-  </php>
-  <logging/>
+<php>
+  <env name="APP_ENV" value="testing"/>
+  <env name="DB_CONNECTION" value="testing"/>
+</php>
 </phpunit>

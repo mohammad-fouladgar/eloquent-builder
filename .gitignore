@@ -10,3 +10,4 @@ build
 .htaccess
 cache
 .php_cs.cache
+.phpunit.cache
