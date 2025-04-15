@@ -12,7 +12,7 @@ class FilterMakeCommandTest extends TestCase
     /**
      * Orchestra app directory path.
      */
-    protected string $basePath;
+    protected ?string $basePath;
 
     /**
      * {@inheritdoc}
@@ -21,7 +21,7 @@ class FilterMakeCommandTest extends TestCase
     {
         parent::setUp();
 
-        $this->basePath = $this->getBasePath();
+        $this->basePath = self::applicationBasePath();
 
         $command = m::mock(
             'Fouladgar\EloquentBuilder\Console\FilterMakeCommand[info,rootNamespace,getDefaultNamespace]',
