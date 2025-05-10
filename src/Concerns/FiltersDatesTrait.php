@@ -75,6 +75,10 @@ trait FiltersDatesTrait
 
     protected function filterEqualsDate(Builder $builder, string $date, string $column): Builder
     {
+        if ($this->isOnlyDate($date)) {
+            return $builder->whereDate($column, $date);
+        }
+
         return $builder->where($column, $date);
     }
 
@@ -95,5 +99,14 @@ trait FiltersDatesTrait
         return is_array($parsedValue) ?
             $this->filterBetweenDate($builder, $parsedValue, $column) :
             $this->filterEqualsDate($builder, $parsedValue, $column);
+    }
+
+    private function isOnlyDate(string $string): bool
+    {
+        // Verify it doesn't contain time components
+        $containsTime = preg_match('/\d{1,2}:\d{2}(:\d{2})?/', $string);
+        $containsMeridiem = preg_match('/[ap]m/i', $string);
+
+        return !$containsTime && !$containsMeridiem;
     }
 }

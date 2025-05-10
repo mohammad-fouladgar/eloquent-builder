@@ -15,13 +15,13 @@ class DateTimeFilterTest extends TestCase
     {
         parent::setUp();
 
-        User::factory()->create(['birth_date' => '2016-01-01']);
-        User::factory()->create(['birth_date' => '2016-12-30']);
-        User::factory()->create(['birth_date' => '2017-01-01']);
-        User::factory()->create(['birth_date' => '2017-12-30']);
+        User::factory()->create(['birth_date' => '2016-01-01', 'authenticated_at' => '2016-01-01 12:34:56']);
+        User::factory()->create(['birth_date' => '2016-12-30', 'authenticated_at' => '2017-01-01 12:34:56']);
+        User::factory()->create(['birth_date' => '2017-01-01', 'authenticated_at' => '2018-01-01 12:34:56']);
+        User::factory()->create(['birth_date' => '2017-12-30', 'authenticated_at' => '2018-02-01 12:34:56']);
 
-        User::factory()->create(['birth_date' => '2018-01-01 10:49:20']);
-        User::factory()->create(['birth_date' => '2018-01-02']);
+        User::factory()->create(['birth_date' => '2018-01-01 10:49:20', 'authenticated_at' => '2018-03-01 12:34:56']);
+        User::factory()->create(['birth_date' => '2018-01-02', 'authenticated_at' => '2018-04-01 12:34:56']);
     }
 
     /**
@@ -142,6 +142,34 @@ class DateTimeFilterTest extends TestCase
         $sameDateTime = $this->eloquentBuilder
             ->model(User::class)
             ->filters(['birth_date' => 'same:2017-12-30'])
+            ->thenApply()
+            ->get(['id', 'birth_date']);
+
+        $this->assertEquals(1, $defaultDateTime->count());
+        $this->assertEquals(1, $sameDateTime->count());
+        $this->assertEquals(1, $equalDateTime->count());
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_filter_same_or_equal_a_date(): void
+    {
+        $defaultDateTime = $this->eloquentBuilder
+            ->model(User::class)
+            ->filters(['authenticated_at' => '2018-02-01'])
+            ->thenApply()
+            ->get(['id', 'birth_date']);
+
+        $equalDateTime = $this->eloquentBuilder
+            ->model(User::class)
+            ->filters(['authenticated_at' => 'equals:2018-02-01'])
+            ->thenApply()
+            ->get(['id', 'birth_date']);
+
+        $sameDateTime = $this->eloquentBuilder
+            ->model(User::class)
+            ->filters(['authenticated_at' => 'same:2018-02-01'])
             ->thenApply()
             ->get(['id', 'birth_date']);
 
