@@ -1,3 +1,6 @@
+## 5.2.0 - 2025-04-15
+ - Detect date and dateTime to specific date.
+
 ## 5.1.0 - 2025-04-15
  - Add support Laravel 12
 
