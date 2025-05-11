@@ -107,6 +107,6 @@ trait FiltersDatesTrait
         $containsTime = preg_match('/\d{1,2}:\d{2}(:\d{2})?/', $string);
         $containsMeridiem = preg_match('/[ap]m/i', $string);
 
-        return !$containsTime && !$containsMeridiem;
+        return ! $containsTime && ! $containsMeridiem;
     }
 }
