@@ -82,9 +82,28 @@ class QuickFilter extends Filter
     public static function includes(string $name = 'include', array $allowed = []): static
     {
         return new static($name, static function (Builder $builder, mixed $value) use ($allowed): Builder {
-            $relations = array_intersect(self::parseIncludes($value), $allowed);
+            $relations = array_intersect(self::parseList($value), $allowed);
 
             return $builder->with(array_values($relations));
+        });
+    }
+
+    /**
+     * Restrict the selected columns on the root model to a comma-separated string or array,
+     * intersected with the given whitelist. The primary key is always selected, since relations
+     * and model identity depend on it.
+     *
+     * @param  string[]  $allowed
+     */
+    public static function fields(string $name = 'fields', array $allowed = []): static
+    {
+        return new static($name, static function (Builder $builder, mixed $value) use ($allowed): Builder {
+            $columns = array_intersect(self::parseList($value), $allowed);
+
+            return $builder->select(array_unique([
+                $builder->getModel()->getKeyName(),
+                ...$columns,
+            ]));
         });
     }
 
@@ -99,15 +118,17 @@ class QuickFilter extends Filter
     }
 
     /**
+     * Normalize a comma-separated string or array into a trimmed, non-empty string list.
+     *
      * @return string[]
      */
-    private static function parseIncludes(mixed $value): array
+    private static function parseList(mixed $value): array
     {
-        $includes = array_filter(is_array($value) ? $value : explode(',', (string) $value), is_scalar(...));
+        $items = array_filter(is_array($value) ? $value : explode(',', (string) $value), is_scalar(...));
 
         return array_values(array_filter(array_map(
-            static fn (mixed $include): string => trim((string) $include),
-            $includes
-        ), static fn (string $include): bool => $include !== ''));
+            static fn (mixed $item): string => trim((string) $item),
+            $items
+        ), static fn (string $item): bool => $item !== ''));
     }
 }

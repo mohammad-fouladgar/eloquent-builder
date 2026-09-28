@@ -265,6 +265,73 @@ class QuickFilterTest extends TestCase
     }
 
     /** @test */
+    public function it_restricts_selected_columns_to_the_whitelist_with_the_fields_quick_filter(): void
+    {
+        User::factory()->create(['name' => 'Mohammad', 'gender' => 'male']);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::fields(allowed: ['name', 'gender'])])
+            ->filters(['fields' => 'name'])
+            ->thenApply()
+            ->get();
+
+        $attributes = array_keys($users->first()->getAttributes());
+
+        $this->assertContains('name', $attributes);
+        $this->assertNotContains('gender', $attributes);
+    }
+
+    /** @test */
+    public function it_always_selects_the_primary_key_with_the_fields_quick_filter(): void
+    {
+        User::factory()->create(['name' => 'Mohammad']);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::fields(allowed: ['name'])])
+            ->filters(['fields' => 'name'])
+            ->thenApply()
+            ->get();
+
+        $this->assertContains('id', array_keys($users->first()->getAttributes()));
+    }
+
+    /** @test */
+    public function it_selects_only_the_primary_key_when_no_requested_field_matches_the_whitelist(): void
+    {
+        User::factory()->create(['name' => 'Mohammad', 'gender' => 'male']);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::fields(allowed: ['name'])])
+            ->filters(['fields' => 'not_a_real_column'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(['id'], array_keys($users->first()->getAttributes()));
+    }
+
+    /** @test */
+    public function it_accepts_an_array_value_for_the_fields_quick_filter(): void
+    {
+        User::factory()->create(['name' => 'Mohammad', 'gender' => 'male', 'age' => 30]);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::fields(allowed: ['name', 'gender', 'age'])])
+            ->filters(['fields' => ['name', 'gender']])
+            ->thenApply()
+            ->get();
+
+        $attributes = array_keys($users->first()->getAttributes());
+
+        $this->assertContains('name', $attributes);
+        $this->assertContains('gender', $attributes);
+        $this->assertNotContains('age', $attributes);
+    }
+
+    /** @test */
     public function quick_filters_take_precedence_over_class_based_filters_with_the_same_key(): void
     {
         User::factory()->create(['age' => 30]);

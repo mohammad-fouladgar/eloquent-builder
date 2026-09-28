@@ -212,18 +212,24 @@ EloquentBuilder::model(User::class)
 - `QuickFilter::callback($name, Closure $callback)` — a custom `fn (Builder $builder, mixed $value): Builder` callback.
 - `QuickFilter::trashed($name = 'trashed')` — for [soft-deletable](https://laravel.com/docs/eloquent#soft-deleting) models. Responds to `with` (`withTrashed()`), `only` (`onlyTrashed()`), or any other value (default: excludes trashed records).
 - `QuickFilter::includes($name = 'include', array $allowed = [])` — eager-loads relations from a comma-separated string or array (`posts,comments.author` or `['posts', 'comments.author']`), restricted to the `$allowed` whitelist. Anything not in the whitelist — including a nested relation whose parent is allowed but not itself (`allowed: ['posts.user']` does **not** permit a bare `posts`) — is silently ignored.
+- `QuickFilter::fields($name = 'fields', array $allowed = [])` — restricts the root model's selected columns to a comma-separated string or array, intersected with the `$allowed` whitelist. The primary key is always selected regardless of the request or whitelist, since relations and model identity depend on it. If nothing requested matches the whitelist, only the primary key is selected.
 
 ```shell
 api/posts/search?filter[trashed]=with
 api/posts/search?filter[trashed]=only
 api/users/search?filter[include]=posts,posts.comments
+api/users/search?filter[fields]=name,email
 ```
 
 > **Note**: A quick filter takes precedence over a class-based filter that shares the same request key. Quick filters don't support the `authorize()` check that class-based filters do.
 
 > **Warning**: `QuickFilter::trashed()` only works on models using Laravel's `SoftDeletes` trait. Using it with `with`/`only` on a model without `SoftDeletes` throws a `BadMethodCallException`.
 
-> **Note**: `defaults()` only kicks in when the `include` key has no value at all — a non-empty but entirely non-whitelisted value (e.g. `include=not_allowed`) still counts as "provided", so it silences the default instead of falling back to it.
+> **Note**: `defaults()` only kicks in when the `include`/`fields` key has no value at all — a non-empty but entirely non-whitelisted value (e.g. `include=not_allowed`) still counts as "provided", so it silences the default instead of falling back to it.
+
+> **Warning**: `QuickFilter::fields()` only restricts columns on the root model — it doesn't (yet) support per-relation fieldsets (e.g. a JSON:API-style `fields[posts]=title`). Combine it with a class-based filter or `QuickFilter::callback()` if you need that.
+
+> **Warning**: Unlike `QuickFilter::includes()` (which merges eager loads via `with()`), `QuickFilter::fields()` calls `select()`, which **replaces** the query's entire column list. If another filter in the same request also calls `select()`/`addSelect()`, whichever one is resolved last wins — filter application order follows the incoming filters array's key order, not declaration order. Avoid combining `fields()` with another column-selecting filter, or have that other filter use `addSelect()` after `fields()` has run.
 
 ### Filter Groups
 
