@@ -45,7 +45,7 @@ class EloquentBuilderTest extends TestCase
     /** @test */
     public function it_should_return_builder_with_an_instance_of_the_model()
     {
-        $userInstance = new User();
+        $userInstance = new User;
 
         $this->assertInstanceOf(Builder::class, $this->eloquentBuilder->model($userInstance)->thenApply());
     }
@@ -110,9 +110,9 @@ class EloquentBuilderTest extends TestCase
         User::factory()->create(['gender' => 'female', 'age' => 40]);
 
         $users = $this->eloquentBuilder->model(User::class)
-                                       ->filters(['age_more_than' => 30, 'gender' => 'female'])
-                                       ->thenApply()
-                                       ->get();
+            ->filters(['age_more_than' => 30, 'gender' => 'female'])
+            ->thenApply()
+            ->get();
 
         $this->assertEquals(2, $users->count());
     }
@@ -129,14 +129,14 @@ class EloquentBuilderTest extends TestCase
         User::factory()->create();
 
         $users = $this->eloquentBuilder->model(User::class)
-                                       ->filters([
-                                           'published_post' => true,
-                                           'gender' => null,
-                                           'age_more_than' => '',
-                                           'name',
-                                       ])
-                                       ->thenApply()
-                                       ->get();
+            ->filters([
+                'published_post' => true,
+                'gender' => null,
+                'age_more_than' => '',
+                'name',
+            ])
+            ->thenApply()
+            ->get();
 
         $this->assertEquals(1, $users->count());
     }
@@ -193,5 +193,37 @@ class EloquentBuilderTest extends TestCase
             ->get();
 
         $this->assertEquals(2, $users->count());
+    }
+
+    /** @test */
+    public function it_can_work_by_pushing_filters_without_calling_filters_first()
+    {
+        User::factory()->create(['gender' => 'male', 'age' => 31]);
+        User::factory()->create(['gender' => 'female', 'age' => 25]);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->filter(['gender' => 'male'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(1, $users->count());
+    }
+
+    /** @test */
+    public function it_overrides_a_previously_set_filter_value_when_pushed_again()
+    {
+        User::factory()->create(['gender' => 'male', 'age' => 31]);
+        User::factory()->create(['gender' => 'female', 'age' => 25]);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->filters(['gender' => 'male'])
+            ->filter(['gender' => 'female'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(1, $users->count());
+        $this->assertEquals('female', $users->first()->gender);
     }
 }

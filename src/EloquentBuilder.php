@@ -12,15 +12,13 @@ class EloquentBuilder
 {
     protected string $filterNamespace = '';
 
-    private ?array $filters = null;
+    private array $filters = [];
 
     private string|null|Builder|EloquentModel $builder = null;
 
-    public function __construct(protected Pipeline $pipeline)
-    {
-    }
+    public function __construct(protected Pipeline $pipeline) {}
 
-    public function filters(array $filters = null): static
+    public function filters(array $filters = []): static
     {
         $this->filters = $filters;
 
@@ -29,7 +27,7 @@ class EloquentBuilder
 
     public function filter(array $filters): static
     {
-        $this->filters += $filters;
+        $this->filters = array_merge($this->filters, $filters);
 
         return $this;
     }

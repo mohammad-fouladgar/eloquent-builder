@@ -20,7 +20,7 @@ class Pipeline extends BasePipeline
 
     private Model $model;
 
-    public function __construct(protected ConfigRepository $config, Container $container = null)
+    public function __construct(protected ConfigRepository $config, ?Container $container = null)
     {
         parent::__construct($container);
     }
@@ -58,31 +58,29 @@ class Pipeline extends BasePipeline
      */
     protected function carry(): Closure
     {
-        return function ($stack, $name) {
-            return function ($passable) use ($stack, $name) {
-                try {
-                    $pipeClass = $this->resolveFilter($name, $this->model);
-                    $parameters = $this->pipes()[$name];
+        return fn ($stack, $name) => function ($passable) use ($stack, $name) {
+            try {
+                $pipeClass = $this->resolveFilter($name, $this->model);
+                $parameters = $this->pipes()[$name];
 
-                    self::notFoundFilterHandler($pipeClass);
+                $this->notFoundFilterHandler($pipeClass);
 
-                    $pipe = $this->getContainer()->make($pipeClass);
+                $pipe = $this->getContainer()->make($pipeClass);
 
-                    self::filterInstanceHandler($pipe, $pipeClass);
+                $this->filterInstanceHandler($pipe, $pipeClass);
 
-                    $carry = method_exists($pipe, $this->method)
-                        ? $pipe->{$this->method}($passable, $stack, $parameters)
-                        : $pipe($passable, $stack, $parameters);
+                $carry = method_exists($pipe, $this->method)
+                    ? $pipe->{$this->method}($passable, $stack, $parameters)
+                    : $pipe($passable, $stack, $parameters);
 
-                    return $this->handleCarry($carry);
-                } catch (Throwable $e) {
-                    return $this->handleException($passable, $e);
-                }
-            };
+                return $this->handleCarry($carry);
+            } catch (Throwable $e) {
+                return $this->handleException($passable, $e);
+            }
         };
     }
 
-    private static function filterBasename(string $namespace): string
+    private function filterBasename(string $namespace): string
     {
         return class_basename($namespace);
     }
@@ -90,23 +88,22 @@ class Pipeline extends BasePipeline
     /**
      * @throws Throwable
      */
-    private static function notFoundFilterHandler($filterClass): void
+    private function notFoundFilterHandler($filterClass): void
     {
         throw_if(
             ! class_exists($filterClass),
-            FilterException::filterNotFound(self::filterBasename($filterClass)),
+            FilterException::filterNotFound($this->filterBasename($filterClass)),
         );
     }
 
     /**
      * @throws Throwable
      */
-    private static function filterInstanceHandler($pipe, $filterClass): void
+    private function filterInstanceHandler($pipe, $filterClass): void
     {
         throw_if(
             ! $pipe instanceof Filter,
-            FilterException::filterInstance(self::filterBasename($filterClass))
+            FilterException::filterInstance($this->filterBasename($filterClass))
         );
     }
-
 }

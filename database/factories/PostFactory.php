@@ -20,10 +20,9 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
-            'title'        => $this->faker->title,
-            'content'      => $this->faker->paragraph,
+            'title' => $this->faker->title,
+            'content' => $this->faker->paragraph,
             'is_published' => $this->faker->boolean,
         ];
     }
 }
-

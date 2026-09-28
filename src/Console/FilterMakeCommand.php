@@ -55,12 +55,9 @@ class FilterMakeCommand extends GeneratorCommand
             $this->files->put($path, $this->buildClass($name));
         }
 
-        $this->info($this->type . ' created successfully.');
+        $this->info($this->type.' created successfully.');
     }
 
-    /**
-     * @param $name
-     */
     protected function setModel($name): void
     {
         $this->model = Str::of($name)->lower()->ucfirst();
@@ -68,12 +65,10 @@ class FilterMakeCommand extends GeneratorCommand
 
     /**
      * Get the stub file for the generator.
-     *
-     * @return string
      */
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/filter.stub';
+        return __DIR__.'/stubs/filter.stub';
     }
 
     /**
@@ -83,16 +78,11 @@ class FilterMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace): string
     {
-        return rtrim(config('eloquent-builder.namespace'), '\\') . '\\' . $this->model;
+        return rtrim(config('eloquent-builder.namespace'), '\\').'\\'.$this->model;
     }
 
-    /**
-     * @param $name
-     *
-     * @return string
-     */
     protected function sanitizeNameInput($name): string
     {
-        return Str::studly(trim($name)) . 'Filter';
+        return Str::studly(trim($name)).'Filter';
     }
 }

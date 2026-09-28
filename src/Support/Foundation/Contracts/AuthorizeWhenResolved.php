@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fouladgar\EloquentBuilder\Support\Foundation\Contracts;
 
 interface AuthorizeWhenResolved

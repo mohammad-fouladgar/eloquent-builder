@@ -22,7 +22,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "illuminate/database": "^10.0|^11.0|^12.0|^13.0",
         "illuminate/support": "^10.0|^11.0|^12.0|^13.0"
     },
@@ -30,7 +30,10 @@
         "phpunit/phpunit": "^10.5.17|^11.5.3",
         "orchestra/testbench": "^7.0|^8.0|^10.0|^11.0",
         "mockery/mockery": "^1.4",
-        "php-coveralls/php-coveralls": "^2.1"
+        "php-coveralls/php-coveralls": "^2.1",
+        "rector/rector": "^2.6",
+        "driftingly/rector-laravel": "^2.6",
+        "laravel/pint": "^1.32"
     },
     "autoload": {
         "psr-4": {
@@ -48,6 +51,10 @@
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
+        "format": "vendor/bin/pint",
+        "format:test": "vendor/bin/pint --test",
+        "refactor": "vendor/bin/rector process",
+        "refactor:dry": "vendor/bin/rector process --dry-run",
         "post-autoload-dump": [
             "@clear",
             "@prepare"

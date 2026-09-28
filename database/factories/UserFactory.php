@@ -20,12 +20,10 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'   => $this->faker->name,
-            'age'    => $this->faker->numberBetween(15, 90),
+            'name' => $this->faker->name,
+            'age' => $this->faker->numberBetween(15, 90),
             'gender' => $this->faker->randomElement(['male', 'female']),
             'status' => $this->faker->randomElement(['offline', 'online']),
         ];
     }
 }
-
-

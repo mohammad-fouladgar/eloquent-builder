@@ -4,7 +4,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/mohammad-fouladgar/eloquent-builder.svg)](https://packagist.org/packages/mohammad-fouladgar/eloquent-builder)
 ![Test Status](https://img.shields.io/github/actions/workflow/status/mohammad-fouladgar/eloquent-builder/run-tests.yml?label=tests)
-![Code Style Status](https://img.shields.io/github/actions/workflow/status/mohammad-fouladgar/eloquent-builder/php-cs-fixer.yml?label=code%20style)
+![Code Style Status](https://img.shields.io/github/actions/workflow/status/mohammad-fouladgar/eloquent-builder/pint.yml?label=code%20style)
 ![Total Downloads](https://img.shields.io/packagist/dt/mohammad-fouladgar/eloquent-builder)
 
 This package allows you to build eloquent queries, based on incoming request parameters. It greatly reduces the complexity of the

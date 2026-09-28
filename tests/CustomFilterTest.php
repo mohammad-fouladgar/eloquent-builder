@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fouladgar\EloquentBuilder\Tests;
 
 use Fouladgar\EloquentBuilder\Tests\Models\Post;
@@ -21,16 +23,16 @@ class CustomFilterTest extends TestCase
         Post::factory(2)->create(['user_id' => 20, 'is_published' => false]);
 
         $users = $this->eloquentBuilder->setFilterNamespace('Fouladgar\\EloquentBuilder\\Tests\\UserDomain\\CustomFilters\\')
-                                       ->model(User::class)
-                                       ->filters(['age_more_than' => 25])
-                                       ->thenApply()
-                                       ->get();
+            ->model(User::class)
+            ->filters(['age_more_than' => 25])
+            ->thenApply()
+            ->get();
 
         $posts = $this->eloquentBuilder->setFilterNamespace('Fouladgar\\EloquentBuilder\\Tests\\PostDomain\\CustomFilters\\')
-                                       ->model(Post::class)
-                                       ->filters(['is_published' => true])
-                                       ->thenApply()
-                                       ->get();
+            ->model(Post::class)
+            ->filters(['is_published' => true])
+            ->thenApply()
+            ->get();
 
         $this->assertEquals(2, $users->count());
         $this->assertEquals(3, $posts->count());

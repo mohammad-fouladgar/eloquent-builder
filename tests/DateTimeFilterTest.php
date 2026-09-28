@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fouladgar\EloquentBuilder\Tests;
 
 use BadMethodCallException;
@@ -11,7 +13,7 @@ class DateTimeFilterTest extends TestCase
     /**
      * Setup the test environment.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

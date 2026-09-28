@@ -23,7 +23,7 @@ trait FilterResolverTrait
         return $base.class_basename($model).'\\'.$this->resolveFilterName($filter);
     }
 
-    private function sanitizeNamespace(string $namespace): array|string
+    private function sanitizeNamespace(string $namespace): string
     {
         return str_replace('\\\\', '\\', $namespace);
     }

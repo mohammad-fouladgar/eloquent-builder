@@ -22,29 +22,20 @@ class PublishCommand extends Command
     protected $description = 'Publishes EloquentBuilder configuration file to config directory of app';
 
     /**
-     * Filesystem instance for fs operations.
-     */
-    protected Filesystem $files;
-
-    /**
      * A list of files (source => destination).
      */
     protected array $fileMap = [];
 
     /**
      * PublishCommand constructor.
-     *
-     * @param Filesystem $files
      */
-    public function __construct(Filesystem $files)
+    public function __construct(protected Filesystem $files)
     {
         parent::__construct();
-
-        $this->files = $files;
-        $fromPath = __DIR__ . '/../..';
+        $fromPath = __DIR__.'/../..';
 
         $this->fileMap = [
-            $fromPath . '/config/eloquent-builder.php' => app()->basePath('config/eloquent-builder.php'),
+            $fromPath.'/config/eloquent-builder.php' => app()->basePath('config/eloquent-builder.php'),
         ];
     }
 

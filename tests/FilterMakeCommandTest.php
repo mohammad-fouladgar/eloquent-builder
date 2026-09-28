@@ -8,7 +8,6 @@ use Mockery as m;
 
 class FilterMakeCommandTest extends TestCase
 {
-
     /**
      * Orchestra app directory path.
      */
@@ -17,7 +16,7 @@ class FilterMakeCommandTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -25,7 +24,7 @@ class FilterMakeCommandTest extends TestCase
 
         $command = m::mock(
             'Fouladgar\EloquentBuilder\Console\FilterMakeCommand[info,rootNamespace,getDefaultNamespace]',
-            [new Filesystem()]
+            [new Filesystem]
         )->shouldAllowMockingProtectedMethods();
 
         $command->shouldReceive('info')->andReturn('Filter[s] created successfully.');
@@ -51,7 +50,7 @@ class FilterMakeCommandTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 

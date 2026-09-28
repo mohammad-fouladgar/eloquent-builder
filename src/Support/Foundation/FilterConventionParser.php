@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fouladgar\EloquentBuilder\Support\Foundation;
 
 use Illuminate\Support\Str;
@@ -23,6 +25,6 @@ class FilterConventionParser
             return $value;
         }
 
-        return array_map('trim', explode(',', $value));
+        return array_map(trim(...), explode(',', $value));
     }
 }

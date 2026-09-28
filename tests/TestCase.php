@@ -16,7 +16,7 @@ class TestCase extends BaseTestCase
     /**
      * Setup the test environment.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -32,7 +32,7 @@ class TestCase extends BaseTestCase
     /**
      * Define environment setup.
      *
-     * @param Application $app
+     * @param  Application  $app
      */
     protected function getEnvironmentSetUp($app): void
     {
@@ -40,9 +40,7 @@ class TestCase extends BaseTestCase
     }
 
     /**
-     * @param Application $app
-     *
-     * @return array
+     * @param  Application  $app
      */
     protected function getPackageProviders($app): array
     {

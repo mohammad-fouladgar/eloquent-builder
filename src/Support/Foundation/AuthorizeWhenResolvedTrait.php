@@ -35,7 +35,7 @@ trait AuthorizeWhenResolvedTrait
      *
      * @throws AuthorizationException
      */
-    protected function failedAuthorization()
+    protected function failedAuthorization(): never
     {
         throw new AuthorizationException('This filter action is unauthorized.');
     }
