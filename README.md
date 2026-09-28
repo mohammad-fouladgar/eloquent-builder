@@ -246,6 +246,41 @@ A group works with class-based filters, quick filters, or a mix of both — each
 
 > **Warning**: Only put filters that add a plain `where` constraint (`QuickFilter::exact/partial/scope/callback`, or a class-based filter that just calls `$builder->where(...)`) inside a group. A filter that changes global scopes or the query's structure — most notably `QuickFilter::trashed()`, or a custom filter calling `withoutGlobalScope()`, `orderBy()`, or `with()` — affects the **whole query** when used inside a group, not just that group's `OR` branch, because that's how Eloquent's underlying `where(Closure)` nesting propagates removed scopes. Use those filters ungrouped instead.
 
+### Defaults & Ignored Values
+
+Use `defaults()` to fill in a value for any filter key that ends up without one — whether it was never sent, sent empty, or dropped by `ignoreValues()` below:
+
+```php
+<?php
+
+// api/user/search (no `status` sent at all)
+EloquentBuilder::model(User::class)
+    ->quickFilters([QuickFilter::exact('status')])
+    ->defaults(['status' => 'online'])
+    ->filters($request->filter)
+    ->thenApply()
+    ->get();
+```
+
+An explicitly provided value always wins over its default.
+
+Use `ignoreValues()` to treat specific incoming values as if the filter was never provided — handy for a sentinel like `status=all` from a `<select>` filter:
+
+```php
+<?php
+
+// api/user/search?filter[status]=all
+EloquentBuilder::model(User::class)
+    ->quickFilters([QuickFilter::exact('status')])
+    ->ignoreValues(['status' => ['all']])
+    ->defaults(['status' => 'online']) // optional — falls back to no filter at all without this
+    ->filters($request->filter)
+    ->thenApply()
+    ->get();
+```
+
+Values are compared to the ignore list as strings, so `ignoreValues(['id' => [0]])` also matches an incoming `'0'`.
+
 ## Use a filter
 
 You can use filters in multiple approaches:

@@ -3,6 +3,7 @@
 namespace Fouladgar\EloquentBuilder\Tests;
 
 use Fouladgar\EloquentBuilder\Exceptions\FilterException;
+use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\QuickFilter;
 use Fouladgar\EloquentBuilder\Tests\Models\Post;
 use Fouladgar\EloquentBuilder\Tests\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -225,5 +226,108 @@ class EloquentBuilderTest extends TestCase
 
         $this->assertEquals(1, $users->count());
         $this->assertEquals('female', $users->first()->gender);
+    }
+
+    /** @test */
+    public function it_applies_a_default_value_when_the_filter_is_not_provided(): void
+    {
+        User::factory()->create(['gender' => 'male']);
+        User::factory()->create(['gender' => 'female']);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->defaults(['gender' => 'female'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(1, $users->count());
+        $this->assertEquals('female', $users->first()->gender);
+    }
+
+    /** @test */
+    public function it_lets_an_explicitly_provided_value_override_the_default(): void
+    {
+        User::factory()->create(['gender' => 'male']);
+        User::factory()->create(['gender' => 'female']);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->defaults(['gender' => 'female'])
+            ->filters(['gender' => 'male'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(1, $users->count());
+        $this->assertEquals('male', $users->first()->gender);
+    }
+
+    /** @test */
+    public function it_falls_back_to_the_default_when_an_ignored_value_is_provided(): void
+    {
+        User::factory()->create(['status' => 'online']);
+        User::factory()->create(['status' => 'offline']);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::exact('status')])
+            ->ignoreValues(['status' => ['all']])
+            ->defaults(['status' => 'online'])
+            ->filters(['status' => 'all'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(1, $users->count());
+        $this->assertEquals('online', $users->first()->status);
+    }
+
+    /** @test */
+    public function it_treats_an_ignored_value_as_absent_without_a_default(): void
+    {
+        User::factory()->create(['status' => 'online']);
+        User::factory()->create(['status' => 'offline']);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::exact('status')])
+            ->ignoreValues(['status' => ['all']])
+            ->filters(['status' => 'all'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(2, $users->count());
+    }
+
+    /** @test */
+    public function it_falls_back_to_the_default_when_an_explicit_empty_value_is_given(): void
+    {
+        User::factory()->create(['gender' => 'male']);
+        User::factory()->create(['gender' => 'female']);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->defaults(['gender' => 'female'])
+            ->filters(['gender' => ''])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(1, $users->count());
+        $this->assertEquals('female', $users->first()->gender);
+    }
+
+    /** @test */
+    public function it_does_not_treat_a_true_value_as_an_ignored_string_value(): void
+    {
+        User::factory()->create(['gender' => 'male']);
+        User::factory()->create(['gender' => 'female']);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::exact('gender')])
+            ->ignoreValues(['gender' => ['no']])
+            ->filters(['gender' => true])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(0, $users->count());
     }
 }

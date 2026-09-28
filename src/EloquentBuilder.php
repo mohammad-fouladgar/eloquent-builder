@@ -23,6 +23,13 @@ class EloquentBuilder
      */
     private array $filterGroups = [];
 
+    private array $defaults = [];
+
+    /**
+     * @var array<string, array<int, mixed>>
+     */
+    private array $ignoredValues = [];
+
     private string|null|Builder|EloquentModel $builder = null;
 
     public function __construct(protected Pipeline $pipeline) {}
@@ -70,6 +77,28 @@ class EloquentBuilder
         return $this;
     }
 
+    /**
+     * Fill in a value for any filter key that has no value provided.
+     */
+    public function defaults(array $defaults): static
+    {
+        $this->defaults = $defaults;
+
+        return $this;
+    }
+
+    /**
+     * Treat the given values as if the filter was never provided, e.g. `['status' => ['all']]`.
+     *
+     * @param  array<string, array<int, mixed>>  $ignoredValues
+     */
+    public function ignoreValues(array $ignoredValues): static
+    {
+        $this->ignoredValues = $ignoredValues;
+
+        return $this;
+    }
+
     public function setFilterNamespace(string $namespace = ''): self
     {
         $this->filterNamespace = $namespace;
@@ -82,11 +111,13 @@ class EloquentBuilder
      */
     public function thenApply(): Builder
     {
-        if (! $this->filters) {
+        $filters = $this->resolveFilters();
+
+        if ($filters === []) {
             return $this->builder;
         }
 
-        $this->apply($this->builder, $this->getFilters($this->filters));
+        $this->apply($this->builder, $filters);
 
         return $this->builder;
     }
@@ -110,6 +141,33 @@ class EloquentBuilder
     private function getFilters(array $filters = []): array
     {
         return collect($filters)->getFilters();
+    }
+
+    /**
+     * Merge in defaults for any filter left without a value, after stripping ignored values.
+     */
+    private function resolveFilters(): array
+    {
+        $filters = $this->getFilters($this->withoutIgnoredValues($this->filters));
+
+        return $this->getFilters($filters + $this->defaults);
+    }
+
+    private function withoutIgnoredValues(array $filters): array
+    {
+        foreach ($this->ignoredValues as $key => $ignored) {
+            if (! array_key_exists($key, $filters) || ! is_scalar($filters[$key])) {
+                continue;
+            }
+
+            $ignored = array_map(strval(...), array_filter((array) $ignored, is_scalar(...)));
+
+            if (in_array((string) $filters[$key], $ignored, true)) {
+                unset($filters[$key]);
+            }
+        }
+
+        return $filters;
     }
 
     /**
