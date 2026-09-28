@@ -4,6 +4,7 @@ namespace Fouladgar\EloquentBuilder;
 
 use Fouladgar\EloquentBuilder\Exceptions\FilterException;
 use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\Pipeline;
+use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\QuickFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Throwable;
@@ -13,6 +14,8 @@ class EloquentBuilder
     protected string $filterNamespace = '';
 
     private array $filters = [];
+
+    private array $quickFilters = [];
 
     private string|null|Builder|EloquentModel $builder = null;
 
@@ -35,6 +38,18 @@ class EloquentBuilder
     public function model(string|EloquentModel|Builder $builder): static
     {
         $this->builder = $this->resolveQuery($builder);
+
+        return $this;
+    }
+
+    /**
+     * @param  QuickFilter[]  $quickFilters
+     */
+    public function quickFilters(array $quickFilters): static
+    {
+        $this->quickFilters = collect($quickFilters)->keyBy(
+            static fn (QuickFilter $quickFilter): string => $quickFilter->getName()
+        )->all();
 
         return $this;
     }
@@ -90,6 +105,7 @@ class EloquentBuilder
             ->send($builder)
             ->model($builder->getModel())
             ->customNamespace($this->filterNamespace)
+            ->quickFilters($this->quickFilters)
             ->through($filters)
             ->thenReturn();
     }

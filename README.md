@@ -183,6 +183,35 @@ multiple names to `Filter` argument:
 php artisan eloquent-builder:make user age_more_than gender
 ```
 
+### Quick Filters
+
+For simple cases, you don't need to create a dedicated filter class at all. Use
+`Fouladgar\EloquentBuilder\Support\Foundation\Concrete\QuickFilter` to declare a filter inline via `quickFilters()`:
+
+```php
+<?php
+
+use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\QuickFilter;
+
+EloquentBuilder::model(User::class)
+    ->quickFilters([
+        QuickFilter::exact('gender'),
+        QuickFilter::partial('name'),
+        QuickFilter::scope('online'),
+        QuickFilter::callback('has_posts', fn (Builder $builder, mixed $value) => $builder->whereHas('posts')),
+    ])
+    ->filters($request->all())
+    ->thenApply()
+    ->get();
+```
+
+- `QuickFilter::exact($name, $column = null)` — a strict `=` match. Pass `$column` when the column name differs from the request key.
+- `QuickFilter::partial($name, $column = null)` — a `LIKE %value%` match.
+- `QuickFilter::scope($name, $scope = null)` — invokes an existing [local scope](https://laravel.com/docs/eloquent#local-scopes) on the model. Pass `$scope` when the scope name differs from the request key.
+- `QuickFilter::callback($name, Closure $callback)` — a custom `fn (Builder $builder, mixed $value): Builder` callback.
+
+> **Note**: A quick filter takes precedence over a class-based filter that shares the same request key. Quick filters don't support the `authorize()` check that class-based filters do.
+
 ## Use a filter
 
 You can use filters in multiple approaches:

@@ -20,6 +20,11 @@ class Pipeline extends BasePipeline
 
     private Model $model;
 
+    /**
+     * @var array<string, Filter>
+     */
+    private array $quickFilters = [];
+
     public function __construct(protected ConfigRepository $config, ?Container $container = null)
     {
         parent::__construct($container);
@@ -35,6 +40,16 @@ class Pipeline extends BasePipeline
     public function customNamespace(string $namespace = ''): static
     {
         $this->customNamespace = $namespace;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string, Filter>  $quickFilters
+     */
+    public function quickFilters(array $quickFilters): static
+    {
+        $this->quickFilters = $quickFilters;
 
         return $this;
     }
@@ -60,14 +75,11 @@ class Pipeline extends BasePipeline
     {
         return fn ($stack, $name) => function ($passable) use ($stack, $name) {
             try {
-                $pipeClass = $this->resolveFilter($name, $this->model);
                 $parameters = $this->pipes()[$name];
 
-                $this->notFoundFilterHandler($pipeClass);
+                [$pipe, $identifier] = $this->resolvePipe($name);
 
-                $pipe = $this->getContainer()->make($pipeClass);
-
-                $this->filterInstanceHandler($pipe, $pipeClass);
+                $this->filterInstanceHandler($pipe, $identifier);
 
                 $pipe->authorizeResolved();
 
@@ -82,6 +94,24 @@ class Pipeline extends BasePipeline
         };
     }
 
+    /**
+     * @return array{0: mixed, 1: string}
+     *
+     * @throws Throwable
+     */
+    private function resolvePipe(string $name): array
+    {
+        if (isset($this->quickFilters[$name])) {
+            return [$this->quickFilters[$name], $name];
+        }
+
+        $pipeClass = $this->resolveFilter($name, $this->model);
+
+        $this->notFoundFilterHandler($pipeClass);
+
+        return [$this->getContainer()->make($pipeClass), $this->filterBasename($pipeClass)];
+    }
+
     private function filterBasename(string $namespace): string
     {
         return class_basename($namespace);
@@ -90,7 +120,7 @@ class Pipeline extends BasePipeline
     /**
      * @throws Throwable
      */
-    private function notFoundFilterHandler($filterClass): void
+    private function notFoundFilterHandler(string $filterClass): void
     {
         throw_if(
             ! class_exists($filterClass),
@@ -101,11 +131,11 @@ class Pipeline extends BasePipeline
     /**
      * @throws Throwable
      */
-    private function filterInstanceHandler($pipe, $filterClass): void
+    private function filterInstanceHandler(mixed $pipe, string $identifier): void
     {
         throw_if(
             ! $pipe instanceof Filter,
-            FilterException::filterInstance($this->filterBasename($filterClass))
+            FilterException::filterInstance($identifier)
         );
     }
 }
