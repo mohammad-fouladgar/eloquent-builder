@@ -69,6 +69,8 @@ class Pipeline extends BasePipeline
 
                 $this->filterInstanceHandler($pipe, $pipeClass);
 
+                $pipe->authorizeResolved();
+
                 $carry = method_exists($pipe, $this->method)
                     ? $pipe->{$this->method}($passable, $stack, $parameters)
                     : $pipe($passable, $stack, $parameters);

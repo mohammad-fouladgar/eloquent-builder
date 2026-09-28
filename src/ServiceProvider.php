@@ -4,7 +4,6 @@ namespace Fouladgar\EloquentBuilder;
 
 use Fouladgar\EloquentBuilder\Console\FilterMakeCommand;
 use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\Pipeline;
-use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\AuthorizeWhenResolved;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -16,10 +15,6 @@ class ServiceProvider extends BaseServiceProvider
         $this->bootPublishes();
 
         $this->registerMacros();
-
-        $this->app->afterResolving(AuthorizeWhenResolved::class, static function ($resolved) {
-            $resolved->authorizeResolved();
-        });
     }
 
     public function register(): void
