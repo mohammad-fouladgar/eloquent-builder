@@ -8,6 +8,7 @@ use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
 use Fouladgar\EloquentBuilder\Support\Foundation\FilterResolverTrait;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pipeline\Pipeline as BasePipeline;
 use Throwable;
@@ -24,6 +25,11 @@ class Pipeline extends BasePipeline
      * @var array<string, Filter>
      */
     private array $quickFilters = [];
+
+    /**
+     * @var FilterGroup[]
+     */
+    private array $filterGroups = [];
 
     public function __construct(protected ConfigRepository $config, ?Container $container = null)
     {
@@ -55,12 +61,24 @@ class Pipeline extends BasePipeline
     }
 
     /**
+     * @param  FilterGroup[]  $filterGroups
+     */
+    public function filterGroups(array $filterGroups): static
+    {
+        $this->filterGroups = $filterGroups;
+
+        return $this;
+    }
+
+    /**
      * @throws Throwable
      */
     public function then(Closure $destination)
     {
+        $this->applyFilterGroups();
+
         $pipeline = array_reduce(
-            array_keys($this->pipes()),
+            array_keys($this->ungroupedFilters()),
             $this->carry(),
             $this->prepareDestination($destination)
         );
@@ -77,11 +95,7 @@ class Pipeline extends BasePipeline
             try {
                 $parameters = $this->pipes()[$name];
 
-                [$pipe, $identifier] = $this->resolvePipe($name);
-
-                $this->filterInstanceHandler($pipe, $identifier);
-
-                $pipe->authorizeResolved();
+                [$pipe, $identifier] = $this->resolveAndAuthorize($name);
 
                 $carry = method_exists($pipe, $this->method)
                     ? $pipe->{$this->method}($passable, $stack, $parameters)
@@ -92,6 +106,64 @@ class Pipeline extends BasePipeline
                 return $this->handleException($passable, $e);
             }
         };
+    }
+
+    /**
+     * @throws Throwable
+     */
+    private function applyFilterGroups(): void
+    {
+        $filters = $this->pipes();
+
+        foreach ($this->filterGroups as $group) {
+            $groupFilters = array_intersect_key($filters, array_flip($group->keys()));
+
+            if ($groupFilters === []) {
+                continue;
+            }
+
+            $this->passable->where(function (Builder $query) use ($groupFilters) {
+                foreach ($groupFilters as $name => $value) {
+                    $query->orWhere(fn (Builder $nested) => $this->applyGroupedFilter($nested, $name, $value));
+                }
+            });
+        }
+    }
+
+    /**
+     * @throws Throwable
+     */
+    private function applyGroupedFilter(Builder $builder, string $name, mixed $value): Builder
+    {
+        [$pipe] = $this->resolveAndAuthorize($name);
+
+        return $pipe->apply($builder, $value);
+    }
+
+    private function ungroupedFilters(): array
+    {
+        $groupedKeys = array_merge([], ...array_map(
+            static fn (FilterGroup $group): array => $group->keys(),
+            $this->filterGroups
+        ));
+
+        return array_diff_key($this->pipes(), array_flip($groupedKeys));
+    }
+
+    /**
+     * @return array{0: Filter, 1: string}
+     *
+     * @throws Throwable
+     */
+    private function resolveAndAuthorize(string $name): array
+    {
+        [$pipe, $identifier] = $this->resolvePipe($name);
+
+        $this->filterInstanceHandler($pipe, $identifier);
+
+        $pipe->authorizeResolved();
+
+        return [$pipe, $identifier];
     }
 
     /**

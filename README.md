@@ -221,6 +221,31 @@ api/posts/search?filter[trashed]=only
 
 > **Warning**: `QuickFilter::trashed()` only works on models using Laravel's `SoftDeletes` trait. Using it with `with`/`only` on a model without `SoftDeletes` throws a `BadMethodCallException`.
 
+### Filter Groups
+
+By default, every filter is combined with `AND`. Use `filterGroups()` with `Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterGroup` to combine a set of filter keys with `OR` instead:
+
+```php
+<?php
+
+use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterGroup;
+
+// api/user/search?filter[status]=online&filter[is_featured]=true
+EloquentBuilder::model(User::class)
+    ->filterGroups([
+        FilterGroup::or(['status', 'is_featured']),
+    ])
+    ->filters($request->filter)
+    ->thenApply()
+    ->get();
+
+// Produces: ... WHERE (status = 'online' OR is_featured = true)
+```
+
+A group works with class-based filters, quick filters, or a mix of both — each key is still resolved and authorized exactly the same way as an ungrouped filter. A group only combines the keys that are actually present in the request; if only one member of the group has a value, it's applied like a normal filter, and if none of them do, the group is skipped entirely.
+
+> **Warning**: Only put filters that add a plain `where` constraint (`QuickFilter::exact/partial/scope/callback`, or a class-based filter that just calls `$builder->where(...)`) inside a group. A filter that changes global scopes or the query's structure — most notably `QuickFilter::trashed()`, or a custom filter calling `withoutGlobalScope()`, `orderBy()`, or `with()` — affects the **whole query** when used inside a group, not just that group's `OR` branch, because that's how Eloquent's underlying `where(Closure)` nesting propagates removed scopes. Use those filters ungrouped instead.
+
 ## Use a filter
 
 You can use filters in multiple approaches:
