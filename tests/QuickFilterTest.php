@@ -151,6 +151,120 @@ class QuickFilterTest extends TestCase
     }
 
     /** @test */
+    public function it_eager_loads_an_allowed_relation_with_the_includes_quick_filter(): void
+    {
+        $user = User::factory()->create();
+        $user->posts()->save(Post::factory()->make());
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::includes(allowed: ['posts'])])
+            ->filters(['include' => 'posts'])
+            ->thenApply()
+            ->get();
+
+        $this->assertTrue($users->first()->relationLoaded('posts'));
+    }
+
+    /** @test */
+    public function it_silently_ignores_a_relation_not_in_the_whitelist(): void
+    {
+        User::factory()->create();
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::includes(allowed: ['posts'])])
+            ->filters(['include' => 'not_a_real_relation'])
+            ->thenApply()
+            ->get();
+
+        $this->assertFalse($users->first()->relationLoaded('posts'));
+    }
+
+    /** @test */
+    public function it_ignores_a_non_scalar_entry_in_the_includes_value_without_a_warning(): void
+    {
+        $user = User::factory()->create();
+        $user->posts()->save(Post::factory()->make());
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::includes(allowed: ['posts'])])
+            ->filters(['include' => ['posts', ['nested']]])
+            ->thenApply()
+            ->get();
+
+        $this->assertTrue($users->first()->relationLoaded('posts'));
+    }
+
+    /** @test */
+    public function it_accepts_an_array_value_for_the_includes_quick_filter(): void
+    {
+        $user = User::factory()->create();
+        $user->posts()->save(Post::factory()->make());
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::includes(allowed: ['posts'])])
+            ->filters(['include' => ['posts']])
+            ->thenApply()
+            ->get();
+
+        $this->assertTrue($users->first()->relationLoaded('posts'));
+    }
+
+    /** @test */
+    public function it_requires_an_exact_whitelist_match_for_nested_includes(): void
+    {
+        $user = User::factory()->create();
+        $user->posts()->save(Post::factory()->make());
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::includes(allowed: ['posts.user'])])
+            ->filters(['include' => 'posts'])
+            ->thenApply()
+            ->get();
+
+        $this->assertFalse($users->first()->relationLoaded('posts'));
+    }
+
+    /** @test */
+    public function it_cannot_escalate_beyond_the_whitelist_via_a_deeper_dotted_chain(): void
+    {
+        $user = User::factory()->create();
+        $user->posts()->save(Post::factory()->make());
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::includes(allowed: ['posts', 'posts.user'])])
+            ->filters(['include' => 'posts.user.rels1.rels2.rel3'])
+            ->thenApply()
+            ->get();
+
+        $this->assertFalse($users->first()->relationLoaded('posts'));
+    }
+
+    /** @test */
+    public function it_eager_loads_a_nested_relation_in_the_whitelist(): void
+    {
+        $user = User::factory()->create();
+        $user->posts()->save(Post::factory()->make());
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::includes(allowed: ['posts.user'])])
+            ->filters(['include' => 'posts.user'])
+            ->thenApply()
+            ->get();
+
+        $post = $users->first()->posts->first();
+
+        $this->assertTrue($users->first()->relationLoaded('posts'));
+        $this->assertTrue($post->relationLoaded('user'));
+    }
+
+    /** @test */
     public function quick_filters_take_precedence_over_class_based_filters_with_the_same_key(): void
     {
         User::factory()->create(['age' => 30]);

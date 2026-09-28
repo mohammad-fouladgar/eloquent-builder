@@ -211,15 +211,19 @@ EloquentBuilder::model(User::class)
 - `QuickFilter::scope($name, $scope = null)` — invokes an existing [local scope](https://laravel.com/docs/eloquent#local-scopes) on the model. Pass `$scope` when the scope name differs from the request key.
 - `QuickFilter::callback($name, Closure $callback)` — a custom `fn (Builder $builder, mixed $value): Builder` callback.
 - `QuickFilter::trashed($name = 'trashed')` — for [soft-deletable](https://laravel.com/docs/eloquent#soft-deleting) models. Responds to `with` (`withTrashed()`), `only` (`onlyTrashed()`), or any other value (default: excludes trashed records).
+- `QuickFilter::includes($name = 'include', array $allowed = [])` — eager-loads relations from a comma-separated string or array (`posts,comments.author` or `['posts', 'comments.author']`), restricted to the `$allowed` whitelist. Anything not in the whitelist — including a nested relation whose parent is allowed but not itself (`allowed: ['posts.user']` does **not** permit a bare `posts`) — is silently ignored.
 
 ```shell
 api/posts/search?filter[trashed]=with
 api/posts/search?filter[trashed]=only
+api/users/search?filter[include]=posts,posts.comments
 ```
 
 > **Note**: A quick filter takes precedence over a class-based filter that shares the same request key. Quick filters don't support the `authorize()` check that class-based filters do.
 
 > **Warning**: `QuickFilter::trashed()` only works on models using Laravel's `SoftDeletes` trait. Using it with `with`/`only` on a model without `SoftDeletes` throws a `BadMethodCallException`.
+
+> **Note**: `defaults()` only kicks in when the `include` key has no value at all — a non-empty but entirely non-whitelisted value (e.g. `include=not_allowed`) still counts as "provided", so it silences the default instead of falling back to it.
 
 ### Filter Groups
 

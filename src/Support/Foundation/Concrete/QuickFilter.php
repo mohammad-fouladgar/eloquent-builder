@@ -74,6 +74,20 @@ class QuickFilter extends Filter
         });
     }
 
+    /**
+     * Eager-load relations from a comma-separated string or array, restricted to the given whitelist.
+     *
+     * @param  string[]  $allowed
+     */
+    public static function includes(string $name = 'include', array $allowed = []): static
+    {
+        return new static($name, static function (Builder $builder, mixed $value) use ($allowed): Builder {
+            $relations = array_intersect(self::parseIncludes($value), $allowed);
+
+            return $builder->with(array_values($relations));
+        });
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -82,5 +96,18 @@ class QuickFilter extends Filter
     public function apply(Builder $builder, mixed $value): Builder
     {
         return ($this->handler)($builder, $value) ?? $builder;
+    }
+
+    /**
+     * @return string[]
+     */
+    private static function parseIncludes(mixed $value): array
+    {
+        $includes = array_filter(is_array($value) ? $value : explode(',', (string) $value), is_scalar(...));
+
+        return array_values(array_filter(array_map(
+            static fn (mixed $include): string => trim((string) $include),
+            $includes
+        ), static fn (string $include): bool => $include !== ''));
     }
 }
