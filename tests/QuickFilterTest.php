@@ -11,6 +11,21 @@ use Fouladgar\EloquentBuilder\Tests\Models\User;
 class QuickFilterTest extends TestCase
 {
     /** @test */
+    public function it_throws_when_the_trashed_quick_filter_is_used_on_a_non_soft_deletable_model(): void
+    {
+        $this->expectException(\BadMethodCallException::class);
+
+        User::factory()->create();
+
+        $this->eloquentBuilder
+            ->model(User::class)
+            ->quickFilters([QuickFilter::trashed()])
+            ->filters(['trashed' => 'with'])
+            ->thenApply()
+            ->get();
+    }
+
+    /** @test */
     public function it_can_filter_using_an_exact_quick_filter(): void
     {
         User::factory()->create(['gender' => 'male']);
@@ -83,6 +98,56 @@ class QuickFilterTest extends TestCase
             ->get();
 
         $this->assertEquals(2, $users->count());
+    }
+
+    /** @test */
+    public function it_can_include_trashed_records_with_the_trashed_quick_filter(): void
+    {
+        Post::factory()->create(['user_id' => 1, 'title' => 'active']);
+        Post::factory()->create(['user_id' => 1, 'title' => 'deleted'])->delete();
+
+        $posts = $this->eloquentBuilder
+            ->model(Post::class)
+            ->quickFilters([QuickFilter::trashed()])
+            ->filters(['trashed' => 'with'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(2, $posts->count());
+    }
+
+    /** @test */
+    public function it_can_get_only_trashed_records_with_the_trashed_quick_filter(): void
+    {
+        Post::factory()->create(['user_id' => 1, 'title' => 'active']);
+        Post::factory()->create(['user_id' => 1, 'title' => 'deleted'])->delete();
+
+        $posts = $this->eloquentBuilder
+            ->model(Post::class)
+            ->quickFilters([QuickFilter::trashed()])
+            ->filters(['trashed' => 'only'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(1, $posts->count());
+        $this->assertEquals('deleted', $posts->first()->title);
+    }
+
+    /** @test */
+    public function it_excludes_trashed_records_by_default_with_the_trashed_quick_filter(): void
+    {
+        Post::factory()->create(['user_id' => 1, 'title' => 'active']);
+        Post::factory()->create(['user_id' => 1, 'title' => 'deleted'])->delete();
+
+        $posts = $this->eloquentBuilder
+            ->model(Post::class)
+            ->quickFilters([QuickFilter::trashed()])
+            ->filters(['trashed' => 'anything-else'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(1, $posts->count());
+        $this->assertEquals('active', $posts->first()->title);
     }
 
     /** @test */

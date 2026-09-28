@@ -199,6 +199,7 @@ EloquentBuilder::model(User::class)
         QuickFilter::partial('name'),
         QuickFilter::scope('online'),
         QuickFilter::callback('has_posts', fn (Builder $builder, mixed $value) => $builder->whereHas('posts')),
+        QuickFilter::trashed(),
     ])
     ->filters($request->all())
     ->thenApply()
@@ -209,8 +210,16 @@ EloquentBuilder::model(User::class)
 - `QuickFilter::partial($name, $column = null)` — a `LIKE %value%` match.
 - `QuickFilter::scope($name, $scope = null)` — invokes an existing [local scope](https://laravel.com/docs/eloquent#local-scopes) on the model. Pass `$scope` when the scope name differs from the request key.
 - `QuickFilter::callback($name, Closure $callback)` — a custom `fn (Builder $builder, mixed $value): Builder` callback.
+- `QuickFilter::trashed($name = 'trashed')` — for [soft-deletable](https://laravel.com/docs/eloquent#soft-deleting) models. Responds to `with` (`withTrashed()`), `only` (`onlyTrashed()`), or any other value (default: excludes trashed records).
+
+```shell
+api/posts/search?filter[trashed]=with
+api/posts/search?filter[trashed]=only
+```
 
 > **Note**: A quick filter takes precedence over a class-based filter that shares the same request key. Quick filters don't support the `authorize()` check that class-based filters do.
+
+> **Warning**: `QuickFilter::trashed()` only works on models using Laravel's `SoftDeletes` trait. Using it with `with`/`only` on a model without `SoftDeletes` throws a `BadMethodCallException`.
 
 ## Use a filter
 

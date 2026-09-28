@@ -19,6 +19,7 @@ class CreatePostsTestTable extends Migration
             $table->string('title');
             $table->text('content');
             $table->boolean('is_published');
+            $table->softDeletes();
         });
     }
 

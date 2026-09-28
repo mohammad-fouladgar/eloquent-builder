@@ -62,6 +62,18 @@ class QuickFilter extends Filter
         return new static($name, $callback);
     }
 
+    /**
+     * Filter soft-deletable models by trashed state: `with`, `only`, or anything else (default, excludes trashed).
+     */
+    public static function trashed(string $name = 'trashed'): static
+    {
+        return new static($name, static fn (Builder $builder, mixed $value): Builder => match ($value) {
+            'with' => $builder->withTrashed(),
+            'only' => $builder->onlyTrashed(),
+            default => $builder,
+        });
+    }
+
     public function getName(): string
     {
         return $this->name;
