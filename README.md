@@ -1,159 +1,127 @@
-# Provides a Eloquent query builder for Laravel
-
-![alt text](./cover.jpg "EloquentBuilder")
+# Eloquent Builder
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/mohammad-fouladgar/eloquent-builder.svg)](https://packagist.org/packages/mohammad-fouladgar/eloquent-builder)
 ![Test Status](https://img.shields.io/github/actions/workflow/status/mohammad-fouladgar/eloquent-builder/run-tests.yml?label=tests)
 ![Code Style Status](https://img.shields.io/github/actions/workflow/status/mohammad-fouladgar/eloquent-builder/pint.yml?label=code%20style)
 ![Total Downloads](https://img.shields.io/packagist/dt/mohammad-fouladgar/eloquent-builder)
 
-This package allows you to build eloquent queries, based on incoming request parameters. It greatly reduces the complexity of the
-queries and conditions, which will make your code clean and maintainable.
+> If you are upgrading from v5 to v6, see [UPGRADE.md](UPGRADE.md).
 
-## Basic Usage
+![EloquentBuilder](./cover.jpg "EloquentBuilder")
 
-Suppose you want to get the list of the users with the requested parameters as follows:
+Build clean, reusable, request-driven Eloquent queries in Laravel.
 
-```php
-//Get api/user/search?age_more_than=25&gender=male&has_published_post=true
-[
-    'age_more_than'  => '25',
-    'gender'         => 'male',
-    'has_published_post' => true,
-]
-```
+Eloquent Builder lets you map incoming request parameters to reusable Eloquent filters without filling your controllers with conditional query logic.
 
-In a __common__ implementation, following code will be expected:
+> **Current release:** v6
+> **PHP:** 8.3+
+
+## Why Eloquent Builder?
+
+Filtering an Eloquent query can quickly become difficult to maintain when every request parameter requires its own conditional logic:
 
 ```php
-<?php
+$users = User::where('is_active', true);
 
-namespace App\Http\Controllers;
+if ($request->has('age_more_than')) {
+    $users->where('age', '>', $request->age_more_than);
+}
 
-use App\Models\User;
-use Illuminate\Http\Request;
+if ($request->has('gender')) {
+    $users->where('gender', $request->gender);
+}
 
-class UserController extends Controller
-{
-    public function index(Request $request)
-    {
-        $users = User::where('is_active', true);
-
-        if ($request->has('age_more_than')) {
-            $users->where('age', '>', $request->age_more_than);
-        }
-
-        if ($request->has('gender')) {
-            $users->where('gender', $request->gender);
-        }
-
-        // A User model may have an infinite numbers of Post(One-To-Many).
-        if ($request->has('has_published_post')) {
-            $users->where(function ($query) use ($request) {
-                $query->whereHas('posts', function ($query) use ($request) {
-                    $query->where('is_published', $request->has_published_post);
-                });
-            });
-        }
-
-        return $users->get();
-    }
+if ($request->has('has_published_post')) {
+    $users->whereHas('posts', function ($query) use ($request) {
+        $query->where('is_published', $request->has_published_post);
+    });
 }
 ```
 
-**But** after using the **EloquentBuilder**, the above code will turns into this:
+With Eloquent Builder, the filtering logic can live in dedicated filter classes or lightweight Quick Filters:
 
 ```php
-<?php
-
-namespace App\Http\Controllers;
-
-use App\User;
-use EloquentBuilder;
-use Illuminate\Http\Request;
-
-class UserController extends Controller
-{
-    public function index(Request $request)
-    {
-        return EloquentBuilder::model(User::class)
-            ->filters($request->all())
-            ->thenApply()
-            ->get();
-    }
-}
+return EloquentBuilder::model(User::class)
+    ->filters($request->filter)
+    ->thenApply()
+    ->get();
 ```
 
-You just need to [define a filter](#define-a-filter) for each parameter that you want to add to the query.
+Your controllers stay focused on application flow while query-specific logic stays inside filters.
 
-### Installation
-You can install the package via composer:
+---
 
-```shell
+## Table of Contents
+
+* [Installation](#installation)
+* [Quick Start](#quick-start)
+* [Filters](#filters)
+
+    * [Defining a Filter](#defining-a-filter)
+    * [Generating Filters with Artisan](#generating-filters-with-artisan)
+    * [Using Filters](#using-filters)
+    * [Fluent Usage](#fluent-usage)
+* [Quick Filters](#quick-filters)
+
+    * [Exact](#exact)
+    * [Partial](#partial)
+    * [Scope](#scope)
+    * [Callback](#callback)
+    * [Trashed](#trashed)
+    * [Includes](#includes)
+    * [Fields](#fields)
+    * [Quick Filter Precedence](#quick-filter-precedence)
+* [Filter Groups](#filter-groups)
+* [Defaults and Ignored Values](#defaults-and-ignored-values)
+* [Predefined Filters](#predefined-filters)
+
+    * [Date Filters](#date-filters)
+    * [Number Filters](#number-filters)
+    * [Sort Filters](#sort-filters)
+* [Authorization](#authorization)
+* [Missing Filter Behavior](#missing-filter-behavior)
+* [Ignoring Empty and Null Values](#ignoring-empty-and-null-values)
+* [Custom Filter Namespaces](#custom-filter-namespaces)
+* [Dependency Injection](#dependency-injection)
+* [Choosing the Right Filter](#choosing-the-right-filter)
+* [Upgrading](#upgrading)
+* [Testing](#testing)
+* [Contributing](#contributing)
+* [Security](#security)
+* [License](#license)
+
+---
+
+## Installation
+
+Install the package via Composer:
+
+```bash
 composer require mohammad-fouladgar/eloquent-builder
 ```
 
->  **Warning:** The `Lumen` framework is no longer supported!
+**Requirements**
 
-### Filters Namespace
+* PHP 8.3+
+* Laravel Eloquent
 
-The default namespace for all filters is ``App\EloquentFilters`` with the base name of the Model. For example, the
-filters' namespace will be `App\EloquentFilters\User` for the `User` model:
+> **Warning:** The `Lumen` framework is no longer supported.
 
-```
-├── app
-├── Console
-│   └── Kernel.php
-├── EloquentFilters
-│   └── User
-│       ├── AgeMoreThanFilter.php
-│       └── GenderFilter.php
-└── Exceptions
-    └── Handler.php
-```
+### Upgrading from v5
 
-#### Customize via Config file
+If you are upgrading an existing application from v5, see [UPGRADE.md](UPGRADE.md) for breaking changes and new features introduced in v6.
 
-You can optionally publish the config file with:
+---
 
-```sh
-php artisan vendor:publish --provider="Fouladgar\EloquentBuilder\ServiceProvider" --tag="config"
+## Quick Start
+
+Suppose your API accepts these filters:
+
+```http
+GET /api/users?filter[age_more_than]=25&filter[gender]=male
 ```
 
-And set the namespace for your model filters which will reside in:
-
-```php
-return [
-    /*
-     |--------------------------------------------------------------------------
-     | Eloquent Filter Settings
-     |--------------------------------------------------------------------------
-     |
-     | Here you should specify default all you Eloquent Model Filters.
-     |
-     */
-    'namespace' => 'App\\EloquentFilters\\',
-];
-```
-
-### Missing Filter Behavior
-
-By default, a filter key with no matching quick filter or filter class throws a `FilterException`. Set `ignore_missing_filters` to `true` in the published config file to silently ignore that key instead (as if it were never provided) — handy if your request payloads may carry extra, unrelated keys alongside your filters:
-
-```php
-'ignore_missing_filters' => true,
-```
-
-> **Note**: This only affects an unrecognized key. A filter class that exists but isn't a valid `Filter` instance still always throws, since that's a bug in your own code rather than an unrecognized request key.
-
-## Defining a Filter
-
-Writing a filter is simple. Define a class that `extends`
-the `Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter` abstract class. This class requires you to implement
-one method: ``apply``. The ``apply`` method may add where constraints to the query as needed. Each filter class should
-be suffixed with the word `Filter`.
-
-For example, take a look at the filter defined below:
+Create an `AgeMoreThanFilter`:
 
 ```php
 <?php
@@ -165,9 +133,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class AgeMoreThanFilter extends Filter
 {
-    /**
-     * Apply the age condition to the query.
-     */
     public function apply(Builder $builder, mixed $value): Builder
     {
         return $builder->where('age', '>', $value);
@@ -175,216 +140,782 @@ class AgeMoreThanFilter extends Filter
 }
 ```
 
-> **Tip**: Also, you can easily use [local scopes](https://laravel.com/docs/5.8/eloquent#local-scopes) in your filter. Because, they are instancing of the query builder.
+Then apply the request filters:
 
-### Define filter[s] by artisan command
+```php
+use App\Models\User;
+use Fouladgar\EloquentBuilder\EloquentBuilder;
 
-If you want to create a filter easily, you can use `eloquent-builder:make` artisan command. This command will accept at
-least two arguments which are `Model` and `Filter`:
-
-```
-php artisan eloquent-builder:make user age_more_than
-```
-
-There is also a possibility of creating multiple filters at the same time. To achieve this goal, you should pass
-multiple names to `Filter` argument:
-
-```
-php artisan eloquent-builder:make user age_more_than gender
+return EloquentBuilder::model(User::class)
+    ->filters($request->filter)
+    ->thenApply()
+    ->get();
 ```
 
-### Quick Filters
+The request key `age_more_than` is resolved to `AgeMoreThanFilter`.
 
-For simple cases, you don't need to create a dedicated filter class at all. Use
-`Fouladgar\EloquentBuilder\Support\Foundation\Concrete\QuickFilter` to declare a filter inline via `quickFilters()`:
+For simple conditions, you can skip the filter class entirely and use a [Quick Filter](#quick-filters).
+
+---
+
+# Filters
+
+## Defining a Filter
+
+A filter is a class that extends:
+
+```php
+Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter
+```
+
+The class must implement `apply()`.
+
+For example:
 
 ```php
 <?php
 
-use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\QuickFilter;
+namespace App\EloquentFilters\User;
 
+use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
+use Illuminate\Database\Eloquent\Builder;
+
+class AgeMoreThanFilter extends Filter
+{
+    public function apply(Builder $builder, mixed $value): Builder
+    {
+        return $builder->where('age', '>', $value);
+    }
+}
+```
+
+Filter classes should use the `Filter` suffix.
+
+With the default namespace, filters for `User` live under:
+
+```text
+App\EloquentFilters\User
+```
+
+For example:
+
+```text
+app/
+└── EloquentFilters/
+    └── User/
+        ├── AgeMoreThanFilter.php
+        └── GenderFilter.php
+```
+
+> **Tip:** You can use Laravel local scopes inside your filter classes as well.
+
+---
+
+## Generating Filters with Artisan
+
+Create a filter with:
+
+```bash
+php artisan eloquent-builder:make user age_more_than
+```
+
+You can generate multiple filters at once:
+
+```bash
+php artisan eloquent-builder:make user age_more_than gender
+```
+
+---
+
+## Using Filters
+
+### Model class
+
+```php
+$users = EloquentBuilder::model(User::class)
+    ->filters(request()->filter)
+    ->thenApply()
+    ->get();
+```
+
+### Existing query
+
+You can start with an existing Eloquent query:
+
+```php
+$query = User::where('is_active', true);
+
+$users = EloquentBuilder::model($query)
+    ->filters(request()->filter)
+    ->thenApply()
+    ->where('city', 'london')
+    ->get();
+```
+
+### Programmatically adding filters
+
+You can also push filter values directly:
+
+```php
+$users = EloquentBuilder::model(new User())
+    ->filters(request()->filter)
+    ->filter(['age_more_than' => '30'])
+    ->filter(['gender' => 'female'])
+    ->thenApply()
+    ->get();
+```
+
+When the same filter key is pushed more than once, the latest value takes precedence in v6.
+
+---
+
+## Fluent Usage
+
+For the common `filters()` use case, you can use the `filter()` macro directly on an Eloquent model or query:
+
+```php
+$users = User::filter(request()->filter)->get();
+```
+
+It also works with an existing query:
+
+```php
+$users = User::where('is_active', true)
+    ->filter(request()->filter)
+    ->get();
+```
+
+This is the simplest way to apply standard filters without using `EloquentBuilder::model()`.
+
+For advanced features such as:
+
+* `quickFilters()`
+* `filterGroups()`
+* `defaults()`
+* `ignoreValues()`
+
+use the full `EloquentBuilder` API.
+
+> **Tip:** It is recommended to put filter parameters under a `filter` request key:
+
+```http
+/api/users?filter[age_more_than]=25&filter[gender]=male
+```
+
+Then access them through:
+
+```php
+$request->filter
+```
+
+---
+
+# Quick Filters
+
+Quick Filters are designed for simple filtering logic where creating a dedicated filter class would add unnecessary boilerplate.
+
+Import:
+
+```php
+use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\QuickFilter;
+```
+
+Then define filters inline:
+
+```php
 EloquentBuilder::model(User::class)
     ->quickFilters([
         QuickFilter::exact('gender'),
         QuickFilter::partial('name'),
         QuickFilter::scope('online'),
-        QuickFilter::callback('has_posts', fn (Builder $builder, mixed $value) => $builder->whereHas('posts')),
+        QuickFilter::callback(
+            'has_posts',
+            fn (Builder $builder, mixed $value) =>
+                $builder->whereHas('posts')
+        ),
         QuickFilter::trashed(),
     ])
-    ->filters($request->all())
+    ->filters($request->filter)
     ->thenApply()
     ->get();
 ```
 
-- `QuickFilter::exact($name, $column = null)` — a strict `=` match. Pass `$column` when the column name differs from the request key.
-- `QuickFilter::partial($name, $column = null)` — a `LIKE %value%` match.
-- `QuickFilter::scope($name, $scope = null)` — invokes an existing [local scope](https://laravel.com/docs/eloquent#local-scopes) on the model. Pass `$scope` when the scope name differs from the request key.
-- `QuickFilter::callback($name, Closure $callback)` — a custom `fn (Builder $builder, mixed $value): Builder` callback.
-- `QuickFilter::trashed($name = 'trashed')` — for [soft-deletable](https://laravel.com/docs/eloquent#soft-deleting) models. Responds to `with` (`withTrashed()`), `only` (`onlyTrashed()`), or any other value (default: excludes trashed records).
-- `QuickFilter::includes($name = 'include', array $allowed = [])` — eager-loads relations from a comma-separated string or array (`posts,comments.author` or `['posts', 'comments.author']`), restricted to the `$allowed` whitelist. Anything not in the whitelist — including a nested relation whose parent is allowed but not itself (`allowed: ['posts.user']` does **not** permit a bare `posts`) — is silently ignored.
-- `QuickFilter::fields($name = 'fields', array $allowed = [])` — restricts the root model's selected columns to a comma-separated string or array, intersected with the `$allowed` whitelist. The primary key is always selected regardless of the request or whitelist, since relations and model identity depend on it. If nothing requested matches the whitelist, only the primary key is selected.
+### Quick Filter Reference
 
-```shell
-api/posts/search?filter[trashed]=with
-api/posts/search?filter[trashed]=only
-api/users/search?filter[include]=posts,posts.comments
-api/users/search?filter[fields]=name,email
-```
+| Quick Filter | Purpose                           |
+| ------------ | --------------------------------- |
+| `exact()`    | Exact `=` comparison              |
+| `partial()`  | `LIKE %value%` comparison         |
+| `scope()`    | Apply an Eloquent local scope     |
+| `callback()` | Apply custom query logic          |
+| `trashed()`  | Control soft-deleted records      |
+| `includes()` | Eager-load allowed relationships  |
+| `fields()`   | Select allowed root-model columns |
 
-> **Note**: A quick filter takes precedence over a class-based filter that shares the same request key. Quick filters don't support the `authorize()` check that class-based filters do.
+---
 
-> **Warning**: `QuickFilter::trashed()` only works on models using Laravel's `SoftDeletes` trait. Using it with `with`/`only` on a model without `SoftDeletes` throws a `BadMethodCallException`.
+## Exact
 
-> **Note**: `defaults()` only kicks in when the `include`/`fields` key has no value at all — a non-empty but entirely non-whitelisted value (e.g. `include=not_allowed`) still counts as "provided", so it silences the default instead of falling back to it.
-
-> **Warning**: `QuickFilter::fields()` only restricts columns on the root model — it doesn't (yet) support per-relation fieldsets (e.g. a JSON:API-style `fields[posts]=title`). Combine it with a class-based filter or `QuickFilter::callback()` if you need that.
-
-> **Warning**: Unlike `QuickFilter::includes()` (which merges eager loads via `with()`), `QuickFilter::fields()` calls `select()`, which **replaces** the query's entire column list. If another filter in the same request also calls `select()`/`addSelect()`, whichever one is resolved last wins — filter application order follows the incoming filters array's key order, not declaration order. Avoid combining `fields()` with another column-selecting filter, or have that other filter use `addSelect()` after `fields()` has run.
-
-### Filter Groups
-
-By default, every filter is combined with `AND`. Use `filterGroups()` with `Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterGroup` to combine a set of filter keys with `OR` instead:
+Use `exact()` for a simple equality condition.
 
 ```php
-<?php
+QuickFilter::exact('status')
+```
 
+Request:
+
+```http
+GET /api/users?filter[status]=active
+```
+
+Equivalent query:
+
+```php
+$query->where('status', 'active');
+```
+
+You can map the request key to a different column:
+
+```php
+QuickFilter::exact('user_status', 'status')
+```
+
+Request:
+
+```http
+GET /api/users?filter[user_status]=active
+```
+
+This applies:
+
+```php
+$query->where('status', 'active');
+```
+
+---
+
+## Partial
+
+Use `partial()` for a `LIKE` query:
+
+```php
+QuickFilter::partial('name')
+```
+
+Request:
+
+```http
+GET /api/users?filter[name]=john
+```
+
+Equivalent query:
+
+```php
+$query->where('name', 'LIKE', '%john%');
+```
+
+You can also map the request key to a different column:
+
+```php
+QuickFilter::partial('search', 'name')
+```
+
+---
+
+## Scope
+
+Use `scope()` when the filtering logic already exists as an Eloquent local scope.
+
+For example:
+
+```php
+public function scopeOnline(Builder $query, mixed $value): Builder
+{
+    return $query->where('is_online', $value);
+}
+```
+
+Register the scope:
+
+```php
+QuickFilter::scope('online')
+```
+
+Request:
+
+```http
+GET /api/users?filter[online]=1
+```
+
+The corresponding local scope is invoked with the filter value.
+
+If the request key and scope name are different:
+
+```php
+QuickFilter::scope('active', 'online')
+```
+
+This maps:
+
+```text
+filter[active]
+     ↓
+scopeOnline()
+```
+
+---
+
+## Callback
+
+Use `callback()` when you need custom query logic but do not want to create a dedicated filter class.
+
+```php
+QuickFilter::callback(
+    'has_posts',
+    fn (Builder $builder, mixed $value) =>
+        $builder->whereHas('posts')
+)
+```
+
+Request:
+
+```http
+GET /api/users?filter[has_posts]=1
+```
+
+The callback receives:
+
+```php
+Builder $builder
+mixed $value
+```
+
+and can modify the query.
+
+For complex or reusable filtering logic, prefer a class-based filter.
+
+---
+
+## Trashed
+
+`trashed()` provides filtering for models using Laravel's `SoftDeletes` trait.
+
+```php
+QuickFilter::trashed()
+```
+
+The default request key is:
+
+```text
+trashed
+```
+
+### Include trashed records
+
+```http
+GET /api/posts?filter[trashed]=with
+```
+
+Equivalent to:
+
+```php
+$query->withTrashed();
+```
+
+### Only trashed records
+
+```http
+GET /api/posts?filter[trashed]=only
+```
+
+Equivalent to:
+
+```php
+$query->onlyTrashed();
+```
+
+Any other value uses the default behavior and excludes trashed records.
+
+You can customize the request key:
+
+```php
+QuickFilter::trashed('deleted')
+```
+
+> **Warning:** `QuickFilter::trashed()` requires Laravel's `SoftDeletes` trait. Using `with` or `only` with a model that does not support soft deletes results in a `BadMethodCallException`.
+
+---
+
+## Includes
+
+`includes()` lets clients request eager-loaded relationships while restricting them to an explicit whitelist.
+
+```php
+QuickFilter::includes('include', [
+    'posts',
+    'posts.comments',
+    'profile',
+])
+```
+
+Request:
+
+```http
+GET /api/users?filter[include]=posts,posts.comments
+```
+
+The query will eager-load the requested allowed relationships.
+
+The request may also provide an array:
+
+```php
+[
+    'posts',
+    'posts.comments',
+]
+```
+
+### Whitelisting
+
+Only relations present in the `$allowed` list are accepted.
+
+For example:
+
+```php
+QuickFilter::includes('include', [
+    'posts.user',
+])
+```
+
+allows:
+
+```text
+posts.user
+```
+
+but does not automatically allow:
+
+```text
+posts
+```
+
+Anything not present in the whitelist is ignored.
+
+---
+
+## Fields
+
+`fields()` lets clients request a limited set of columns from the root model.
+
+```php
+QuickFilter::fields('fields', [
+    'id',
+    'name',
+    'email',
+])
+```
+
+Request:
+
+```http
+GET /api/users?filter[fields]=name,email
+```
+
+The selected columns will include:
+
+```text
+id
+name
+email
+```
+
+The primary key is always selected, even if it was not explicitly requested.
+
+If none of the requested fields are allowed, only the primary key is selected.
+
+### Root model only
+
+`fields()` currently applies only to the root model.
+
+It does not provide relation-specific fieldsets such as:
+
+```text
+fields[posts]=title
+```
+
+Use a class-based filter or `QuickFilter::callback()` for more advanced selection logic.
+
+### Important: `fields()` uses `select()`
+
+`fields()` calls Eloquent's `select()` method.
+
+That means it replaces the query's existing column list.
+
+Avoid combining it with another filter that also calls `select()`.
+
+If another filter needs to add columns after `fields()` has been applied, use `addSelect()` where appropriate.
+
+---
+
+## Quick Filter Precedence
+
+Quick Filters take precedence over class-based filters when they use the same request key.
+
+For example:
+
+```php
+QuickFilter::exact('status')
+```
+
+takes precedence over a class-based `StatusFilter` for the same `status` key.
+
+> **Note:** Quick Filters do not support the `authorize()` method available to class-based filters. Use a class-based filter when filter-level authorization is required.
+
+---
+
+# Filter Groups
+
+By default, filters are combined with `AND`.
+
+For example:
+
+```http
+GET /api/users?filter[status]=online&filter[is_featured]=true
+```
+
+normally produces:
+
+```sql
+WHERE status = 'online'
+AND is_featured = true
+```
+
+Use `FilterGroup::or()` to combine a group of filter keys with `OR`:
+
+```php
 use Fouladgar\EloquentBuilder\Support\Foundation\Concrete\FilterGroup;
 
-// api/user/search?filter[status]=online&filter[is_featured]=true
 EloquentBuilder::model(User::class)
     ->filterGroups([
-        FilterGroup::or(['status', 'is_featured']),
+        FilterGroup::or([
+            'status',
+            'is_featured',
+        ]),
     ])
     ->filters($request->filter)
     ->thenApply()
     ->get();
-
-// Produces: ... WHERE (status = 'online' OR is_featured = true)
 ```
 
-A group works with class-based filters, quick filters, or a mix of both — each key is still resolved and authorized exactly the same way as an ungrouped filter. A group only combines the keys that are actually present in the request; if only one member of the group has a value, it's applied like a normal filter, and if none of them do, the group is skipped entirely.
+The same request now produces:
 
-> **Warning**: Only put filters that add a plain `where` constraint (`QuickFilter::exact/partial/scope/callback`, or a class-based filter that just calls `$builder->where(...)`) inside a group. A filter that changes global scopes or the query's structure — most notably `QuickFilter::trashed()`, or a custom filter calling `withoutGlobalScope()`, `orderBy()`, or `with()` — affects the **whole query** when used inside a group, not just that group's `OR` branch, because that's how Eloquent's underlying `where(Closure)` nesting propagates removed scopes. Use those filters ungrouped instead.
+```sql
+WHERE (
+    status = 'online'
+    OR is_featured = true
+)
+```
 
-> **Note**: With [`ignore_missing_filters`](#missing-filter-behavior) enabled, if every member of a group turns out to be an unrecognized key, the group contributes no constraint at all — it does **not** make the group match zero rows, it simply doesn't restrict anything (same as if the group were never declared).
+Filter groups can contain:
 
-### Defaults & Ignored Values
+* class-based filters
+* Quick Filters
+* a combination of both
 
-Use `defaults()` to fill in a value for any filter key that ends up without one — whether it was never sent, sent empty, or dropped by `ignoreValues()` below:
+Only filter keys that are present in the request are applied.
+
+If only one member is present, it behaves like a normal filter.
+
+If none are present, the group is skipped.
+
+### Filters inside groups
+
+Filter groups are intended for filters that add normal `where` constraints.
+
+Good candidates include:
+
+```text
+QuickFilter::exact()
+QuickFilter::partial()
+QuickFilter::scope()
+QuickFilter::callback()
+```
+
+Avoid putting filters that change the overall query structure inside an OR group, especially filters that:
+
+```text
+withoutGlobalScope()
+orderBy()
+with()
+```
+
+or otherwise modify query state outside the nested `where` condition.
+
+`QuickFilter::trashed()` should also be used outside filter groups.
+
+---
+
+# Defaults and Ignored Values
+
+## Defaults
+
+Use `defaults()` when a filter should receive a value if none is provided.
 
 ```php
-<?php
-
-// api/user/search (no `status` sent at all)
 EloquentBuilder::model(User::class)
-    ->quickFilters([QuickFilter::exact('status')])
-    ->defaults(['status' => 'online'])
+    ->quickFilters([
+        QuickFilter::exact('status'),
+    ])
+    ->defaults([
+        'status' => 'online',
+    ])
     ->filters($request->filter)
     ->thenApply()
     ->get();
 ```
 
-An explicitly provided value always wins over its default.
+If the request does not contain `filter[status]`, the default value is used.
 
-Use `ignoreValues()` to treat specific incoming values as if the filter was never provided — handy for a sentinel like `status=all` from a `<select>` filter:
+An explicitly provided value takes precedence over the default.
+
+---
+
+## Ignored Values
+
+Use `ignoreValues()` when a specific incoming value should be treated as if the filter was not provided.
+
+This is useful for UI sentinel values such as:
+
+```text
+filter[status]=all
+```
+
+Example:
 
 ```php
-<?php
-
-// api/user/search?filter[status]=all
 EloquentBuilder::model(User::class)
-    ->quickFilters([QuickFilter::exact('status')])
-    ->ignoreValues(['status' => ['all']])
-    ->defaults(['status' => 'online']) // optional — falls back to no filter at all without this
+    ->quickFilters([
+        QuickFilter::exact('status'),
+    ])
+    ->ignoreValues([
+        'status' => ['all'],
+    ])
     ->filters($request->filter)
     ->thenApply()
     ->get();
 ```
 
-Values are compared to the ignore list as strings, so `ignoreValues(['id' => [0]])` also matches an incoming `'0'`.
+The value `all` is ignored.
 
-## Use a filter
-
-You can use filters in multiple approaches:
+You can combine ignored values with defaults:
 
 ```php
-<?php
-
-// Use by a model class name
-$users = EloquentBuilder::model(\App\Models\User::class)->filters(request()->all())->thenApply()->get();
-
-// Use by existing query
-$query = \App\Models\User::where('is_active', true);
-
-$users = EloquentBuilder::model($query)
-        ->filters(request()->all())
-        ->thenApply()
-        ->where('city', 'london')
-        ->get();
-
-// Use by instance of a model and push filter
-$users = EloquentBuilder::model(new \App\Models\User())
-        ->filters(request()->filter)
-        ->filter(['age_more_than' => '30'])
-        ->filter(['gender' => 'female'])
-        ->thenApply()
-        ->get();
-```
-
-### Fluent, Non-Facade Usage
-
-For the common case, a `filter()` macro on Eloquent's `Builder` lets you skip the facade entirely — it works on a model class statically or on an existing query, and returns a plain `Builder` so you can keep chaining:
-
-```php
-<?php
-
-$users = \App\Models\User::filter(request()->filter)->get();
-
-// Also works on an existing query:
-$users = \App\Models\User::where('is_active', true)
-    ->filter(request()->filter)
+EloquentBuilder::model(User::class)
+    ->quickFilters([
+        QuickFilter::exact('status'),
+    ])
+    ->ignoreValues([
+        'status' => ['all'],
+    ])
+    ->defaults([
+        'status' => 'online',
+    ])
+    ->filters($request->filter)
+    ->thenApply()
     ->get();
 ```
 
-> **Note**: The macro only covers the plain `filters()` case. For `quickFilters()`, `filterGroups()`, `defaults()`, or `ignoreValues()`, use the full `EloquentBuilder::model(...)` chain.
+Now:
 
-> **Tip**: It's recommended to put your query params inside a filter key as below:
-
- ```
- user/search?filter[age_more_than]=25&filter[gender]=male
- ```
-
-And then use them this way: `request()->filter`.
-
-## Use Predefined Filters
-This package provides several predefined filters using string conventions, so you can use them in your filter classes
-easily.
-
-> **Tip**: All value(s) in string conventions will be validated according to the used filter.
-
-### Date filters
-Date filtering is one of the most commonly used filters that you may use in your filters by following these
-conventions: `between:date1,date2`,`before:date`, `before_or_equal:date`, `after:date`, `after_or_equal:date`
-, `same:date`, and `equals:date`.
-
-**Examples:**
-
-```shell
-api/user/search?birth_date=before:2018-01-01
-
-# These are similar between convention:
-api/user/search?birth_date=between:2018-01-01,2022-01-01
-api/article/search?birth_date=2018-01-01,2022-01-01 
-api/article/search?birth_date[]=2018-01-01&birth_date[]=2022-01-01 
-
-# These are similar equals convention:
-api/user/search?birth_date=equals:2018-01-01
-api/user/search?birth_date=same:2018-01-01
-api/user/search?birth_date=2018-01-01
+```text
+filter[status]=all
+        │
+        ▼
+     ignored
+        │
+        ▼
+default = online
 ```
 
-All you need is to define a filter and use the `Fouladgar\EloquentBuilder\Concerns\FiltersDatesTrait` trait. For
-example:
+Values are compared as strings, so:
+
+```php
+ignoreValues([
+    'id' => [0],
+])
+```
+
+also matches an incoming `'0'`.
+
+> **Note:** `defaults()` only applies when the filter has no value after processing. A non-empty value that happens to contain no allowed items does not automatically trigger the default.
+
+---
+
+# Predefined Filters
+
+Eloquent Builder provides reusable traits for common filtering requirements:
+
+* Date filtering
+* Number filtering
+* Sorting
+
+---
+
+## Date Filters
+
+Use `FiltersDatesTrait` for date-based filters.
+
+Supported conventions:
+
+```text
+between:date1,date2
+before:date
+before_or_equal:date
+after:date
+after_or_equal:date
+same:date
+equals:date
+```
+
+### Examples
+
+```http
+GET /api/users?birth_date=before:2018-01-01
+```
+
+### Between
+
+These forms can be used for a range:
+
+```http
+birth_date=between:2018-01-01,2022-01-01
+```
+
+```http
+birth_date=2018-01-01,2022-01-01
+```
+
+```http
+birth_date[]=2018-01-01&birth_date[]=2022-01-01
+```
+
+### Equals
+
+These forms represent equality:
+
+```http
+birth_date=equals:2018-01-01
+```
+
+```http
+birth_date=same:2018-01-01
+```
+
+```http
+birth_date=2018-01-01
+```
+
+### Defining a date filter
 
 ```php
 <?php
@@ -401,32 +932,69 @@ class BirthDateFilter extends Filter
 
     public function apply(Builder $builder, mixed $value): Builder
     {
-        return $this->filterDate($builder, $value, 'birth_date');
+        return $this->filterDate(
+            $builder,
+            $value,
+            'birth_date'
+        );
     }
 }
 ```
 
-### Number filters
-Another predefined filters is Number filters that you can use in your filters. For example, it would be useful for price
-filter,score filters, and any numeric filters. You can follow these numeric conventions:  
-`between:number1,number2`,`gt:number`,`gte:number`,`lt:number`,`lte:number`, and `equals:number`.
+---
 
-**Examples:**
+## Number Filters
 
-```shell
-api/user/search?score=gte:500
+Use `FiltersNumbersTrait` for numeric filters.
 
-# These are similar between convention:
-api/user/search?score=between:100,1010
-api/article/search?score=100,1010
-api/article/search?score[]=100&score[]=1010
+Supported conventions:
 
-# These are similar equals convention:
-api/user/search?score=equals:2222
-api/user/search?score=2222
+```text
+between:number1,number2
+gt:number
+gte:number
+lt:number
+lte:number
+equals:number
 ```
 
-For example, make a `ScoreFilter` and use `Fouladgar\EloquentBuilder\Concerns\FiltersNumbersTrait` trait as below:
+### Examples
+
+```http
+GET /api/users?score=gte:500
+```
+
+### Between
+
+```http
+score=between:100,1010
+```
+
+or:
+
+```http
+score=100,1010
+```
+
+or:
+
+```http
+score[]=100&score[]=1010
+```
+
+### Equals
+
+```http
+score=equals:2222
+```
+
+or:
+
+```http
+score=2222
+```
+
+### Defining a number filter
 
 ```php
 <?php
@@ -443,28 +1011,45 @@ class ScoreFilter extends Filter
 
     public function apply(Builder $builder, mixed $value): Builder
     {
-        return $this->filterNumber($builder, $value, 'score');
+        return $this->filterNumber(
+            $builder,
+            $value,
+            'score'
+        );
     }
 }
 ```
 
-### Sort filters
-You may want to sort your query filter. There are some usage to make it:
+---
 
-**Examples:**
-```shell
-api/user/search?sort_by[birth_date]=desc&sort_by[id]=asc
+## Sort Filters
 
-api/user/search?sort_by[]=birth_date:desc&sort_by[]=id:asc
+Use `SortableTrait` to expose a controlled set of sortable columns.
 
-# The default direction is `asc`:
-api/user/search?sort_by[]=birth_date
+For example:
+
+```http
+GET /api/users?sort_by[birth_date]=desc&sort_by[id]=asc
 ```
-For example make a `SortByFilter` and use the `Fouladgar\EloquentBuilder\Concerns\SortableTrait` trait. 
+
+You can also use:
+
+```http
+GET /api/users?sort_by[]=birth_date:desc&sort_by[]=id:asc
+```
+
+If no direction is specified, `asc` is used:
+
+```http
+GET /api/users?sort_by[]=birth_date
+```
+
+### Defining a sort filter
+
 ```php
 <?php
 
-namespace App\EloquentBuilders\User;
+namespace App\EloquentFilters\User;
 
 use Fouladgar\EloquentBuilder\Concerns\SortableTrait;
 use Fouladgar\EloquentBuilder\Support\Foundation\Contracts\Filter;
@@ -475,7 +1060,8 @@ class SortByFilter extends Filter
     use SortableTrait;
 
     protected array $sortable = [
-        'birth_date', 'score',
+        'birth_date',
+        'score',
     ];
 
     public function apply(Builder $builder, mixed $value): Builder
@@ -484,188 +1070,260 @@ class SortByFilter extends Filter
     }
 }
 ```
-> **Tip**: The sortable column(s) should be specified by `$sortable` attribute.
 
-`$sortable` can also map a key to a custom `Closure` instead of a plain column name — handy for sorting by something that isn't a direct column, like a relation count:
+Only columns listed in `$sortable` can be requested by the client.
+
+### Custom sort resolvers
+
+A sortable key can map to a custom closure instead of a direct database column.
+
+For example, sorting by the number of posts:
 
 ```php
-<?php
-
 protected array $sortable = [
-    'birth_date', 'score',
-    'posts_count' => function (Builder $builder, string $direction): Builder {
-        return $builder->withCount('posts')->orderBy('posts_count', $direction);
+    'birth_date',
+    'score',
+
+    'posts_count' => function (
+        Builder $builder,
+        string $direction
+    ): Builder {
+        return $builder
+            ->withCount('posts')
+            ->orderBy('posts_count', $direction);
     },
 ];
 ```
 
-> **Note**: The resolver must mutate the given `$builder` in place (as `withCount()`/`orderBy()` do); its return value is ignored. Returning a different `Builder` instance (e.g. from `newQuery()`) won't affect the query.
+Request:
 
-```shell
-api/user/search?sort_by[posts_count]=desc
+```http
+GET /api/users?sort_by[posts_count]=desc
 ```
 
-To apply a default sort when the client doesn't request one, combine `SortableTrait` with `defaults()` (see [Defaults & Ignored Values](#defaults--ignored-values)):
+The resolver receives the builder and sort direction and should mutate the provided builder.
+
+> **Note:** The resolver's return value is ignored. Returning a different `Builder` instance does not replace the current query.
+
+### Default sorting
+
+Combine `SortableTrait` with `defaults()` to apply a default sort:
 
 ```php
-<?php
-
 EloquentBuilder::model(User::class)
-    ->defaults(['sort_by' => ['created_at' => 'desc']])
+    ->defaults([
+        'sort_by' => [
+            'created_at' => 'desc',
+        ],
+    ])
     ->filters($request->filter)
     ->thenApply()
     ->get();
 ```
 
-## Authorizing Filter
-The filter class also contains an `authorize` method. Within this method, you may check if the authenticated user
-actually has the authority to apply a given filter. For example, you may determine if a user has a premium account, can
-apply the `StatusFilter` to get listing the online or offline people:
+---
+
+# Authorization
+
+Class-based filters can implement `authorize()` when filter-level authorization is required.
+
+For example:
 
 ```php
-/**
- * Determine if the user is authorized to make this filter.
- */
- public function authorize(): bool
- {
-     if(auth()->user()->hasPremiumAccount()){
-        return true;
-     }
-
-    return false;
- }
+public function authorize(): bool
+{
+    return auth()->user()->hasPremiumAccount();
+}
 ```
 
-By default, you do not need to implement the `authorize` method and the filter applies to your query builder. If
-the `authorize` method returns `false`, a HTTP response with a 403 status code will automatically be returned.
+If `authorize()` returns `false`, the filter is rejected through Laravel's authorization mechanism.
 
-## Ignore Filters on null value
+You do not need to implement `authorize()` when a filter does not require authorization.
 
-Filter parameters are ignored if contain **empty** or **null** values.
+> **Note:** Authorization is performed for filters that are resolved and applied through the Eloquent Builder pipeline. Quick Filters do not provide an `authorize()` method.
 
-Suppose you have a request something like this:
+---
+
+# Missing Filter Behavior
+
+By default, an incoming filter key without a matching Quick Filter or filter class throws a `FilterException`.
+
+You can change this behavior in the published configuration:
 
 ```php
-//Get api/user/search?filter[name]&filter[gender]=null&filter[age_more_than]=''&filter[published_post]=true
+'ignore_missing_filters' => true,
+```
 
-EloquentBuilder::model(User::class)->filters($request->filter)->thenApply();
+With this option enabled, unrecognized filter keys are silently ignored.
 
-// filters result will be:
-$filters = [
-    'published_post' => true
+This can be useful when a request payload contains additional parameters that are not intended to be filters.
+
+> **Note:** This only affects unrecognized keys. If a matching filter class exists but is not a valid `Filter` instance, that is still treated as an error.
+
+---
+
+# Ignoring Empty and Null Values
+
+Filter parameters with empty or null values are ignored.
+
+For example:
+
+```text
+filter[name]
+filter[gender]=null
+filter[age_more_than]=
+filter[published_post]=true
+```
+
+Only the filter with a meaningful value is applied.
+
+---
+
+# Custom Filter Namespaces
+
+The default filter namespace is:
+
+```text
+App\EloquentFilters\
+```
+
+You can customize it by publishing the configuration:
+
+```bash
+php artisan vendor:publish \
+    --provider="Fouladgar\EloquentBuilder\ServiceProvider" \
+    --tag="config"
+```
+
+Then configure:
+
+```php
+return [
+    'namespace' => 'App\\EloquentFilters\\',
 ];
 ```
 
-Only the **"published_post"** filter will be applied on your query.
+### Per-domain namespaces
 
-### Customize per domain/module
-
-When you have a laravel project with custom directory structure, you might need to have multiple filters in multiple
-directories. For this purpose, you can use `setFilterNamespace()` method and pass the desired namespace to it.
-
-For example, let's assume you have a project which implement a domain based structure:
-
-```
-.
-├── app
-├── bootstrap
-├── config
-├── database
-├── Domains
-│   ├── Store
-│   │   ├── database
-│   │   │   └── migrations
-│   │   ├── src
-│   │       ├── Filters // We put our Store domain filters here!
-│   │       │   └── StoreFilter.php
-│   │       ├── Entities
-│   │       ├── Http
-│   │          └── Controllers
-│   │       ├── routes
-│   │       └── Services
-│   ├── User
-│   │   ├── database
-│   │   │   └── migrations
-│   │   ├── src
-│   │       ├── Filters // We put our User domain filters here!
-│   │       │   └── UserFilter.php
-│   │       ├── Entities
-│   │       ├── Http
-│   │          └── Controllers
-│   │       ├── routes
-│   │       └── Services
-...
-```
-
-In the above example, each domain has its own filters directory. So we can set and use filters custom namespace as
-following:
+For applications using domain-based structures, you can set the namespace for a specific query:
 
 ```php
 $stores = EloquentBuilder::model(\Domains\Entities\Store::class)
-            ->filters($request->all())
-            ->setFilterNamespace('Domains\\Store\\Filters')
-            ->thenApply()
-            ->get();
+    ->filters($request->all())
+    ->setFilterNamespace('Domains\\Store\\Filters')
+    ->thenApply()
+    ->get();
 ```
 
-> **Note**: When using `setFilterNamespace()`, default namespace and config file will be ignored.
+For example:
 
-## Use as Dependency Injection
+```text
+Domains/
+├── Store/
+│   └── src/
+│       └── Filters/
+│           └── StoreFilter.php
+│
+└── User/
+    └── src/
+        └── Filters/
+            └── UserFilter.php
+```
 
-You may need to use the `EloquentBuilder` as `DependencyInjection` in a `construct` or a `function` method.
+> **Note:** When `setFilterNamespace()` is used, the default namespace and configured namespace are ignored for that builder instance.
 
-Suppose you have an `UserController` and you want get a list of the users with applying some filters on them:
+---
+
+# Dependency Injection
+
+`EloquentBuilder` can be injected into a controller or another service.
+
+For example:
 
 ```php
 <?php
 
 namespace App\Controllers;
 
-use App\Http\Resources\UserResource;
 use App\Models\User;
-use Fouladgar\EloquentBuilder\EloquentBuilder as Builder;
-use Fouladgar\EloquentBuilder\Exceptions\FilterException;
+use Fouladgar\EloquentBuilder\EloquentBuilder;
 use Illuminate\Http\Request;
 
 class UserController
 {
-    public function index(Request $request, User $user, Builder $builder)
-    {
-        $users = $user->newQuery()->where('is_active', true);
-        try {
-            $builder->model($users)
-                    ->filters($request->filter)
-                    ->thenApply();
-        } catch (FilterException $filterException) {
-            //...
-        }
+    public function index(
+        Request $request,
+        User $user,
+        EloquentBuilder $builder
+    ) {
+        $users = $user->newQuery()
+            ->where('is_active', true);
 
-        return UserResource::collection($users->get());
+        $builder
+            ->model($users)
+            ->filters($request->filter)
+            ->thenApply();
+
+        return $users->get();
     }
 }
 ```
 
-That's it.
+---
 
-## Testing
+# Choosing the Right Filter
 
-```sh
+Use this as a quick decision guide:
+
+| Requirement                     | Recommended API           |
+| ------------------------------- | ------------------------- |
+| Simple `=` comparison           | `QuickFilter::exact()`    |
+| Simple `LIKE` search            | `QuickFilter::partial()`  |
+| Existing Eloquent local scope   | `QuickFilter::scope()`    |
+| One-off custom query logic      | `QuickFilter::callback()` |
+| Soft-delete filtering           | `QuickFilter::trashed()`  |
+| Client-controlled eager loading | `QuickFilter::includes()` |
+| Client-controlled root columns  | `QuickFilter::fields()`   |
+| Reusable or complex logic       | Class-based `Filter`      |
+| Filter-level authorization      | Class-based `Filter`      |
+| OR conditions                   | `FilterGroup::or()`       |
+| Date comparisons                | `FiltersDatesTrait`       |
+| Numeric comparisons             | `FiltersNumbersTrait`     |
+| Controlled sorting              | `SortableTrait`           |
+
+---
+
+# Testing
+
+Run the test suite with:
+
+```bash
 composer test
 ```
+---
 
-## Contributing
+# Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-## Security
+---
 
-If you discover any security related issues, please email fouladgar.dev@gmail.com instead of using the issue tracker.
+# Security
 
-## License
+If you discover a security-related issue, please email:
 
-Eloquent-Builder is released under the MIT License. See the bundled
-[LICENSE](https://github.com/mohammad-fouladgar/eloquent-builder/blob/master/LICENSE)
-file for details.
+[fouladgar.dev@gmail.com](mailto:fouladgar.dev@gmail.com)
 
-Built with :heart: for you.
+Please do not use the public issue tracker for security vulnerabilities.
 
+---
+
+# License
+
+Eloquent Builder is released under the MIT License.
+
+See the [LICENSE](LICENSE) file for details.
+
+---
+
+Built with ❤️ for you.
