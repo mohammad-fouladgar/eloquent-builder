@@ -57,6 +57,34 @@ class SortableFilterTest extends TestCase
     /**
      * @test
      */
+    public function it_can_sort_using_a_custom_closure_resolver(): void
+    {
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->filters(['sort_by' => ['posts_count' => 'desc']])
+            ->thenApply();
+
+        $this->assertEquals(
+            'select "users".*, (select count(*) from "posts" where "users"."id" = "posts"."user_id" and "posts"."deleted_at" is null) as "posts_count" from "users" order by "posts_count" desc',
+            $users->toSql()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function it_cannot_bypass_the_sortable_whitelist_via_a_numeric_string_key(): void
+    {
+        $this->expectException(FilterException::class);
+        $this->eloquentBuilder
+            ->model(User::class)
+            ->filters(['sort_by' => ['1' => 'desc']])
+            ->thenApply();
+    }
+
+    /**
+     * @test
+     */
     public function it_can_throw_exception_if_selected_column_is_invalid(): void
     {
         $this->expectException(FilterException::class);

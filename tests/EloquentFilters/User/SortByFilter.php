@@ -17,6 +17,13 @@ class SortByFilter extends Filter
         'birth_date', 'score',
     ];
 
+    public function __construct()
+    {
+        $this->sortable['posts_count'] = static fn (Builder $builder, string $direction): Builder => $builder
+            ->withCount('posts')
+            ->orderBy('posts_count', $direction);
+    }
+
     /**
      * @throws FilterException|Throwable
      */

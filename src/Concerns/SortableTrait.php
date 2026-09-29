@@ -2,6 +2,7 @@
 
 namespace Fouladgar\EloquentBuilder\Concerns;
 
+use Closure;
 use Fouladgar\EloquentBuilder\Exceptions\FilterException;
 use Fouladgar\EloquentBuilder\Support\Foundation\FilterConventionParser;
 use Fouladgar\EloquentBuilder\Support\Foundation\ValidatesConventionValues;
@@ -57,9 +58,19 @@ trait SortableTrait
      */
     protected function prepareSort(Builder $builder, string $column, string $direction): void
     {
-        $column = Str::of($column)->snake()->lower();
+        $column = (string) Str::of($column)->snake()->lower();
         $direction = Str::lower($direction);
-        ValidatesConventionValues::validateSortable($column, $direction, $this->sortable ?? []);
+        $sortable = $this->sortable ?? [];
+
+        ValidatesConventionValues::validateSortable($column, $direction, $sortable);
+
+        $resolver = $sortable[$column] ?? null;
+
+        if ($resolver instanceof Closure) {
+            $resolver($builder, $direction);
+
+            return;
+        }
 
         $builder->orderBy($column, $direction);
     }

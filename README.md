@@ -457,6 +457,37 @@ class SortByFilter extends Filter
 ```
 > **Tip**: The sortable column(s) should be specified by `$sortable` attribute.
 
+`$sortable` can also map a key to a custom `Closure` instead of a plain column name — handy for sorting by something that isn't a direct column, like a relation count:
+
+```php
+<?php
+
+protected array $sortable = [
+    'birth_date', 'score',
+    'posts_count' => function (Builder $builder, string $direction): Builder {
+        return $builder->withCount('posts')->orderBy('posts_count', $direction);
+    },
+];
+```
+
+> **Note**: The resolver must mutate the given `$builder` in place (as `withCount()`/`orderBy()` do); its return value is ignored. Returning a different `Builder` instance (e.g. from `newQuery()`) won't affect the query.
+
+```shell
+api/user/search?sort_by[posts_count]=desc
+```
+
+To apply a default sort when the client doesn't request one, combine `SortableTrait` with `defaults()` (see [Defaults & Ignored Values](#defaults--ignored-values)):
+
+```php
+<?php
+
+EloquentBuilder::model(User::class)
+    ->defaults(['sort_by' => ['created_at' => 'desc']])
+    ->filters($request->filter)
+    ->thenApply()
+    ->get();
+```
+
 ## Authorizing Filter
 The filter class also contains an `authorize` method. Within this method, you may check if the authenticated user
 actually has the authority to apply a given filter. For example, you may determine if a user has a premium account, can

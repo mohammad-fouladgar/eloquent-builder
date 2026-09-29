@@ -2,6 +2,7 @@
 
 namespace Fouladgar\EloquentBuilder\Support\Foundation;
 
+use Closure;
 use DateTimeInterface;
 use Fouladgar\EloquentBuilder\Exceptions\FilterException;
 use Throwable;
@@ -61,7 +62,7 @@ class ValidatesConventionValues
     public static function validateSortable(string $column, string $direction, array $sortable): void
     {
         throw_if(
-            ! in_array($column, $sortable),
+            ! in_array($column, $sortable, true) && ! ($sortable[$column] ?? null) instanceof Closure,
             FilterException::invalidSelectedSort($column),
         );
 
