@@ -84,7 +84,6 @@ Your controllers stay focused on application flow while query-specific logic sta
 * [Custom Filter Namespaces](#custom-filter-namespaces)
 * [Dependency Injection](#dependency-injection)
 * [Choosing the Right Filter](#choosing-the-right-filter)
-* [Upgrading](#upgrading)
 * [Testing](#testing)
 * [Contributing](#contributing)
 * [Security](#security)
@@ -144,7 +143,6 @@ Then apply the request filters:
 
 ```php
 use App\Models\User;
-use Fouladgar\EloquentBuilder\EloquentBuilder;
 
 return EloquentBuilder::model(User::class)
     ->filters($request->filter)
@@ -877,13 +875,13 @@ same:date
 equals:date
 ```
 
-### Examples
+### Date Examples
 
 ```http
 GET /api/users?birth_date=before:2018-01-01
 ```
 
-### Between
+### Date Between
 
 These forms can be used for a range:
 
@@ -899,7 +897,7 @@ birth_date=2018-01-01,2022-01-01
 birth_date[]=2018-01-01&birth_date[]=2022-01-01
 ```
 
-### Equals
+### Date Equals
 
 These forms represent equality:
 
@@ -958,13 +956,13 @@ lte:number
 equals:number
 ```
 
-### Examples
+### Number Examples
 
 ```http
 GET /api/users?score=gte:500
 ```
 
-### Between
+### Number Between
 
 ```http
 score=between:100,1010
@@ -982,7 +980,7 @@ or:
 score[]=100&score[]=1010
 ```
 
-### Equals
+### Number Equals
 
 ```http
 score=equals:2222

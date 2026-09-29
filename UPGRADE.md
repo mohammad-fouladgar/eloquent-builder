@@ -32,7 +32,7 @@ All additive — safe to adopt incrementally, nothing above requires using them:
 
 - **`QuickFilter`** — class-free filters: `exact()`, `partial()`, `scope()`, `callback()`, `trashed()`, `includes()`, `fields()`. See [Quick Filters](README.md#quick-filters).
 - **`FilterGroup::or([...])`** — combine a set of filter keys with `OR` instead of the default `AND`. See [Filter Groups](README.md#filter-groups).
-- **`EloquentBuilder::defaults()` / `ignoreValues()`** — default filter values and per-filter sentinel values to ignore. See [Defaults & Ignored Values](README.md#defaults--ignored-values).
-- **`SortableTrait` custom sort resolvers** — map a `$sortable` key to a `Closure` instead of a plain column name. See [Sort filters](README.md#sort-filters).
+- **`EloquentBuilder::defaults()` / `ignoreValues()`** — default filter values and per-filter sentinel values to ignore. See [Defaults and Ignored Values](README.md#defaults-and-ignored-values).
+- **`SortableTrait` custom sort resolvers** — map a `$sortable` key to a `Closure` instead of a plain column name. See [Sort Filters](README.md#sort-filters).
 - **`ignore_missing_filters` config toggle** — silently ignore an unrecognized filter key instead of throwing. See [Missing Filter Behavior](README.md#missing-filter-behavior).
-- **`Builder::filter()` macro** — filter directly on an Eloquent `Builder`/model class, no facade needed: `User::filter($request->filter)->get()`. See [Fluent, Non-Facade Usage](README.md#fluent-non-facade-usage).
+- **`Builder::filter()` macro** — filter directly on an Eloquent `Builder`/model class, no facade needed: `User::filter($request->filter)->get()`. See [Fluent Usage](README.md#fluent-usage).
