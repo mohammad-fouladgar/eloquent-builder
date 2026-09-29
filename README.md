@@ -331,6 +331,23 @@ $users = EloquentBuilder::model(new \App\Models\User())
         ->get();
 ```
 
+### Fluent, Non-Facade Usage
+
+For the common case, a `filter()` macro on Eloquent's `Builder` lets you skip the facade entirely — it works on a model class statically or on an existing query, and returns a plain `Builder` so you can keep chaining:
+
+```php
+<?php
+
+$users = \App\Models\User::filter(request()->filter)->get();
+
+// Also works on an existing query:
+$users = \App\Models\User::where('is_active', true)
+    ->filter(request()->filter)
+    ->get();
+```
+
+> **Note**: The macro only covers the plain `filters()` case. For `quickFilters()`, `filterGroups()`, `defaults()`, or `ignoreValues()`, use the full `EloquentBuilder::model(...)` chain.
+
 > **Tip**: It's recommended to put your query params inside a filter key as below:
 
  ```
