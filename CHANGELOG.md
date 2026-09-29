@@ -1,3 +1,20 @@
+## 6.0.0 - 2026-09-29
+ - ⚠️ Requires PHP ^8.3 — see UPGRADE.md for this and other breaking changes
+ - improve upgrade file and update readme
+ - add upgrade file and update readme
+ - feat: add Builder::filter() macro for fluent, non-facade DX
+ - feat: add config toggle for missing-filter behavior
+ - feat: allow custom Closure sort resolvers in SortableTrait
+ - feat: add QuickFilter::fields() for sparse-fieldset column selection
+ - feat: add QuickFilter::includes() for whitelisted eager-loading
+ - feat: add default filter values and per-filter ignore-values
+ - feat: add OR filter groups (FilterGroup)
+ - feat: add QuickFilter::trashed() for soft-delete filtering
+ - feat: add quick/inline filter types (QuickFilter)
+ - refactor: scope filter authorization check to the pipeline
+ - chore: remove unused PublishCommand (Lumen-era dead code)
+ - add rector and pint
+
 ## 5.4.0 - 2026-05-02
  - Add support Laravel 13
 
