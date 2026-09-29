@@ -136,6 +136,16 @@ return [
 ];
 ```
 
+### Missing Filter Behavior
+
+By default, a filter key with no matching quick filter or filter class throws a `FilterException`. Set `ignore_missing_filters` to `true` in the published config file to silently ignore that key instead (as if it were never provided) — handy if your request payloads may carry extra, unrelated keys alongside your filters:
+
+```php
+'ignore_missing_filters' => true,
+```
+
+> **Note**: This only affects an unrecognized key. A filter class that exists but isn't a valid `Filter` instance still always throws, since that's a bug in your own code rather than an unrecognized request key.
+
 ## Defining a Filter
 
 Writing a filter is simple. Define a class that `extends`
@@ -255,6 +265,8 @@ EloquentBuilder::model(User::class)
 A group works with class-based filters, quick filters, or a mix of both — each key is still resolved and authorized exactly the same way as an ungrouped filter. A group only combines the keys that are actually present in the request; if only one member of the group has a value, it's applied like a normal filter, and if none of them do, the group is skipped entirely.
 
 > **Warning**: Only put filters that add a plain `where` constraint (`QuickFilter::exact/partial/scope/callback`, or a class-based filter that just calls `$builder->where(...)`) inside a group. A filter that changes global scopes or the query's structure — most notably `QuickFilter::trashed()`, or a custom filter calling `withoutGlobalScope()`, `orderBy()`, or `with()` — affects the **whole query** when used inside a group, not just that group's `OR` branch, because that's how Eloquent's underlying `where(Closure)` nesting propagates removed scopes. Use those filters ungrouped instead.
+
+> **Note**: With [`ignore_missing_filters`](#missing-filter-behavior) enabled, if every member of a group turns out to be an unrecognized key, the group contributes no constraint at all — it does **not** make the group match zero rows, it simply doesn't restrict anything (same as if the group were never declared).
 
 ### Defaults & Ignored Values
 

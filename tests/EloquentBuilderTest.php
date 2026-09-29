@@ -330,4 +330,33 @@ class EloquentBuilderTest extends TestCase
 
         $this->assertEquals(0, $users->count());
     }
+
+    /** @test */
+    public function it_silently_ignores_an_unknown_filter_key_when_configured_to(): void
+    {
+        config(['eloquent-builder.ignore_missing_filters' => true]);
+
+        User::factory()->create();
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->filters(['not_exists_filter' => 'any_value'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(1, $users->count());
+    }
+
+    /** @test */
+    public function it_still_throws_for_an_invalid_filter_instance_even_when_ignoring_missing_filters(): void
+    {
+        config(['eloquent-builder.ignore_missing_filters' => true]);
+
+        $this->expectException(FilterException::class);
+
+        $this->eloquentBuilder
+            ->model(User::class)
+            ->filters(['invalid_implemented' => 'any_value'])
+            ->thenApply();
+    }
 }

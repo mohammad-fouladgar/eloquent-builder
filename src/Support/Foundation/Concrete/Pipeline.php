@@ -93,9 +93,14 @@ class Pipeline extends BasePipeline
     {
         return fn ($stack, $name) => function ($passable) use ($stack, $name) {
             try {
-                $parameters = $this->pipes()[$name];
+                $resolved = $this->resolveAndAuthorize($name);
 
-                [$pipe, $identifier] = $this->resolveAndAuthorize($name);
+                if ($resolved === null) {
+                    return $this->handleCarry($stack($passable));
+                }
+
+                [$pipe] = $resolved;
+                $parameters = $this->pipes()[$name];
 
                 $carry = method_exists($pipe, $this->method)
                     ? $pipe->{$this->method}($passable, $stack, $parameters)
@@ -135,7 +140,13 @@ class Pipeline extends BasePipeline
      */
     private function applyGroupedFilter(Builder $builder, string $name, mixed $value): Builder
     {
-        [$pipe] = $this->resolveAndAuthorize($name);
+        $resolved = $this->resolveAndAuthorize($name);
+
+        if ($resolved === null) {
+            return $builder;
+        }
+
+        [$pipe] = $resolved;
 
         return $pipe->apply($builder, $value);
     }
@@ -151,13 +162,19 @@ class Pipeline extends BasePipeline
     }
 
     /**
-     * @return array{0: Filter, 1: string}
+     * @return array{0: Filter, 1: string}|null
      *
      * @throws Throwable
      */
-    private function resolveAndAuthorize(string $name): array
+    private function resolveAndAuthorize(string $name): ?array
     {
-        [$pipe, $identifier] = $this->resolvePipe($name);
+        $resolved = $this->resolvePipe($name);
+
+        if ($resolved === null) {
+            return null;
+        }
+
+        [$pipe, $identifier] = $resolved;
 
         $this->filterInstanceHandler($pipe, $identifier);
 
@@ -167,11 +184,11 @@ class Pipeline extends BasePipeline
     }
 
     /**
-     * @return array{0: mixed, 1: string}
+     * @return array{0: mixed, 1: string}|null
      *
      * @throws Throwable
      */
-    private function resolvePipe(string $name): array
+    private function resolvePipe(string $name): ?array
     {
         if (isset($this->quickFilters[$name])) {
             return [$this->quickFilters[$name], $name];
@@ -179,7 +196,9 @@ class Pipeline extends BasePipeline
 
         $pipeClass = $this->resolveFilter($name, $this->model);
 
-        $this->notFoundFilterHandler($pipeClass);
+        if ($this->missingFilterHandler($pipeClass)) {
+            return null;
+        }
 
         return [$this->getContainer()->make($pipeClass), $this->filterBasename($pipeClass)];
     }
@@ -190,14 +209,27 @@ class Pipeline extends BasePipeline
     }
 
     /**
+     * @return bool whether the filter is missing and should be silently skipped
+     *
      * @throws Throwable
      */
-    private function notFoundFilterHandler(string $filterClass): void
+    private function missingFilterHandler(string $filterClass): bool
     {
+        if (class_exists($filterClass)) {
+            return false;
+        }
+
         throw_if(
-            ! class_exists($filterClass),
+            ! $this->ignoresMissingFilters(),
             FilterException::filterNotFound($this->filterBasename($filterClass)),
         );
+
+        return true;
+    }
+
+    private function ignoresMissingFilters(): bool
+    {
+        return (bool) $this->config->get('eloquent-builder.ignore_missing_filters', false);
     }
 
     /**

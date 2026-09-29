@@ -83,6 +83,24 @@ class FilterGroupTest extends TestCase
     }
 
     /** @test */
+    public function it_does_not_restrict_rows_when_every_grouped_member_is_missing_and_ignored(): void
+    {
+        config(['eloquent-builder.ignore_missing_filters' => true]);
+
+        User::factory()->create(['gender' => 'male']);
+        User::factory()->create(['gender' => 'female']);
+
+        $users = $this->eloquentBuilder
+            ->model(User::class)
+            ->filterGroups([FilterGroup::or(['unknown_a', 'unknown_b'])])
+            ->filters(['unknown_a' => 'x', 'unknown_b' => 'y'])
+            ->thenApply()
+            ->get();
+
+        $this->assertEquals(2, $users->count());
+    }
+
+    /** @test */
     public function it_still_authorizes_grouped_class_based_filters(): void
     {
         $this->expectException(AuthorizationException::class);
